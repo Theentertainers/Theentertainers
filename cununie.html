@@ -60,6 +60,16 @@ section.alt{background:var(--bg2);border-block:1px solid var(--line)}
 .faq details[open]{border-color:rgba(212,175,55,.45)}
 .faq p{padding:0 20px 18px;color:#cfcabe;font-size:.94rem}
 
+/* filmuleț de prezentare (TikTok, vertical) */
+.vid{display:grid;grid-template-columns:1fr auto;gap:50px;align-items:center;max-width:980px;margin:0 auto}
+.vid .txt h2{font-size:clamp(1.8rem,3.6vw,2.6rem);margin-bottom:14px}
+.vid .txt p{color:#d6d2c6;margin-bottom:14px}
+.vid .txt .cta{justify-content:flex-start;margin-top:22px}
+.phone{position:relative;width:min(340px,82vw);aspect-ratio:9/16;border-radius:30px;padding:8px;background:var(--grad);box-shadow:0 30px 70px -20px rgba(212,175,55,.45),0 0 0 1px rgba(212,175,55,.4)}
+.phone::before{content:"";position:absolute;inset:-30px;z-index:-1;background:radial-gradient(ellipse,rgba(212,175,55,.25),transparent 65%)}
+.phone iframe{width:100%;height:100%;border:0;border-radius:23px;background:#000;display:block}
+
+@media (max-width:960px){ .vid{grid-template-columns:1fr;justify-items:center;text-align:center;gap:34px} .vid .txt .cta{justify-content:center} }
 @media (max-width:960px){ .intro{grid-template-columns:1fr} .inc{grid-template-columns:1fr 1fr} .inc>div:last-child{grid-column:1/-1} }
 @media (max-width:600px){ .inc{grid-template-columns:1fr} section.sec{padding:64px 0} .intro .txt,.quote{padding:26px 22px} }
 </style>
@@ -115,7 +125,27 @@ section.alt{background:var(--bg2);border-block:1px solid var(--line)}
   </div>
 </section>
 
-<section class="sec alt">
+<section class="sec alt" id="video">
+  <div class="wrap vid">
+    <div class="txt rv">
+      <span class="kicker">Vezi cum arată</span>
+      <h2>O ceremonie <span class="gold">în imagini</span></h2>
+      <p>Cel mai bine îți dai seama cum e uitându-te. Emoția mirilor, zâmbetele invitaților și momentele care fac dintr-o ceremonie o amintire pentru toată viața.</p>
+      <p>Apasă Play și dă sonorul mai tare.</p>
+      <div class="cta">
+        <a href="rezerva.html?serviciu=actor" class="btn btn-gold">Vreau și eu</a>
+        <a href="https://www.tiktok.com/@cozminbacanu" target="_blank" rel="noopener" class="btn btn-ghost">Mai multe pe TikTok</a>
+      </div>
+    </div>
+    <div class="phone rv">
+      <iframe src="https://www.tiktok.com/player/v1/7647954884481879318?music_info=1&description=0&rel=0&native_context_menu=0&closed_caption=0"
+        title="Ceremonie de cununie civilă – The Entertainers" loading="lazy"
+        allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
   <div class="wrap">
     <div class="sec-head rv">
       <span class="kicker">Ce include</span>
@@ -142,7 +172,7 @@ section.alt{background:var(--bg2);border-block:1px solid var(--line)}
   </div>
 </section>
 
-<section class="sec">
+<section class="sec alt">
   <div class="wrap">
     <div class="sec-head rv">
       <span class="kicker">Cum decurge</span>
@@ -157,7 +187,7 @@ section.alt{background:var(--bg2);border-block:1px solid var(--line)}
   </div>
 </section>
 
-<section class="sec alt">
+<section class="sec">
   <div class="wrap">
     <div class="sec-head rv">
       <span class="kicker">Întrebări frecvente</span>
