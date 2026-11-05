@@ -4,81 +4,97 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>By The River – The Entertainers</title>
-<meta name="description" content="By The River – conceptul de petrecere în aer liber semnat The Entertainers: muzică, lumini și atmosferă la apus, pe malul apei sau oriunde vrei tu.">
+<meta name="description" content="By The River – petrecerea în aer liber semnată The Entertainers: muzică bună, pe malul apei, de la apus până târziu. Good vibes, good music, good people.">
 <meta property="og:title" content="By The River – The Entertainers">
-<meta property="og:description" content="Petrecerea în aer liber care vine la tine.">
-<meta property="og:image" content="assets/logo-gold.png">
+<meta property="og:description" content="Good vibes • Good music • Good people. Petrecerea în aer liber, de la apus până târziu.">
+<meta property="og:image" content="assets/btr-og.jpg">
 <meta name="theme-color" content="#0b0b0c">
 <link rel="icon" href="assets/mic-gold.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@600;700;800&family=Montserrat:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/site.css">
 <style>
-:root{--teal:#3fc1c9;--teal2:#1b6f78}
-/* hero cu râu animat */
-.bhero{position:relative;min-height:88svh;display:grid;place-items:center;text-align:center;overflow:hidden;padding:130px 0 150px;
-  background:radial-gradient(ellipse at 50% 115%,rgba(255,170,60,.38),transparent 55%),radial-gradient(ellipse at 50% 0%,rgba(63,193,201,.16),transparent 60%),linear-gradient(#08090c,#0b0b0c)}
-.sun{position:absolute;left:50%;bottom:120px;width:min(460px,80vw);aspect-ratio:1;translate:-50% 50%;border-radius:50%;background:radial-gradient(circle,rgba(255,196,90,.55),rgba(255,140,40,.12) 55%,transparent 70%);filter:blur(4px);animation:sun 8s ease-in-out infinite alternate}
+:root{--or:#f7a51c;--or2:#ffc457;--or3:#c4670b;--cream:#fbf3e0}
+/* ===== HERO ===== */
+.bhero{position:relative;min-height:88svh;display:grid;place-items:center;text-align:center;overflow:hidden;padding:140px 0 170px;
+  background:radial-gradient(ellipse at 50% 112%,rgba(255,150,30,.55),transparent 55%),radial-gradient(ellipse at 50% 70%,rgba(196,103,11,.25),transparent 65%),linear-gradient(#070707,#140a03 70%,#0b0b0c)}
+.sun{position:absolute;left:50%;bottom:150px;width:min(520px,86vw);aspect-ratio:1;translate:-50% 50%;border-radius:50%;background:radial-gradient(circle,rgba(255,190,80,.7),rgba(255,120,20,.18) 55%,transparent 70%);filter:blur(6px);animation:sun 8s ease-in-out infinite alternate}
 @keyframes sun{to{transform:scale(1.08);opacity:.85}}
+.lights{position:absolute;top:78px;left:-2%;width:104%;height:70px;pointer-events:none;z-index:1}
+.lights svg{width:100%;height:100%;overflow:visible}
+.lights circle{fill:#ffd27a;filter:drop-shadow(0 0 6px #ffb52e) drop-shadow(0 0 14px rgba(255,170,40,.8));animation:tw 2.6s ease-in-out infinite alternate}
+.lights circle:nth-child(3n){animation-delay:.8s}.lights circle:nth-child(3n+1){animation-delay:1.6s}
+@keyframes tw{to{opacity:.45}}
 .waves{position:absolute;left:0;right:0;bottom:0;height:190px;pointer-events:none}
 .waves svg{position:absolute;bottom:0;width:200%;height:100%;left:0}
-.w1{animation:flow 18s linear infinite;opacity:.9}
-.w2{animation:flow 12s linear infinite reverse;opacity:.6}
-.w3{animation:flow 26s linear infinite;opacity:.45}
+.w1{animation:flow 18s linear infinite;opacity:.95}.w2{animation:flow 12s linear infinite reverse;opacity:.7}.w3{animation:flow 26s linear infinite;opacity:.5}
 @keyframes flow{to{transform:translateX(-50%)}}
 .bhero .wrap{position:relative;z-index:2}
-.bt{font-family:"Great Vibes",cursive;font-size:clamp(4rem,13vw,9rem);line-height:1;padding:0 .15em;margin:6px 0 4px;
-  background:linear-gradient(120deg,#f3d77a 0%,#d4af37 40%,#7fe3e8 75%,#3fc1c9 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 8px 30px rgba(0,0,0,.6))}
-.bsub{font-family:"Playfair Display",serif;font-size:clamp(1.2rem,2.6vw,1.7rem);color:#f4ecd4;margin-bottom:14px}
-.bhero p.lead{color:#e3dfd3;max-width:640px;margin:0 auto 30px}
-.tag2{display:inline-block;font-size:.78rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--teal);border:1px solid rgba(63,193,201,.45);padding:6px 16px;border-radius:999px;background:rgba(0,0,0,.35)}
-.btn-teal{background:linear-gradient(135deg,#7fe3e8,#3fc1c9 50%,#1b6f78);color:#04211f;box-shadow:0 8px 28px -8px rgba(63,193,201,.6)}
-.btn-teal:hover{transform:translateY(-2px)}
+.pres{font-family:Oswald,sans-serif;font-size:.78rem;letter-spacing:6px;color:#e9dfc9;text-transform:uppercase}
+.logo-n{display:block;width:min(760px,92%);height:auto;margin:14px auto 10px;filter:drop-shadow(0 12px 40px rgba(0,0,0,.7))}
+.vibes{font-family:Oswald,sans-serif;font-weight:500;letter-spacing:5px;text-transform:uppercase;color:var(--cream);font-size:clamp(.78rem,1.6vw,1rem);margin:10px 0 30px}
+.vibes i{color:var(--or);font-style:normal;margin:0 10px}
+.btn-or{background:linear-gradient(135deg,#ffd27a,#f7a51c 50%,#c4670b);color:#1d0d00;box-shadow:0 8px 28px -8px rgba(247,165,28,.7)}
+.btn-or:hover{transform:translateY(-2px)}
 
 section.sec{padding:84px 0}
 section.alt{background:var(--bg2);border-block:1px solid var(--line)}
 .sec-head{text-align:center;max-width:720px;margin:0 auto 46px}
-.sec-head .kicker{margin-bottom:14px}
+.sec-head .kicker{margin-bottom:14px;color:var(--or)}
 .sec-head h2{font-size:clamp(1.8rem,3.6vw,2.6rem);margin-bottom:12px}
 .sec-head p{color:var(--muted)}
-.teal{background:linear-gradient(120deg,#d4af37,#7fe3e8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ot{background:linear-gradient(120deg,#ffd27a,#f7a51c 60%,#e07f12);-webkit-background-clip:text;background-clip:text;color:transparent}
 
-.ing{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-.ing>div{padding:30px 24px;border-radius:var(--r);background:linear-gradient(160deg,#18191d,#111214);border:1px solid var(--line);transition:transform .3s,border-color .3s}
-.ing>div:hover{transform:translateY(-6px);border-color:rgba(63,193,201,.5)}
-.ing .ico{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(212,175,55,.14),rgba(63,193,201,.14));border:1px solid rgba(63,193,201,.35);margin-bottom:16px}
-.ing .ico svg{width:28px;height:28px;stroke:#bfeef0;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.ing h3{font-size:1.2rem;margin-bottom:8px}
-.ing p{color:var(--muted);font-size:.93rem}
-
-.concept{display:grid;grid-template-columns:1.2fr 1fr;gap:26px;align-items:center;margin-bottom:46px}
+/* concept */
+.concept{display:grid;grid-template-columns:1.2fr 1fr;gap:26px;align-items:center;margin-bottom:50px}
 .concept p{color:#d6d2c6;margin-bottom:14px;font-size:1.02rem}
-.concept q{display:block;font-family:"Great Vibes",cursive;font-size:clamp(2rem,4vw,2.8rem);line-height:1.2;quotes:none;text-align:center;padding:30px;border-radius:var(--r);border:1px solid rgba(63,193,201,.35);background:radial-gradient(ellipse at 50% 100%,rgba(255,170,60,.18),transparent 70%),#111214}
+.concept q{display:block;font-family:"Great Vibes",cursive;font-size:clamp(2rem,4vw,2.8rem);line-height:1.2;quotes:none;text-align:center;padding:34px 26px;border-radius:var(--r);border:1px solid rgba(247,165,28,.4);color:var(--or2);background:radial-gradient(ellipse at 50% 110%,rgba(255,150,30,.25),transparent 70%),#111214}
+.signs{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.sign{padding:26px 22px 24px;border-radius:var(--r);background:linear-gradient(160deg,#1b1510,#111214);border:1px solid var(--line);transition:transform .3s,border-color .3s}
+.sign:hover{transform:translateY(-6px);border-color:rgba(247,165,28,.55)}
+.sign h3{display:inline-block;font-family:Oswald,sans-serif;font-weight:600;letter-spacing:2px;text-transform:uppercase;font-size:1.15rem;color:var(--cream);background:linear-gradient(90deg,#3a2414,#24170d);border:1px solid rgba(247,165,28,.35);padding:7px 26px 7px 14px;margin-bottom:14px;clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%)}
+.sign h3 small{display:block;font-family:Montserrat,sans-serif;font-weight:500;letter-spacing:1px;text-transform:none;font-size:.72rem;color:var(--or2)}
+.sign p{color:var(--muted);font-size:.93rem}
 
-.eds{display:grid;gap:14px;max-width:900px;margin:0 auto}
-.ed{display:grid;grid-template-columns:110px 1fr auto;gap:20px;align-items:center;padding:20px 22px;border-radius:var(--r);background:var(--card);border:1px solid var(--line)}
-.ed.next{border-color:rgba(63,193,201,.6);box-shadow:0 0 0 1px rgba(63,193,201,.2),0 20px 50px -25px rgba(63,193,201,.35)}
-.ed .dt{text-align:center;padding:10px 6px;border-radius:14px;background:linear-gradient(160deg,rgba(212,175,55,.18),rgba(63,193,201,.12))}
-.ed .dt b{display:block;font-family:"Playfair Display",serif;font-size:2.1rem;line-height:1}
-.ed .dt span{font-size:.75rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal)}
-.ed .dt small{display:block;font-size:.72rem;color:var(--muted)}
-.ed h3{font-size:1.25rem;margin-bottom:4px}
-.ed .meta{color:#cfcabe;font-size:.9rem;display:flex;flex-wrap:wrap;gap:4px 14px}
-.ed .ln{color:var(--gold2);font-size:.88rem;font-weight:600;margin-top:4px}
-.ed .ds{color:var(--muted);font-size:.9rem;margin-top:6px;white-space:pre-wrap}
-.ed .soon{display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--teal);color:#04211f;margin-left:8px;vertical-align:3px}
-.past{max-width:900px;margin:28px auto 0}
-.past summary{cursor:pointer;color:var(--gold2);font-weight:600;text-align:center;list-style:none}
-.past summary::-webkit-details-marker{display:none}
-.past .eds{margin-top:16px}
-.past .ed{opacity:.75}
+/* reguli */
+.rules{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;max-width:760px;margin:0 auto}
+.rule{flex:1 1 300px;max-width:372px;display:flex;gap:14px;align-items:center;padding:18px;border-radius:16px;border:1px solid rgba(247,165,28,.4);background:#111214}
+.rule .ri{width:58px;height:58px;flex:none;border-radius:50%;border:2px solid var(--or);display:grid;place-items:center;font-family:Oswald,sans-serif;font-weight:700;font-size:1.3rem;color:var(--or)}
+.rule .ri svg{width:30px;height:30px;stroke:var(--or);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.rule b{display:block;font-family:Oswald,sans-serif;font-weight:500;font-size:1.1rem;letter-spacing:.3px;color:var(--cream)}
+.rule span{font-size:.84rem;color:var(--muted)}
+
+/* ediții */
+.sub{font-family:Oswald,sans-serif;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--or);font-size:.95rem;text-align:center;margin:0 0 18px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:20px}
+.pgrid+.sub{margin-top:54px}
+.pc{display:flex;flex-direction:column;border-radius:var(--r);overflow:hidden;background:var(--card);border:1px solid var(--line);transition:transform .3s,border-color .3s}
+.pc:hover{transform:translateY(-6px);border-color:rgba(247,165,28,.55)}
+.pc.next{border-color:rgba(247,165,28,.7);box-shadow:0 0 0 1px rgba(247,165,28,.25),0 24px 60px -28px rgba(247,165,28,.55)}
+.pc .im{position:relative;display:block;aspect-ratio:4/5;background:url(assets/btr-logo.webp) 50% 45%/78% auto no-repeat,radial-gradient(ellipse at 50% 100%,rgba(255,150,30,.4),transparent 65%),linear-gradient(160deg,#2a1708,#0b0b0c 75%)}
+.pc .im img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pc .im .dt{position:absolute;left:12px;top:12px;text-align:center;padding:8px 10px;border-radius:12px;background:rgba(11,11,12,.82);backdrop-filter:blur(4px);border:1px solid rgba(247,165,28,.45);min-width:58px}
+.pc .im .dt b{display:block;font-family:Oswald,sans-serif;font-size:1.6rem;line-height:1;color:#fff}
+.pc .im .dt span{display:block;font-size:.68rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--or)}
+.pc .im .dt small{display:block;font-size:.66rem;color:var(--muted)}
+.pc .soon{position:absolute;right:12px;top:12px;font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:var(--or);color:#1d0d00}
+.pc .bd{padding:16px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
+.pc h3{font-size:1.15rem}
+.pc .meta{color:#cfcabe;font-size:.86rem;display:flex;flex-wrap:wrap;gap:2px 12px}
+.pc .ln{color:var(--or2);font-size:.85rem;font-weight:600}
+.pc .ds{color:var(--muted);font-size:.88rem;white-space:pre-wrap;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.pc .ds.open{-webkit-line-clamp:unset}
+.pc .more{background:none;border:0;color:var(--or2);font:600 .82rem Montserrat,sans-serif;padding:0;cursor:pointer;align-self:flex-start}
+.pc .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:8px}
 .emsg{text-align:center;color:var(--muted);padding:26px;border:1px dashed var(--line);border-radius:var(--r);max-width:700px;margin:0 auto}
+.emsg a{color:var(--or2)}
 
+/* galerie */
 .albs{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;margin-bottom:28px}
 .alb{display:block;border-radius:var(--r);overflow:hidden;background:var(--card);border:1px solid var(--line);transition:transform .3s,border-color .3s}
-.alb:hover{transform:translateY(-6px);border-color:rgba(63,193,201,.5)}
-.alb .cv{aspect-ratio:4/3;background:linear-gradient(160deg,#122326,#0b0b0c) center/cover no-repeat}
+.alb:hover{transform:translateY(-6px);border-color:rgba(247,165,28,.55)}
+.alb .cv{aspect-ratio:4/3;background:linear-gradient(160deg,#2a1708,#0b0b0c) center/cover no-repeat}
 .alb .in{padding:14px 16px}
 .alb h3{font-size:1.1rem}
 .alb small{color:var(--muted)}
@@ -87,18 +103,23 @@ section.alt{background:var(--bg2);border-block:1px solid var(--line)}
 .vbox{position:relative;width:100%;aspect-ratio:9/16;background:#000;cursor:pointer;overflow:hidden}
 .vbox.wide{aspect-ratio:16/9}
 .vbox img{width:100%;height:100%;object-fit:cover;opacity:.85}
-.vbox .ph{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 80%,rgba(255,170,60,.35),transparent 60%),linear-gradient(160deg,#10272a,#0b0b0c 70%)}
-.vbox .ph::after{content:"By The River";position:absolute;left:0;right:0;top:26%;text-align:center;font-family:"Great Vibes",cursive;font-size:2.4rem;color:#f3d77a;opacity:.9}
-.vbox .play{position:absolute;left:50%;top:50%;translate:-50% -50%;width:70px;height:70px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#f3d77a,#3fc1c9);box-shadow:0 10px 30px -6px rgba(63,193,201,.6)}
-.vbox .play svg{width:28px;height:28px;fill:#04211f;margin-left:4px}
+.vbox .ph{position:absolute;inset:0;background:url(assets/btr-logo.webp) 50% 26%/80% auto no-repeat,radial-gradient(ellipse at 50% 85%,rgba(255,150,30,.45),transparent 60%),linear-gradient(160deg,#2a1708,#0b0b0c 70%)}
+.vbox .play{position:absolute;left:50%;top:55%;translate:-50% -50%;width:70px;height:70px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#ffd27a,#f7a51c);box-shadow:0 10px 30px -6px rgba(247,165,28,.7)}
+.vbox .play svg{width:28px;height:28px;fill:#1d0d00;margin-left:4px}
 .vbox iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .vmeta{padding:12px 14px 14px}
 .vmeta h3{font-family:Montserrat,sans-serif;font-size:.98rem;font-weight:700;margin-bottom:10px}
 .nomedia{text-align:center;color:var(--muted)}
 
-@media (max-width:960px){ .ing{grid-template-columns:1fr 1fr} .concept{grid-template-columns:1fr} }
-@media (max-width:600px){ .ing{grid-template-columns:1fr} .ed{grid-template-columns:78px 1fr;gap:14px} .ed .dt b{font-size:1.6rem} .ed .act{grid-column:1/-1} section.sec{padding:64px 0} .bhero{padding:120px 0 130px} }
-@media (prefers-reduced-motion:reduce){ .w1,.w2,.w3,.sun{animation:none} }
+/* urmărește-ne */
+.fol{text-align:center}
+.fol .t{font-family:"Great Vibes",cursive;font-size:2.4rem;color:var(--cream);margin-bottom:16px}
+.fol .cta{margin-bottom:30px}
+.tags{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px;font-family:Oswald,sans-serif;font-weight:600;letter-spacing:.5px;font-size:1.05rem;color:#1d0d00;background:var(--or);padding:10px 26px;max-width:860px;margin:0 auto;clip-path:polygon(1% 12%,100% 0,98% 55%,100% 100%,0 90%,2% 50%)}
+
+@media (max-width:960px){ .signs{grid-template-columns:1fr 1fr} .concept{grid-template-columns:1fr} }
+@media (max-width:600px){ .signs{grid-template-columns:1fr} section.sec{padding:64px 0} .bhero{padding:120px 0 150px} .lights{top:70px;height:46px} .vibes i{margin:0 5px} .vibes{letter-spacing:3px} }
+@media (prefers-reduced-motion:reduce){ .w1,.w2,.w3,.sun,.lights circle{animation:none} }
 </style>
 </head>
 <body>
@@ -123,20 +144,20 @@ section.alt{background:var(--bg2);border-block:1px solid var(--line)}
 
 <section class="bhero">
   <div class="sun" aria-hidden="true"></div>
+  <div class="lights" aria-hidden="true"><svg viewBox="0 0 1000 70" preserveAspectRatio="none" id="lights"></svg></div>
   <div class="wrap">
-    <span class="tag2">The Entertainers prezintă</span>
-    <h1 class="bt">By The River</h1>
-    <div class="bsub">Petrecerea în aer liber care vine la tine</div>
-    <p class="lead">Muzică, lumini și atmosferă la apus. Pe malul unui râu, lângă un lac, într-o grădină sau oriunde îți imaginezi. Noi aducem petrecerea.</p>
+    <div class="pres">The Entertainers prezintă</div>
+    <h1 style="margin:0"><img class="logo-n" src="assets/btr-logo.webp" width="783" height="189" alt="By The River"></h1>
+    <div class="vibes">Good vibes<i>•</i>Good music<i>•</i>Good people</div>
     <div class="cta">
-      <a href="#editii" class="btn btn-teal">Vezi edițiile</a>
-      <a href="rezerva.html?serviciu=btr" class="btn btn-ghost">Vreau By The River</a>
+      <a href="#editii" class="btn btn-or">Petrecerile noastre</a>
+      <a href="#galerie" class="btn btn-ghost">Poze și clipuri</a>
     </div>
   </div>
   <div class="waves" aria-hidden="true">
-    <svg class="w3" viewBox="0 0 2400 190" preserveAspectRatio="none"><path d="M0 90 C200 60 400 120 600 90 S1000 60 1200 90 S1600 120 1800 90 S2200 60 2400 90 V190 H0Z" fill="#0f3a40"/></svg>
-    <svg class="w2" viewBox="0 0 2400 190" preserveAspectRatio="none"><path d="M0 120 C150 100 350 145 600 120 S1050 95 1200 120 S1550 145 1800 120 S2250 95 2400 120 V190 H0Z" fill="#14555c"/></svg>
-    <svg class="w1" viewBox="0 0 2400 190" preserveAspectRatio="none"><defs><linearGradient id="gw" x1="0" x2="1"><stop offset="0" stop-color="#d4af37" stop-opacity=".55"/><stop offset=".5" stop-color="#3fc1c9" stop-opacity=".5"/><stop offset="1" stop-color="#d4af37" stop-opacity=".55"/></linearGradient></defs>
+    <svg class="w3" viewBox="0 0 2400 190" preserveAspectRatio="none"><path d="M0 90 C200 60 400 120 600 90 S1000 60 1200 90 S1600 120 1800 90 S2200 60 2400 90 V190 H0Z" fill="#3a1d07"/></svg>
+    <svg class="w2" viewBox="0 0 2400 190" preserveAspectRatio="none"><path d="M0 120 C150 100 350 145 600 120 S1050 95 1200 120 S1550 145 1800 120 S2250 95 2400 120 V190 H0Z" fill="#241205"/></svg>
+    <svg class="w1" viewBox="0 0 2400 190" preserveAspectRatio="none"><defs><linearGradient id="gw" x1="0" x2="1"><stop offset="0" stop-color="#ffd27a" stop-opacity=".6"/><stop offset=".5" stop-color="#f7a51c" stop-opacity=".75"/><stop offset="1" stop-color="#ffd27a" stop-opacity=".6"/></linearGradient></defs>
       <path d="M0 150 C200 135 400 165 600 150 S1000 135 1200 150 S1600 165 1800 150 S2200 135 2400 150 V190 H0Z" fill="#0b0b0c"/>
       <path d="M0 150 C200 135 400 165 600 150 S1000 135 1200 150 S1600 165 1800 150 S2200 135 2400 150" fill="none" stroke="url(#gw)" stroke-width="2.5"/></svg>
   </div>
@@ -146,18 +167,18 @@ section.alt{background:var(--bg2);border-block:1px solid var(--line)}
   <div class="wrap">
     <div class="concept">
       <div class="rv">
-        <span class="kicker">Conceptul</span>
-        <h2 style="font-size:clamp(1.8rem,3.6vw,2.6rem);margin-bottom:16px">Nu e un loc. <span class="teal">E o stare.</span></h2>
-        <p>By The River nu are o adresă fixă. E un concept de petrecere pe care îl ducem acolo unde e cel mai frumos: pe malul unui râu, lângă un lac, într-o grădină sau pe o terasă cu priveliște.</p>
-        <p>Pornim muzica pe la apus, aprindem luminile când se lasă seara și ținem ringul plin până târziu. Totul în aer liber, cu oameni buni și cu atmosfera pe care doar The Entertainers o poate aduce.</p>
+        <span class="kicker" style="color:var(--or)">Conceptul</span>
+        <h2 style="font-size:clamp(1.8rem,3.6vw,2.6rem);margin-bottom:16px">Nu e un loc. <span class="ot">E o stare.</span></h2>
+        <p>By The River e petrecerea în aer liber semnată The Entertainers. Pornim muzica odată cu apusul, aprindem becurile când se lasă seara și ținem ringul plin până târziu.</p>
+        <p>Îți iei prietenii și lași restul în grija noastră: DJ, MC, sonorizare și lumini, pe malul unui râu, lângă un lac sau oriunde e cel mai frumos.</p>
       </div>
       <q class="rv">Soarele apune, petrecerea abia începe.</q>
     </div>
-    <div class="ing">
-      <div class="rv"><div class="ico"><svg viewBox="0 0 24 24"><path d="M3 14v-2a9 9 0 0118 0v2"/><rect x="2" y="14" width="5" height="7" rx="2"/><rect x="17" y="14" width="5" height="7" rx="2"/></svg></div><h3>Muzica</h3><p>DJ și MC care citesc atmosfera: de la relaxare la apus până la ring plin noaptea.</p></div>
-      <div class="rv"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></div><h3>Apusul</h3><p>Petrecerea pornește odată cu cel mai frumos moment al zilei.</p></div>
-      <div class="rv"><div class="ico"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0012 3z"/></svg></div><h3>Luminile</h3><p>Lumini profesionale care transformă orice mal de râu într-un club în aer liber.</p></div>
-      <div class="rv"><div class="ico"><svg viewBox="0 0 24 24"><path d="M2 16c2 0 2-1.5 4-1.5S8 16 10 16s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5M2 20c2 0 2-1.5 4-1.5S8 20 10 20s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5M12 3l3 6H9z"/></svg></div><h3>Oriunde</h3><p>Râu, lac, grădină, terasă. Ne spui unde, noi venim cu tot ce trebuie.</p></div>
+    <div class="signs">
+      <div class="sign rv"><h3>Music<small>Muzica</small></h3><p>Muzica bună care umple ringul, mixate live de DJ, cu MC care ține atmosfera sus.</p></div>
+      <div class="sign rv"><h3>Sunset<small>Apusul</small></h3><p>Petrecerea începe la apus, cel mai frumos moment al zilei pe malul apei.</p></div>
+      <div class="sign rv"><h3>River<small>Râul</small></h3><p>Pe malul apei, cu lampioane și ghirlande de lumini care aprind seara.</p></div>
+      <div class="sign rv"><h3>Friends<small>Prietenii</small></h3><p>Oameni faini, o comunitate care vine pentru vibe-ul bun și se distrează responsabil.</p></div>
     </div>
   </div>
 </section>
@@ -166,19 +187,33 @@ section.alt{background:var(--bg2);border-block:1px solid var(--line)}
   <div class="wrap">
     <div class="sec-head rv">
       <span class="kicker">Ediții</span>
-      <h2>Următoarele <span class="teal">By The River</span></h2>
-      <p>Unde și când ne vedem la următoarea petrecere.</p>
+      <h2>Petrecerile <span class="ot">By The River</span></h2>
+      <p>Ce urmează și ce am trăit deja împreună.</p>
     </div>
-    <div class="eds" id="next"><div class="emsg"><span class="spin"></span>Se încarcă…</div></div>
-    <details class="past" id="pastWrap" hidden><summary id="pastSum">Ediții trecute</summary><div class="eds" id="past"></div></details>
+    <div id="eds"><div class="emsg"><span class="spin"></span>Se încarcă…</div></div>
   </div>
 </section>
 
-<section class="sec" id="galerie">
+<section class="sec" id="reguli">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="kicker">Regulile serii</span>
+      <h2>Ca să ne distrăm <span class="ot">toți frumos</span></h2>
+    </div>
+    <div class="rules">
+      <div class="rule rv"><div class="ri"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M5 5l14 14M9 7h4l-1 10H10zM14 12h4l-1 5h-3"/></svg></div><div><b>Fără mâncare și băutură din afară</b><span>Nu este permis consumul de produse aduse din exterior.</span></div></div>
+      <div class="rule rv"><div class="ri">18+</div><div><b>Alcool doar 18+</b><span>Minorilor le este interzis consumul de alcool.</span></div></div>
+      <div class="rule rv"><div class="ri"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M5 5l14 14M4 15c1.5 0 1.5-1 3-1s1.5 1 3 1 1.5-1 3-1 1.5 1 3 1 1.5-1 3-1M15 8a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg></div><div><b>Fără înot</b><span>Nu se intră în apă pe durata petrecerii.</span></div></div>
+      <div class="rule rv"><div class="ri"><svg viewBox="0 0 24 24"><path d="M12 3v7M9 10l3-7 3 7-1 11h-4zM6 21l3-8M18 21l-3-8"/></svg></div><div><b>Respect</b><span>Pentru locație și pentru ceilalți participanți.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec alt" id="galerie">
   <div class="wrap">
     <div class="sec-head rv">
       <span class="kicker">Galerie</span>
-      <h2>Cum arată <span class="teal">By The River</span></h2>
+      <h2>Cum arată <span class="ot">o seară By The River</span></h2>
     </div>
     <div class="albs" id="albs"></div>
     <div class="vgrid" id="vids"></div>
@@ -186,13 +221,24 @@ section.alt{background:var(--bg2);border-block:1px solid var(--line)}
   </div>
 </section>
 
+<section class="sec fol">
+  <div class="wrap rv">
+    <div class="t">Follow us</div>
+    <div class="cta">
+      <a class="btn btn-ghost" href="https://www.tiktok.com/@cozminbacanu" target="_blank" rel="noopener">TikTok</a>
+      <a class="btn btn-ghost" href="https://www.facebook.com/bacanucozmin" target="_blank" rel="noopener">Facebook</a>
+    </div>
+    <div class="tags"><span>#comunitate</span><span>#fiiresponsabil</span><span>#bytheriver</span><span>#theentertainers</span></div>
+  </div>
+</section>
+
 <section class="band">
   <div class="wrap rv">
-    <span class="kicker">Hai la mal</span>
-    <h2>Vrei <span class="teal">By The River</span> la tine?</h2>
-    <p>Petrecere privată, eveniment de firmă sau o seară de vară cu prietenii. Spune-ne unde și venim.</p>
+    <span class="kicker" style="color:var(--or)">We love to entertain you!</span>
+    <h2>Vrei o petrecere <span class="ot">în stilul ăsta</span>?</h2>
+    <p>Petrecere privată, eveniment de firmă sau o seară de vară cu prietenii. Aducem muzica, luminile și atmosfera oriunde.</p>
     <div class="cta">
-      <a href="rezerva.html?serviciu=btr" class="btn btn-teal">Cere o ofertă</a>
+      <a href="rezerva.html?serviciu=btr" class="btn btn-or">Cere o ofertă</a>
       <a href="tel:+40727292171" class="btn btn-ghost">Sună: 0727 292 171</a>
     </div>
   </div>
@@ -216,6 +262,7 @@ section.alt{background:var(--bg2);border-block:1px solid var(--line)}
           <li><a href="index.html">Acasă</a></li>
           <li><a href="despre.html">Despre noi</a></li>
           <li><a href="cununie.html">Actor cununie civilă</a></li>
+          <li><a href="bytheriver.html">By The River</a></li>
           <li><a href="harta.html">Harta evenimentelor</a></li>
           <li><a href="calendar.html">Calendar disponibilitate</a></li>
           <li><a href="galerie-foto.html">Galerie foto</a></li>
@@ -236,7 +283,7 @@ section.alt{background:var(--bg2);border-block:1px solid var(--line)}
   </div>
 </footer>
 
-<a class="wa" href="https://wa.me/40727292171?text=Bun%C4%83%20ziua!%20A%C8%99%20dori%20detalii%20despre%20By%20The%20River." target="_blank" rel="noopener" aria-label="Scrie-ne pe WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.6 15l-1.4 5 5.2-1.4A10 10 0 1012 2zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.6-1.2-3s.8-2.2 1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.6 2.1 1.1 1 2.1 1.3 2.4 1.4.3.2.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.7-.1 1.3z"/></svg></a>
+<a class="wa" href="https://wa.me/40727292171?text=Bun%C4%83!%20A%C8%99%20vrea%20detalii%20despre%20By%20The%20River." target="_blank" rel="noopener" aria-label="Scrie-ne pe WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.6 15l-1.4 5 5.2-1.4A10 10 0 1012 2zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.6-1.2-3s.8-2.2 1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.6 2.1 1.1 1 2.1 1.3 2.4 1.4.3.2.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.7-.1 1.3z"/></svg></a>
 
 <script src="assets/site.js"></script>
 <script>
@@ -246,28 +293,48 @@ const today = TE.iso(new Date());
 const MS = ['ian','feb','mar','apr','mai','iun','iul','aug','sep','oct','noi','dec'];
 let vrx = {};
 
-function edCard(e, isNext){
+// ghirlanda de becuri din hero
+(() => { let s = '<path d="M0 8 Q125 62 250 14 T500 14 T750 14 T1000 8" fill="none" stroke="#6b4a26" stroke-width="1.4"/>';
+  for (let i = 0; i <= 40; i++) { const t = i / 40, x = t * 1000, seg = (t * 4) % 1, y = 11 + Math.sin(seg * Math.PI) * 25; s += `<circle cx="${x.toFixed(1)}" cy="${(y + 5).toFixed(1)}" r="3.4"/>`; }
+  $('lights').innerHTML = s; })();
+
+// cardul unei ediții (poză = afișul ediției, altfel coperta albumului legat)
+function edCard(e, cover, isNext){
   const d = new Date(e.date + 'T12:00'), wd = d.toLocaleDateString('ro-RO', { weekday: 'long' });
-  const meta = [e.time && '🕖 ' + TE.esc(e.time), (e.venue || e.city) && '📍 ' + TE.esc([e.venue, e.city].filter(Boolean).join(', '))].filter(Boolean).map(x => `<span>${x}</span>`).join('');
-  return `<article class="ed${isNext ? ' next' : ''} rv in">
-    <div class="dt"><b>${d.getDate()}</b><span>${MS[d.getMonth()]}</span><small>${d.getFullYear()}</small></div>
-    <div><h3>${TE.esc(e.title || 'By The River')}${isNext ? '<span class="soon">Următoarea</span>' : ''}</h3>
-      <div class="meta"><span style="text-transform:capitalize">${wd}</span>${meta}</div>
+  const img = e.poster ? TE.photoUrl(e.poster) : cover ? TE.photoUrl(cover) : '';
+  const alb = e.albums, n = alb?.photos?.[0]?.count || 0;
+  const meta = [`<span style="text-transform:capitalize">${wd}</span>`, e.time && '<span>🕖 ' + TE.esc(e.time) + '</span>',
+    (e.venue || e.city) && '<span>📍 ' + TE.esc([e.venue, e.city].filter(Boolean).join(', ')) + '</span>'].filter(Boolean).join('');
+  const acts = [alb && n ? `<a class="btn btn-or btn-sm" href="galerie-foto.html#album=${alb.id}">Vezi pozele (${n})</a>` : '',
+    e.link && /^https?:\/\//.test(e.link) ? `<a class="btn btn-ghost btn-sm" href="${TE.esc(e.link)}" target="_blank" rel="noopener">Detalii ↗</a>` : ''].join('');
+  return `<article class="pc${isNext ? ' next' : ''}">
+    <div class="im">${img ? `<img src="${img}" alt="${TE.esc(e.title || 'By The River')}" loading="lazy">` : ''}
+      <div class="dt"><b>${d.getDate()}</b><span>${MS[d.getMonth()]}</span><small>${d.getFullYear()}</small></div>
+      ${isNext ? '<span class="soon">Urmează</span>' : ''}</div>
+    <div class="bd"><h3>${TE.esc(e.title || 'By The River')}</h3>
+      <div class="meta">${meta}</div>
       ${e.lineup ? `<div class="ln">🎧 ${TE.esc(e.lineup)}</div>` : ''}
-      ${e.description ? `<div class="ds">${TE.esc(e.description)}</div>` : ''}</div>
-    <div class="act">${e.link && /^https?:\/\//.test(e.link) ? `<a class="btn btn-teal btn-sm" href="${TE.esc(e.link)}" target="_blank" rel="noopener">Detalii ↗</a>` : ''}</div>
+      ${e.description ? `<div class="ds">${TE.esc(e.description)}</div><button class="more" hidden>Citește tot</button>` : ''}
+      ${acts ? `<div class="acts">${acts}</div>` : ''}</div>
   </article>`;
 }
 
 (async () => {
   // ediții
   try {
-    const eds = await api('btr_editions?select=*&order=date.asc');
+    let eds;
+    try { eds = await api('btr_editions?select=*,albums(id,cover_path,photos(count))&order=date.asc'); }
+    catch { eds = await api('btr_editions?select=*&order=date.asc'); }
+    const need = eds.filter(e => !e.poster && e.albums && !e.albums.cover_path && e.albums.photos?.[0]?.count).map(e => e.albums.id), first = {};
+    if (need.length) (await api(`photos?select=album_id,thumb&album_id=in.(${need.join(',')})&order=sort.asc,created_at.asc`)).forEach(p => first[p.album_id] ||= p.thumb);
+    const cov = e => e.albums ? (e.albums.cover_path || first[e.albums.id]) : null;
     const up = eds.filter(e => e.date >= today), past = eds.filter(e => e.date < today).reverse();
-    $('next').innerHTML = up.length ? up.map((e, i) => edCard(e, i === 0)).join('')
-      : `<div class="emsg">Următoarea ediție se anunță în curând. Urmărește-ne pe <a href="https://www.tiktok.com/@cozminbacanu" target="_blank" rel="noopener" style="color:var(--gold2)">TikTok</a> și <a href="https://www.facebook.com/bacanucozmin" target="_blank" rel="noopener" style="color:var(--gold2)">Facebook</a>, sau adu By The River la tine!</div>`;
-    if (past.length) { $('past').innerHTML = past.map(e => edCard(e, false)).join(''); $('pastSum').textContent = `Ediții trecute (${past.length}) ›`; $('pastWrap').hidden = false; }
-  } catch { $('next').innerHTML = '<div class="emsg">Edițiile nu s-au putut încărca acum.</div>'; }
+    let h = '';
+    if (up.length) h += `<div class="sub">Urmează</div><div class="pgrid">${up.map((e, i) => edCard(e, cov(e), i === 0)).join('')}</div>`;
+    if (past.length) h += `<div class="sub">Petrecerile de până acum</div><div class="pgrid">${past.map(e => edCard(e, cov(e), false)).join('')}</div>`;
+    $('eds').innerHTML = h || `<div class="emsg">Următoarea ediție se anunță în curând. Urmărește-ne pe <a href="https://www.tiktok.com/@cozminbacanu" target="_blank" rel="noopener">TikTok</a> și <a href="https://www.facebook.com/bacanucozmin" target="_blank" rel="noopener">Facebook</a>.</div>`;
+    $('eds').querySelectorAll('.ds').forEach(ds => { const b = ds.nextElementSibling; if (ds.scrollHeight > ds.clientHeight + 2) { b.hidden = false; b.onclick = () => { b.textContent = ds.classList.toggle('open') ? 'Mai puțin' : 'Citește tot'; }; } });
+  } catch { $('eds').innerHTML = '<div class="emsg">Edițiile nu s-au putut încărca acum.</div>'; }
 
   // poze + clipuri din galerii, categoria „By The River”
   try {

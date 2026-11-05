@@ -241,6 +241,14 @@ main{padding:28px 0 80px}
         <div class="g2">
           <div class="f"><label for="bLink">Link (bilete / eveniment Facebook)</label><input id="bLink" maxlength="400" placeholder="https://…"></div>
           <div class="f"><label>&nbsp;</label><label class="chk"><input type="checkbox" id="bPub" checked> Vizibilă pe site</label></div>
+          <div class="f"><label>Poză / afiș (apare pe cardul ediției)</label>
+            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+              <div id="bPrev" style="width:72px;height:90px;border-radius:10px;border:1px solid var(--line);background:#111 center/cover no-repeat;flex:none"></div>
+              <label class="btn btn-ghost btn-sm" style="cursor:pointer">Alege poza<input type="file" id="bFile" accept="image/*" hidden></label>
+              <button type="button" class="btn btn-ghost btn-sm hidden" id="bNoPic">Scoate poza</button>
+            </div></div>
+          <div class="f"><label for="bAlb">Album foto al ediției</label><select id="bAlb"><option value="">— niciunul —</option></select>
+            <small style="color:var(--muted)">Pe card apare butonul „Vezi pozele”. Fără poză, se folosește coperta albumului.</small></div>
         </div>
         <div class="err" id="berr"></div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -447,13 +455,24 @@ document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
 });
 
 // ---------- By The River: ediții ----------
-let btr = [], bEdit = null;
+let btr = [], bEdit = null, bPic = null, bAlbs = [];   // bPic: { file } = poză nouă, { path } = cea salvată, null = fără
 const bdp = TE.datePicker($('bDate'));
 async function loadBtr(){
-  const { data, error } = await sb.from('btr_editions').select('*').order('date', { ascending: false });
-  if (error) { $('bList').innerHTML = `<div class="empty-l">Nu s-au putut încărca: ${TE.esc(error.message)}</div>`; return; }
-  btr = data; renderBtr();
+  const [r, a] = await Promise.all([sb.from('btr_editions').select('*').order('date', { ascending: false }),
+    sb.from('albums').select('id,title,event_date,type').order('event_date', { ascending: false, nullsFirst: false })]);
+  if (r.error) { $('bList').innerHTML = `<div class="empty-l">Nu s-au putut încărca: ${TE.esc(r.error.message)}</div>`; return; }
+  btr = r.data; bAlbs = a.data || [];
+  const sel = $('bAlb'), cur = sel.value, opt = x => `<option value="${x.id}">${TE.esc(x.title)}${x.event_date ? ' · ' + TE.nice(x.event_date) : ''}</option>`;
+  const mine = bAlbs.filter(x => x.type === 'By The River'), rest = bAlbs.filter(x => x.type !== 'By The River');
+  sel.innerHTML = '<option value="">— niciunul —</option>' + (mine.length ? `<optgroup label="By The River">${mine.map(opt).join('')}</optgroup>` : '') + (rest.length ? `<optgroup label="Alte albume">${rest.map(opt).join('')}</optgroup>` : '');
+  sel.value = cur; renderBtr();
 }
+function bShowPic(){
+  const p = $('bPrev'); p.style.backgroundImage = bPic ? `url('${bPic.file ? URL.createObjectURL(bPic.file) : TE.photoUrl(bPic.path)}')` : '';
+  $('bNoPic').classList.toggle('hidden', !bPic);
+}
+$('bFile').onchange = () => { const f = $('bFile').files[0]; if (f) { bPic = { file: f }; bShowPic(); } $('bFile').value = ''; };
+$('bNoPic').onclick = () => { bPic = null; bShowPic(); };
 function renderBtr(){
   const today = TE.iso(new Date());
   $('bList').innerHTML = `<h2 style="font-size:1.2rem;margin-top:10px">${btr.length} ediții</h2>` + (btr.length ? btr.map(e => `
@@ -467,6 +486,7 @@ function renderBtr(){
   $('bList').querySelectorAll('[data-bd]').forEach(b => b.onclick = async () => {
     const e = btr.find(x => x.id === b.dataset.bd); if (!confirm(`Ștergi ediția din ${TE.nice(e.date)}?`)) return;
     const { error } = await sb.from('btr_editions').delete().eq('id', e.id); if (error) return alert(error.message);
+    if (e.poster) await sb.storage.from('photos').remove([e.poster]);
     toast('Ediție ștearsă ✓'); if (bEdit?.id === e.id) bOpen(null); loadBtr();
   });
 }
@@ -477,6 +497,7 @@ function bOpen(e){
   bdp.set(e?.date || ''); $('bTime').value = e?.time || ''; $('bTitle').value = e?.title || ''; $('bLineup').value = e?.lineup || '';
   $('bCity').value = e?.city || ''; $('bVenue').value = e?.venue || ''; $('bDesc').value = e?.description || ''; $('bLink').value = e?.link || '';
   $('bPub').checked = e ? e.published : true;
+  bPic = e?.poster ? { path: e.poster } : null; bShowPic(); $('bAlb').value = e?.album_id || '';
   if (e) $('bForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 $('bCancel').onclick = () => bOpen(null);
@@ -488,9 +509,20 @@ $('bForm').addEventListener('submit', async ev => {
     link: link ? (/^https?:\/\//i.test(link) ? link : 'https://' + link) : null, published: $('bPub').checked };
   if (!row.date) { $('berr').textContent = 'Scrie data corect: zz/ll/aaaa.'; $('bDate').focus(); return; }
   $('bSave').disabled = true;
+  const old = bEdit?.poster || null; let upl = null;
+  try {
+    if (bPic?.file) {   // poza nouă: micșorată la 1600 px, JPEG
+      const big = await shrink(bPic.file, 1600, .85); upl = `btr/${crypto.randomUUID()}.jpg`;
+      const r = await sb.storage.from('photos').upload(upl, big.blob, { contentType: 'image/jpeg', cacheControl: '31536000', upsert: false });
+      if (r.error) throw r.error;
+    }
+  } catch (ex) { $('bSave').disabled = false; $('berr').textContent = 'Poza nu s-a încărcat: ' + (ex.message || ex); return; }
+  row.poster = upl || bPic?.path || null; row.album_id = $('bAlb').value || null;
   const q = bEdit ? sb.from('btr_editions').update(row).eq('id', bEdit.id) : sb.from('btr_editions').insert(row);
   const { error } = await q; $('bSave').disabled = false;
-  if (error) { $('berr').textContent = 'Nu s-a salvat: ' + error.message; return; }
+  if (error) { if (upl) sb.storage.from('photos').remove([upl]);
+    $('berr').textContent = 'Nu s-a salvat: ' + error.message + (/poster|album_id/.test(error.message) ? ' (rulează întâi 09-btr-poze.sql)' : ''); return; }
+  if (old && old !== row.poster) sb.storage.from('photos').remove([old]);
   toast(bEdit ? 'Ediție modificată ✓' : 'Ediție adăugată ✓'); bOpen(null); loadBtr();
 });
 
