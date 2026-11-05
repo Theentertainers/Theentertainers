@@ -108,6 +108,17 @@ footer{border-top:1px solid var(--line);background:#08080a;padding:60px 0 30px}
 .cal-msg{text-align:center;color:var(--muted);padding:10px 0 0;font-size:.9rem;min-height:1.6em}
 .spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(243,215,122,.3);border-top-color:var(--gold2);border-radius:50%;animation:spin .8s linear infinite;vertical-align:-3px;margin-right:8px}
 
+/* Reacții ❤️ 👏 🔥 😍 */
+.rx{display:flex;gap:6px;flex-wrap:wrap}
+.rx-b{display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);cursor:pointer;font-size:.9rem;transition:border-color .2s,background .2s,transform .15s}
+.rx-b:hover{border-color:rgba(212,175,55,.6);background:rgba(212,175,55,.08)}
+.rx-b .e{font-size:1.05rem;line-height:1}
+.rx-b b{font-size:.82rem;font-weight:700;min-width:0}
+.rx-b.on{border-color:var(--gold);background:rgba(212,175,55,.18);color:var(--gold2)}
+.rx-b:disabled{cursor:wait}
+.rx-b.pop .e{animation:rxpop .45s ease}
+@keyframes rxpop{0%{transform:scale(1)}40%{transform:scale(1.6) rotate(-10deg)}100%{transform:scale(1)}}
+
 /* Câmp de dată zz/ll/aaaa cu calendar */
 .dp{position:relative}
 .dp input{padding-right:48px!important}

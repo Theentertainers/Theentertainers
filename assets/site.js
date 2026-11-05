@@ -25,6 +25,54 @@ window.TE = {
       : `https://www.youtube-nocookie.com/embed/${v.video_id}?autoplay=1&rel=0&modestbranding=1`;
   },
 
+  // ---------- reacții ❤️ 👏 🔥 😍 ----------
+  RK: [['h','❤️','Îmi place'],['c','👏','Bravo'],['f','🔥','Super'],['l','😍','Superb']],
+  voter(){
+    if (TE._v) return TE._v;
+    try { TE._v = localStorage.getItem('te_voter'); } catch {}
+    if (!TE._v) { TE._v = (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(16) + '-' + Math.random().toString(16).slice(2)).toLowerCase(); try { localStorage.setItem('te_voter', TE._v); } catch {} }
+    return TE._v;
+  },
+  async rpc(fn, body){
+    const r = await fetch(TE.SUPABASE_URL + '/rest/v1/rpc/' + fn, { method: 'POST', headers: { apikey: TE.SUPABASE_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const j = await r.json().catch(() => null);
+    if (!r.ok) throw new Error(j?.message || r.status);
+    return j;
+  },
+  // { id: { h:{n,mine}, c:{…} } }
+  async reactLoad(type, ids){
+    const out = {}; if (!ids.length) return out;
+    try { (await TE.rpc('reaction_counts', { p_type: type, p_ids: ids, p_voter: TE.voter() })).forEach(r => ((out[r.item_id] ||= {})[r.kind] = { n: +r.n, mine: r.mine })); } catch {}
+    return out;
+  },
+  reactBar(type, id, counts = {}){
+    return `<div class="rx" data-rt="${type}" data-ri="${id}">` + TE.RK.map(([k, e, t]) => {
+      const c = counts[k] || { n: 0, mine: false };
+      return `<button type="button" class="rx-b${c.mine ? ' on' : ''}" data-k="${k}" title="${t}" aria-label="${t}" aria-pressed="${c.mine}"><span class="e">${e}</span><b>${c.n || ''}</b></button>`;
+    }).join('') + '</div>';
+  },
+  // un singur ascultător pentru toate barele de reacții din pagină; onChange(type, id, counts)
+  reactInit(onChange){
+    document.addEventListener('click', async e => {
+      const b = e.target.closest('.rx-b'); if (!b || b.disabled) return;
+      e.stopPropagation();
+      const bar = b.closest('.rx'), type = bar.dataset.rt, id = bar.dataset.ri, k = b.dataset.k;
+      // răspuns imediat pe ecran, apoi confirmăm cu serverul
+      const on = !b.classList.contains('on'), num = b.querySelector('b'), n = Math.max(0, (+num.textContent || 0) + (on ? 1 : -1));
+      b.classList.toggle('on', on); num.textContent = n || ''; b.classList.remove('pop'); void b.offsetWidth; if (on) b.classList.add('pop');
+      b.disabled = true;
+      try {
+        const rows = await TE.rpc('toggle_reaction', { p_type: type, p_id: id, p_kind: k, p_voter: TE.voter() });
+        const counts = {}; rows.forEach(r => counts[r.kind] = { n: +r.n, mine: r.mine });
+        document.querySelectorAll(`.rx[data-rt="${type}"][data-ri="${id}"]`).forEach(x => x.outerHTML = TE.reactBar(type, id, counts));
+        onChange && onChange(type, id, counts);
+      } catch (ex) {
+        b.classList.toggle('on', !on); num.textContent = (n + (on ? -1 : 1)) || '';
+        b.title = ex.message;
+      } finally { b.disabled = false; }
+    });
+  },
+
   photoUrl(path){ return TE.SUPABASE_URL + '/storage/v1/object/public/photos/' + path; },
 
   iso(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); },
