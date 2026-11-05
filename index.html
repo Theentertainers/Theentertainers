@@ -49,16 +49,18 @@ h1,h2,h3{font-family:"Playfair Display",serif;line-height:1.15}
 .burger{display:none;margin-left:auto;width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.4);color:var(--gold2);font-size:22px;cursor:pointer}
 
 /* ---------- Hero ---------- */
-.hero{position:relative;min-height:100svh;display:grid;place-items:center;text-align:center;overflow:hidden;padding:110px 0 70px}
-.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+/* clipul de fundal are logo-ul în el, așa că textul stă jos, sub logo */
+.hero{position:relative;min-height:100svh;display:grid;place-items:end center;text-align:center;overflow:hidden;padding:110px 0 44px}
+.hero .scroll-hint{display:none}
+.hero video{position:absolute;left:0;top:-17%;width:100%;height:100%;object-fit:cover;z-index:-2}
 .hero::before{content:"";position:absolute;inset:0;z-index:-1;
-  background:radial-gradient(ellipse at center,rgba(11,11,12,.55) 0%,rgba(11,11,12,.8) 60%,rgba(11,11,12,.95) 100%),linear-gradient(to bottom,rgba(11,11,12,.5),rgba(11,11,12,0) 30%,rgba(11,11,12,0) 70%,var(--bg))}
-.hero-logo{width:min(620px,88vw);aspect-ratio:1890/712;margin:0 auto 30px;position:relative;animation:pop 1s cubic-bezier(.2,1.4,.4,1) both;filter:drop-shadow(0 6px 24px rgba(0,0,0,.8))}
-.hero-logo img{width:100%;height:100%}
-/* sclipire aurie care trece peste logo */
-.hero-logo::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,250,225,.95) 50%,transparent 65%) no-repeat;background-size:250% 100%;background-position:150% 0;
-  -webkit-mask:url(assets/logo-gold.png) center/contain no-repeat;mask:url(assets/logo-gold.png) center/contain no-repeat;animation:shine 5s ease-in-out 1.2s infinite}
-.hero-logo::before{content:"";position:absolute;inset:-25% -10%;background:radial-gradient(ellipse,rgba(212,175,55,.28),transparent 65%);z-index:-1;animation:glow 3s ease-in-out infinite alternate}
+  background:linear-gradient(to bottom,rgba(11,11,12,.55) 0,rgba(11,11,12,0) 14%,rgba(11,11,12,0) 58%,rgba(11,11,12,.75) 72%,var(--bg) 85%)}
+/* pe telefon (ecran înalt) clipul se vede întreg sus, iar textul vine sub el */
+@media (max-aspect-ratio:1/1){
+  .hero{display:block;min-height:0;padding:64px 0 56px}
+  .hero video{position:relative;inset:auto;z-index:auto;height:auto;aspect-ratio:16/9;display:block;margin-bottom:22px}
+  .hero::before,.scroll-hint{display:none}
+}
 .kicker{display:inline-block;font-size:.8rem;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gold2);border:1px solid rgba(243,215,122,.35);padding:6px 16px;border-radius:999px;margin-bottom:18px;background:rgba(0,0,0,.35)}
 .hero h1{font-size:clamp(2.1rem,5.5vw,4rem);font-weight:800;max-width:900px;margin:0 auto 16px;text-shadow:0 4px 30px rgba(0,0,0,.6)}
 .hero h1.motto{font-family:"Great Vibes",cursive;font-weight:400;font-size:clamp(2.6rem,7vw,5.2rem);line-height:1.2;padding:0 .2em;filter:drop-shadow(0 4px 18px rgba(0,0,0,.8));text-shadow:none}
@@ -187,7 +189,6 @@ footer{border-top:1px solid var(--line);background:#08080a;padding:60px 0 30px}
     <source src="assets/hero.mp4" type="video/mp4">
   </video>
   <div class="wrap">
-    <div class="hero-logo"><img src="assets/logo-gold.png" alt="The Entertainers"></div>
     <span class="kicker">Din 2005 · Din Slatina, în toată țara</span>
     <h1 class="motto"><span class="gold">We love to entertain you!</span></h1>
     <p class="lead">DJ, MC, sonorizare și lumini profesionale pentru nunți, cununii, botezuri, majorate, petreceri corporate și team building.</p>
