@@ -133,8 +133,7 @@ main{padding:28px 0 80px}
       <div class="cal-msg" id="msg"></div>
       <div class="legend">
         <span><i></i>Liber</span>
-        <span><i class="l-half"></i>1 eveniment</span>
-        <span><i class="l-full"></i>2 evenimente (plin)</span>
+        <span><i class="l-full"></i>Ocupat</span>
         <span><i class="l-prov"></i>Provizoriu</span>
       </div>
     </div>
@@ -151,7 +150,7 @@ main{padding:28px 0 80px}
     <div class="dayev hidden" id="dayEv"></div>
     <div class="warn hidden" id="capWarn"></div>
     <div class="g2">
-      <div class="f"><label for="fDate">Data *</label><input id="fDate" type="date" required></div>
+      <div class="f"><label for="fDate">Data *</label><input id="fDate" type="date" required><small id="fDateTxt" style="color:var(--gold2);font-weight:600;font-size:.85rem"></small></div>
       <div class="f"><label for="fType">Tip eveniment *</label><select id="fType" required></select></div>
     </div>
     <div class="f"><label>Statut</label>
@@ -271,8 +270,9 @@ function renderList(){
 }
 
 // ---------- formular ----------
+// un singur eveniment pe zi: pe o zi ocupată se deschide direct evenimentul existent
 function openDay(iso, dayEvents){
-  if (dayEvents.length) openForm(null, iso, dayEvents); else openForm(null, iso);
+  if (dayEvents.length) openForm(dayEvents[0]); else openForm(null, iso);
 }
 function openForm(ev, iso, dayEvents){
   editing = ev || null;
@@ -300,10 +300,16 @@ function openForm(ev, iso, dayEvents){
 }
 function checkCap(){
   const d = $('fDate').value;
+  // data scrisă în cuvinte, ca să nu încurcăm ziua cu luna (Chrome poate afișa lună/zi/an)
+  $('fDateTxt').textContent = d ? new Date(d + 'T12:00').toLocaleDateString('ro-RO', { weekday:'long', day:'numeric', month:'long', year:'numeric' }) : '';
+  if (!d) return;
   const n = events.filter(e => e.date === d && e.id !== editing?.id).length;
   const w = $('capWarn');
-  if (n >= TE.CAPACITY) { w.textContent = `Atenție: în ${TE.nice(d)} sunt deja ${n} evenimente (aveți ${TE.CAPACITY} echipe). Poți salva oricum.`; w.classList.remove('hidden'); }
+  const busy = n >= TE.CAPACITY;
+  if (busy) { w.textContent = `În ${TE.nice(d)} există deja un eveniment. Alege altă dată sau modifică evenimentul existent.`; w.classList.remove('hidden'); }
   else w.classList.add('hidden');
+  $('fSave').disabled = busy;
+  return busy;
 }
 $('fDate').addEventListener('change', checkCap);
 const close = () => { $('modal').classList.add('hidden'); editing = null; };
@@ -323,6 +329,11 @@ $('form').addEventListener('submit', async e => {
     notes: $('fNotes').value.trim() || null
   };
   if (row.price != null && row.deposit != null && row.deposit > row.price) { $('ferr').textContent = 'Avansul e mai mare decât prețul.'; return; }
+  // verificare în baza de date (data poate fi în altă lună decât cea afișată)
+  let dq = sb.from('events').select('id', { count: 'exact', head: true }).eq('date', row.date);
+  if (editing) dq = dq.neq('id', editing.id);
+  const { count } = await dq;
+  if (count >= TE.CAPACITY) { $('ferr').textContent = `În ${TE.nice(row.date)} există deja un eveniment.`; return; }
   $('fSave').disabled = true;
   const q = editing ? sb.from('events').update(row).eq('id', editing.id) : sb.from('events').insert(row);
   const { error } = await q;
