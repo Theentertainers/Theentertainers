@@ -11,6 +11,62 @@ window.TE = {
   nice(iso){ const [y,m,d] = iso.split('-').map(Number); return d + ' ' + TE.MONTHS[m-1] + ' ' + y; },
   esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); },
 
+  // Câmp de dată în format românesc zz/ll/aaaa, cu calendar la clic (în locul celui din browser,
+  // care afișează formatul după limba Chrome-ului). Folosire: const dp = TE.datePicker(input, {min, onChange});
+  // dp.get() → 'AAAA-LL-ZZ' sau '' ; dp.set('AAAA-LL-ZZ')
+  datePicker(input, opts = {}){
+    input.type = 'text'; input.inputMode = 'numeric'; input.placeholder = 'zz/ll/aaaa';
+    input.autocomplete = 'off'; input.maxLength = 10;
+    const wrap = document.createElement('div'); wrap.className = 'dp';
+    input.parentNode.insertBefore(wrap, input); wrap.appendChild(input);
+    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'dp-btn'; btn.setAttribute('aria-label', 'Alege din calendar');
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>';
+    const pop = document.createElement('div'); pop.className = 'dp-pop'; pop.hidden = true;
+    wrap.append(btn, pop);
+    let iso = '', vy, vm;
+    const fmt = i => i ? i.slice(8, 10) + '/' + i.slice(5, 7) + '/' + i.slice(0, 4) : '';
+    const parse = s => {
+      const m = s.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})$/); if (!m) return '';
+      const d = new Date(+m[3], m[2] - 1, +m[1]);
+      return d.getMonth() === m[2] - 1 && d.getDate() === +m[1] ? TE.iso(d) : '';
+    };
+    const fire = () => opts.onChange && opts.onChange(iso);
+    const set = (v, notify) => { iso = v || ''; input.value = fmt(iso); if (notify) fire(); };
+    input.addEventListener('input', () => {
+      const d = input.value.replace(/\D/g, '').slice(0, 8);
+      input.value = d.length > 4 ? d.slice(0, 2) + '/' + d.slice(2, 4) + '/' + d.slice(4) : d.length > 2 ? d.slice(0, 2) + '/' + d.slice(2) : d;
+      const p = parse(input.value);
+      if (p !== iso) { iso = p; fire(); }
+    });
+    function draw(){
+      const first = new Date(vy, vm, 1), days = new Date(vy, vm + 1, 0).getDate(), lead = (first.getDay() + 6) % 7;
+      const min = typeof opts.min === 'function' ? opts.min() : opts.min, today = TE.iso(new Date());
+      let h = `<div class="dp-top"><button type="button" data-n="-1" aria-label="Luna anterioară">‹</button><b>${TE.MONTHS[vm]} ${vy}</b><button type="button" data-n="1" aria-label="Luna următoare">›</button></div><div class="dp-grid">`;
+      h += TE.DOW.map(d => `<span class="dp-dow">${d.slice(0, 2)}</span>`).join('');
+      for (let i = 0; i < lead; i++) h += '<span></span>';
+      for (let d = 1; d <= days; d++) {
+        const v = TE.iso(new Date(vy, vm, d)), off = min && v < min;
+        h += `<button type="button" class="dp-d${v === iso ? ' sel' : ''}${v === today ? ' tod' : ''}" data-v="${v}"${off ? ' disabled' : ''}>${d}</button>`;
+      }
+      pop.innerHTML = h + '</div>';
+    }
+    function open(){
+      const base = iso ? new Date(iso + 'T12:00') : new Date();
+      vy = base.getFullYear(); vm = base.getMonth(); draw(); pop.hidden = false;
+    }
+    const close = () => { pop.hidden = true; };
+    btn.addEventListener('click', () => pop.hidden ? open() : close());
+    input.addEventListener('click', () => { if (pop.hidden) open(); });
+    pop.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.n) { vm += +b.dataset.n; if (vm < 0) { vm = 11; vy--; } if (vm > 11) { vm = 0; vy++; } draw(); }
+      else if (b.dataset.v) { set(b.dataset.v, true); close(); }
+    });
+    document.addEventListener('click', e => { if (!wrap.contains(e.target)) close(); });
+    input.addEventListener('keydown', e => { if (e.key === 'Escape' || e.key === 'Tab') close(); });
+    return { get: () => iso, set: v => set(v, false), input };
+  },
+
   // Desenează grila unei luni. byDate = { 'YYYY-MM-DD': [ {type,status,...}, ... ] }
   // opts: { admin:bool, onDay(iso, events) }
   renderMonth(el, year, month, byDate, opts = {}){
