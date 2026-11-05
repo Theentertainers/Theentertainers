@@ -105,7 +105,23 @@ main{padding:28px 0 80px}
 .tag.k{background:rgba(120,160,255,.14);color:#a9c1ff}
 .tag.r{background:rgba(255,255,255,.06);color:var(--muted)}
 
+/* galerie video */
+.vadd{padding:20px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
+.vdet{font-size:.85rem;font-weight:600;min-height:1.2em}
+.vdet.ok{color:#7fcf9a}.vdet.bad{color:#ff9b9b}
+.vi{display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
+.vi .th{width:64px;height:64px;border-radius:10px;object-fit:cover;background:linear-gradient(160deg,#2a2414,#0b0b0c);display:grid;place-items:center;font-size:.65rem;font-weight:700;color:var(--gold2)}
+.vi h3{font-family:Montserrat,sans-serif;font-size:.95rem;font-weight:700;margin-bottom:4px}
+.vi .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.8rem;color:var(--muted)}
+.vi .row a{color:var(--gold2)}
+.vi select{padding:6px 10px;border-radius:9px;border:1px solid var(--line);background:#0e0e11;font-size:.82rem}
+.vi .acts{gap:4px}
+.vi .ib{width:34px;height:34px}
+
 @media (max-width:760px){
+  .vi{grid-template-columns:52px 1fr}
+  .vi .th{width:52px;height:52px}
+  .vi .acts{grid-column:1/-1;justify-content:flex-end}
   .sum{grid-template-columns:1fr 1fr}
   .ev{grid-template-columns:1fr;gap:8px}
   .acts{justify-content:flex-end}
@@ -144,6 +160,21 @@ main{padding:28px 0 80px}
     <div class="tabs">
       <button class="tab on" data-t="tabCal">Calendar</button>
       <button class="tab" data-t="tabReq">Cereri de rezervare <span class="badge hidden" id="badge"></span></button>
+      <button class="tab" data-t="tabVid">Galerie video</button>
+    </div>
+
+    <div id="tabVid" class="hidden">
+      <div class="bar"><h1>Galerie <span class="gold">video</span></h1><a class="lnk" href="galerie-video.html" target="_blank" style="color:var(--gold2)">Vezi pagina publică ↗</a></div>
+      <form class="vadd" id="vForm">
+        <div class="f" style="margin:0"><label for="vUrl">Link TikTok sau YouTube *</label><input id="vUrl" placeholder="Lipește aici linkul clipului" autocomplete="off"><small id="vDet" class="vdet"></small></div>
+        <div class="g2" style="margin-top:12px">
+          <div class="f"><label for="vTitle">Titlu (opțional)</label><input id="vTitle" maxlength="100" placeholder="ex. Nunta Ana & Mihai"></div>
+          <div class="f"><label for="vCat">Categorie</label><select id="vCat"></select></div>
+        </div>
+        <div class="err" id="verr"></div>
+        <button class="btn btn-gold btn-sm" id="vAdd">+ Adaugă clipul</button>
+      </form>
+      <div class="list" id="vList"></div>
     </div>
 
     <div id="tabReq" class="hidden">
@@ -251,8 +282,98 @@ function show(logged){
 // ---------- tab-uri ----------
 document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
   document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === b));
-  ['tabCal','tabReq'].forEach(id => $(id).classList.toggle('hidden', id !== b.dataset.t));
+  ['tabCal','tabReq','tabVid'].forEach(id => $(id).classList.toggle('hidden', id !== b.dataset.t));
   if (b.dataset.t === 'tabReq') loadReq();
+  if (b.dataset.t === 'tabVid') loadVid();
+});
+
+// ---------- galerie video ----------
+let vids = [];
+TE.VCATS.forEach(c => $('vCat').insertAdjacentHTML('beforeend', `<option>${c}</option>`));
+// linkurile scurte din aplicația TikTok (vm.tiktok.com/…) le aflăm prin serviciul public oEmbed al TikTok
+async function resolveVideo(url){
+  const p = TE.parseVideo(url);
+  if (!p || !p.short) return p;
+  try {
+    const r = await fetch('https://www.tiktok.com/oembed?url=' + encodeURIComponent(url));
+    const j = await r.json();
+    return j.embed_product_id ? { platform: 'tiktok', id: String(j.embed_product_id), title: j.title } : null;
+  } catch { return null; }
+}
+let vTimer;
+$('vUrl').addEventListener('input', () => {
+  clearTimeout(vTimer);
+  const d = $('vDet'), url = $('vUrl').value.trim();
+  if (!url) { d.textContent = ''; return; }
+  d.className = 'vdet'; d.textContent = 'Verific linkul…';
+  vTimer = setTimeout(async () => {
+    const p = await resolveVideo(url);
+    if (url !== $('vUrl').value.trim()) return;
+    if (!p) { d.className = 'vdet bad'; d.textContent = 'Nu recunosc linkul. Copiază-l din TikTok sau YouTube (Distribuie → Copiază linkul).'; }
+    else { d.className = 'vdet ok'; d.textContent = (p.platform === 'tiktok' ? 'TikTok' : 'YouTube') + ' recunoscut ✓'; if (p.title && !$('vTitle').value) $('vTitle').value = p.title.slice(0, 100); }
+  }, 350);
+});
+async function loadVid(){
+  const { data, error } = await sb.from('videos').select('*').order('sort', { ascending: false }).order('created_at', { ascending: false });
+  if (error) { $('vList').innerHTML = `<div class="empty-l">Nu s-au putut încărca: ${TE.esc(error.message)}</div>`; return; }
+  vids = data; renderVid();
+}
+const icoUp = '<svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>', icoDown = '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>';
+function renderVid(){
+  if (!vids.length) { $('vList').innerHTML = '<div class="empty-l">Niciun clip încă. Lipește mai sus un link TikTok sau YouTube.</div>'; return; }
+  $('vList').innerHTML = `<h2 style="font-size:1.2rem;margin-top:10px">${vids.length} clipuri · primele apar primele pe site</h2>` + vids.map((v, i) => `
+    <div class="vi">
+      ${v.platform === 'youtube' ? `<img class="th" src="https://i.ytimg.com/vi/${v.video_id}/default.jpg" alt="">` : '<div class="th">TikTok</div>'}
+      <div><h3>${TE.esc(v.title || '(fără titlu)')}</h3>
+        <div class="row"><select data-cat="${v.id}">${TE.VCATS.map(c => `<option${c === v.category ? ' selected' : ''}>${c}</option>`).join('')}</select>
+        <a href="${TE.esc(v.url)}" target="_blank" rel="noopener">deschide ↗</a></div></div>
+      <div class="acts">
+        <button class="ib" data-up="${i}" title="Mai sus"${i === 0 ? ' disabled' : ''}>${icoUp}</button>
+        <button class="ib" data-down="${i}" title="Mai jos"${i === vids.length - 1 ? ' disabled' : ''}>${icoDown}</button>
+        <button class="ib" data-ren="${v.id}" title="Schimbă titlul">${icoEdit}</button>
+        <button class="ib del" data-del="${v.id}" title="Șterge">${icoDel}</button>
+      </div>
+    </div>`).join('');
+  const L = $('vList');
+  L.querySelectorAll('[data-cat]').forEach(s => s.onchange = async () => { await vUpd(s.dataset.cat, { category: s.value }); toast('Categorie schimbată ✓'); });
+  L.querySelectorAll('[data-up]').forEach(b => b.onclick = () => vMove(+b.dataset.up, -1));
+  L.querySelectorAll('[data-down]').forEach(b => b.onclick = () => vMove(+b.dataset.down, 1));
+  L.querySelectorAll('[data-ren]').forEach(b => b.onclick = async () => {
+    const v = vids.find(x => x.id === b.dataset.ren), t = prompt('Titlul clipului:', v.title || '');
+    if (t === null) return; await vUpd(v.id, { title: t.trim().slice(0, 100) || null }); toast('Titlu schimbat ✓'); loadVid();
+  });
+  L.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
+    const v = vids.find(x => x.id === b.dataset.del);
+    if (!confirm(`Ștergi clipul „${v.title || 'fără titlu'}” din galerie? (Pe TikTok/YouTube rămâne.)`)) return;
+    const { error } = await sb.from('videos').delete().eq('id', v.id);
+    if (error) alert('Nu s-a șters: ' + error.message); else { toast('Clip șters ✓'); loadVid(); }
+  });
+}
+async function vUpd(id, patch){ const { error } = await sb.from('videos').update(patch).eq('id', id); if (error) alert('Nu s-a salvat: ' + error.message); }
+async function vMove(i, dir){
+  const j = i + dir; if (j < 0 || j >= vids.length) return;
+  // renumerotăm toată lista ca ordinea să fie sigur corectă
+  const order = vids.slice(); [order[i], order[j]] = [order[j], order[i]];
+  const n = order.length;
+  await Promise.all(order.map((v, k) => v.sort === n - k ? null : sb.from('videos').update({ sort: n - k }).eq('id', v.id)));
+  loadVid();
+}
+$('vForm').addEventListener('submit', async e => {
+  e.preventDefault(); $('verr').textContent = '';
+  let url = $('vUrl').value.trim();
+  $('vAdd').disabled = true;
+  const p = await resolveVideo(url);
+  $('vAdd').disabled = false;
+  if (!p) { $('verr').textContent = 'Lipește un link valid de TikTok sau YouTube.'; return; }
+  if (p.platform === 'tiktok' && /(?:vm|vt)\.tiktok\.com|tiktok\.com\/t\//i.test(url)) url = 'https://www.tiktok.com/@cozminbacanu/video/' + p.id;
+  if (vids.some(v => v.video_id === p.id)) { $('verr').textContent = 'Clipul e deja în galerie.'; return; }
+  $('vAdd').disabled = true;
+  const top = vids.reduce((m, v) => Math.max(m, v.sort), 0) + 1;
+  const { error } = await sb.from('videos').insert({ platform: p.platform, video_id: p.id, url, title: $('vTitle').value.trim() || null, category: $('vCat').value, sort: top });
+  $('vAdd').disabled = false;
+  if (error) { $('verr').textContent = 'Nu s-a adăugat: ' + error.message; return; }
+  $('vUrl').value = ''; $('vTitle').value = ''; $('vDet').textContent = '';
+  toast('Clip adăugat ✓'); loadVid();
 });
 
 // ---------- cereri de rezervare ----------
