@@ -73,6 +73,28 @@ window.TE = {
     });
   },
 
+  // ---------- harta României pe județe ----------
+  async loadMap(){
+    if (TE._map) return TE._map;
+    const m = await (await fetch('assets/judete.json')).json();
+    // contururile ca liste de puncte, pentru „în ce județ cade punctul”
+    m.judete.forEach(j => j.rings = j.d.split('Z').filter(Boolean).map(r => r.replace('M', '').split('L').map(p => p.split(',').map(Number))));
+    return TE._map = m;
+  },
+  proj(m, lat, lon){ const p = m.proj; return [(lon - p.lon0) * p.k * p.c, (p.lat0 - lat) * p.k]; },
+  countyAt(m, lat, lon){
+    const [x, y] = TE.proj(m, lat, lon);
+    const inside = r => { let c = false; for (let i = 0, k = r.length - 1; i < r.length; k = i++) { const [xi, yi] = r[i], [xk, yk] = r[k]; if ((yi > y) !== (yk > y) && x < (xk - xi) * (y - yi) / (yk - yi) + xi) c = !c; } return c; };
+    // dacă punctul cade în mai multe contururi (ex. București e în interiorul Ilfovului), alegem județul cel mai mic
+    const size = j => { let a = 1e9, b = -1e9, c = 1e9, d = -1e9; j.rings.flat().forEach(([px, py]) => { a = Math.min(a, px); b = Math.max(b, px); c = Math.min(c, py); d = Math.max(d, py); }); return (b - a) * (d - c); };
+    const hits = m.judete.filter(j => j.rings.some(inside)).sort((p, q) => size(p) - size(q));
+    if (hits.length) return hits[0].n;
+    // la margine (Dunăre, granițe): cel mai apropiat centru de județ
+    let best = null, bd = 1e9; m.judete.forEach(j => { const d = Math.hypot(j.cx - x, j.cy - y); if (d < bd) { bd = d; best = j.n; } });
+    return best;
+  },
+  plain(s){ return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim(); },
+
   photoUrl(path){ return TE.SUPABASE_URL + '/storage/v1/object/public/photos/' + path; },
 
   iso(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); },
