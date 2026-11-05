@@ -2,7 +2,7 @@
 window.TE = {
   SUPABASE_URL: 'https://mmnulrkqnbopkxuooocs.supabase.co',
   SUPABASE_KEY: 'sb_publishable_o6j_hu_VXCTltuxERfXzEQ_gaJSC6JY', // cheie publică, e făcută să stea pe site
-  CAPACITY: 2, // câte evenimente putem face într-o zi (2 echipe)
+  CAPACITY: 1, // câte evenimente putem face într-o zi
   TYPES: ['Nuntă','Cununie','Botez','Majorat','Corporate','Team building','Altul'],
   MONTHS: ['ianuarie','februarie','martie','aprilie','mai','iunie','iulie','august','septembrie','octombrie','noiembrie','decembrie'],
   DOW: ['Lun','Mar','Mie','Joi','Vin','Sâm','Dum'],
