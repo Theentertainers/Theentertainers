@@ -25,6 +25,8 @@ window.TE = {
       : `https://www.youtube-nocookie.com/embed/${v.video_id}?autoplay=1&rel=0&modestbranding=1`;
   },
 
+  photoUrl(path){ return TE.SUPABASE_URL + '/storage/v1/object/public/photos/' + path; },
+
   iso(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); },
   nice(iso){ const [y,m,d] = iso.split('-').map(Number); return d + ' ' + TE.MONTHS[m-1] + ' ' + y; },
   esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); },
