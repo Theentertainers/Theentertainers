@@ -193,7 +193,7 @@ main{padding:28px 0 80px}
     <div class="dayev hidden" id="dayEv"></div>
     <div class="warn hidden" id="capWarn"></div>
     <div class="g2">
-      <div class="f"><label for="fDate">Data *</label><input id="fDate" type="date" required><small id="fDateTxt" style="color:var(--gold2);font-weight:600;font-size:.85rem"></small></div>
+      <div class="f"><label for="fDate">Data *</label><input id="fDate" required><small id="fDateTxt" style="color:var(--gold2);font-weight:600;font-size:.85rem"></small></div>
       <div class="f"><label for="fType">Tip eveniment *</label><select id="fType" required></select></div>
     </div>
     <div class="f"><label>Statut</label>
@@ -231,6 +231,7 @@ const lei = n => (Number(n) || 0).toLocaleString('ro-RO') + ' lei';
 const now = new Date();
 let y = now.getFullYear(), m = now.getMonth(), events = [], editing = null;
 
+const fdp = TE.datePicker($('fDate'), { onChange: () => checkCap() });
 TE.TYPES.forEach(t => $('fType').insertAdjacentHTML('beforeend', `<option>${t}</option>`));
 
 function toast(t){ const el = $('toast'); el.textContent = t; el.classList.add('show'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2400); }
@@ -397,7 +398,7 @@ function openForm(ev, iso, dayEvents){
   $('ferr').textContent = '';
   $('fTitle').textContent = ev ? 'Modifică evenimentul' : 'Eveniment nou';
   $('fDel').classList.toggle('hidden', !ev);
-  $('fDate').value = ev ? ev.date : (iso || TE.iso(new Date()));
+  fdp.set(ev ? ev.date : (iso || TE.iso(new Date())));
   $('fType').value = ev ? ev.type : 'Nuntă';
   document.querySelector(`input[name=st][value=${ev ? ev.status : 'confirmat'}]`).checked = true;
   $('fName').value = ev?.client_name || ''; $('fPhone').value = ev?.client_phone || '';
@@ -417,10 +418,10 @@ function openForm(ev, iso, dayEvents){
   setTimeout(() => (ev ? $('fName') : $('fType')).focus(), 50);
 }
 function checkCap(){
-  const d = $('fDate').value;
+  const d = fdp.get();
   // data scrisă în cuvinte, ca să nu încurcăm ziua cu luna (Chrome poate afișa lună/zi/an)
   $('fDateTxt').textContent = d ? new Date(d + 'T12:00').toLocaleDateString('ro-RO', { weekday:'long', day:'numeric', month:'long', year:'numeric' }) : '';
-  if (!d) return;
+  if (!d) { $('capWarn').classList.add('hidden'); $('fSave').disabled = false; return false; }
   const n = events.filter(e => e.date === d && e.id !== editing?.id).length;
   const w = $('capWarn');
   const busy = n >= TE.CAPACITY;
@@ -429,7 +430,6 @@ function checkCap(){
   $('fSave').disabled = busy;
   return busy;
 }
-$('fDate').addEventListener('change', checkCap);
 const close = () => { $('modal').classList.add('hidden'); editing = null; fromReq = null; };
 $('fCancel').onclick = close;
 $('modal').addEventListener('click', e => { if (e.target.id === 'modal') close(); });
@@ -439,13 +439,14 @@ $('form').addEventListener('submit', async e => {
   e.preventDefault();
   const num = v => v === '' ? null : Number(v);
   const row = {
-    date: $('fDate').value, type: $('fType').value,
+    date: fdp.get(), type: $('fType').value,
     status: document.querySelector('input[name=st]:checked').value,
     client_name: $('fName').value.trim() || null, client_phone: $('fPhone').value.trim() || null,
     city: $('fCity').value.trim() || null, venue: $('fVenue').value.trim() || null,
     price: num($('fPrice').value), deposit: num($('fDep').value),
     notes: $('fNotes').value.trim() || null
   };
+  if (!row.date) { $('ferr').textContent = 'Scrie data corect: zz/ll/aaaa (ex. 14/06/2027).'; $('fDate').focus(); return; }
   if (row.price != null && row.deposit != null && row.deposit > row.price) { $('ferr').textContent = 'Avansul e mai mare decât prețul.'; return; }
   // verificare în baza de date (data poate fi în altă lună decât cea afișată)
   let dq = sb.from('events').select('id', { count: 'exact', head: true }).eq('date', row.date);

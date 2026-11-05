@@ -92,7 +92,7 @@
         <p class="sub">Câmpurile cu <span style="color:var(--gold2)">*</span> sunt obligatorii.</p>
 
         <div class="g2">
-          <div class="f"><label for="date">Data evenimentului <i>*</i></label><input id="date" type="date" required><span class="dnote" id="dnote"></span></div>
+          <div class="f"><label for="date">Data evenimentului <i>*</i></label><input id="date" required><span class="dnote" id="dnote"></span></div>
           <div class="f"><label for="type">Tip eveniment <i>*</i></label>
             <select id="type" required><option value="">Alege…</option><option>Nuntă</option><option>Cununie</option><option>Botez</option><option>Majorat</option><option>Corporate</option><option>Team building</option><option>Altul</option></select></div>
           <div class="f"><label for="city">Localitate</label><input id="city" maxlength="80" placeholder="ex. Slatina"></div>
@@ -199,37 +199,36 @@
 const $ = id => document.getElementById(id);
 const t0 = Date.now();
 const today = TE.iso(new Date());
-$('date').min = today;
+const dp = TE.datePicker($('date'), { min: today, onChange: () => checkDate() });
 
 // data venită din calendar (rezerva.html?data=2027-06-14)
 const qd = new URLSearchParams(location.search).get('data');
-if (qd && /^\d{4}-\d{2}-\d{2}$/.test(qd) && qd >= today) $('date').value = qd;
+if (qd && /^\d{4}-\d{2}-\d{2}$/.test(qd) && qd >= today) dp.set(qd);
 
 // verificăm dacă data e liberă
 let busy = false;
 async function checkDate(){
-  const d = $('date').value, n = $('dnote');
+  const d = dp.get(), n = $('dnote');
   busy = false;
-  if (!d) { n.textContent = ''; return; }
+  if (!d) { n.className = 'dnote'; n.textContent = ''; return; }
   const words = new Date(d + 'T12:00').toLocaleDateString('ro-RO', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   if (d < today) { n.className = 'dnote busy'; n.textContent = 'Data a trecut.'; return; }
   n.className = 'dnote info'; n.textContent = words + ' · verific…';
   try {
     const r = await fetch(TE.SUPABASE_URL + '/rest/v1/rpc/public_calendar', { method:'POST', headers:{ apikey: TE.SUPABASE_KEY, 'Content-Type':'application/json' }, body: JSON.stringify({ from_date: d, to_date: d }) });
     const ev = r.ok ? await r.json() : [];
-    if (d !== $('date').value) return;
+    if (d !== dp.get()) return;
     busy = ev.length >= TE.CAPACITY;
     n.className = 'dnote ' + (busy ? 'busy' : 'ok');
     n.textContent = words + (busy ? ' · din păcate e ocupată. Sună-ne, poate găsim o soluție.' : ' · e liberă ✓');
   } catch { n.className = 'dnote info'; n.textContent = words; }
 }
-$('date').addEventListener('change', checkDate);
 checkDate();
 
 function data(){
   return {
     name: $('name').value.trim(), phone: $('phone').value.trim(), email: $('email').value.trim(),
-    date: $('date').value, type: $('type').value, city: $('city').value.trim(), venue: $('venue').value.trim(),
+    date: dp.get(), type: $('type').value, city: $('city').value.trim(), venue: $('venue').value.trim(),
     guests: $('guests').value ? parseInt($('guests').value, 10) : null,
     services: [...document.querySelectorAll('#svc input:checked')].map(i => i.value),
     msg: $('msg').value.trim()
