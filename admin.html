@@ -118,7 +118,40 @@ main{padding:28px 0 80px}
 .vi .acts{gap:4px}
 .vi .ib{width:34px;height:34px}
 
+/* galerie foto */
+.albs{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.ab{text-align:left;padding:0;border-radius:14px;overflow:hidden;background:var(--card);border:1px solid var(--line);cursor:pointer;transition:border-color .2s}
+.ab:hover{border-color:var(--gold)}
+.ab .cv{aspect-ratio:4/3;background:linear-gradient(160deg,#2a2414,#0b0b0c) center/cover no-repeat}
+.ab .in{padding:10px 12px}
+.ab h3{font-family:Montserrat,sans-serif;font-size:.95rem;font-weight:700}
+.ab small{color:var(--muted);font-size:.78rem}
+.ab .hid{color:#ffb38f;font-weight:700}
+.back2{background:none;border:0;color:var(--gold2);font-weight:600;cursor:pointer;margin-bottom:14px;padding:0}
+.chk{display:flex!important;align-items:center;gap:10px;padding:12px 0;font-size:.92rem!important;color:var(--text)!important;cursor:pointer}
+.chk input{width:18px!important;height:18px;accent-color:var(--gold)}
+.drop{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:18px;padding:28px 18px;border-radius:16px;border:2px dashed rgba(212,175,55,.5);background:rgba(212,175,55,.04);text-align:center;cursor:pointer;transition:background .2s}
+.drop:hover,.drop.over{background:rgba(212,175,55,.1)}
+.drop svg{width:40px;height:40px;stroke:var(--gold2);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.drop b{font-size:1.05rem}
+.drop span{font-size:.84rem;color:var(--muted)}
+.prog{margin-top:14px;display:flex;align-items:center;gap:12px}
+.pbar{flex:1;height:10px;border-radius:999px;background:#222;overflow:hidden}
+.pbar i{display:block;height:100%;width:0;background:var(--grad);transition:width .3s}
+.prog span{font-size:.88rem;font-weight:600;color:var(--gold2);white-space:nowrap}
+.hint2{color:var(--muted);font-size:.85rem;margin:10px 0}
+.pgr{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.pt{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:#111}
+.pt img{width:100%;height:100%;object-fit:cover}
+.pt.cov{box-shadow:0 0 0 3px var(--gold)}
+.pt .pa{position:absolute;inset:auto 0 0 0;display:flex;justify-content:space-between;padding:6px;background:linear-gradient(transparent,rgba(0,0,0,.8))}
+.pt .pa button{width:32px;height:32px;border-radius:8px;border:0;background:rgba(0,0,0,.6);color:#fff;cursor:pointer;font-size:1rem}
+.pt .pa button.on{color:var(--gold2)}
+.pt .pa button:hover{background:rgba(0,0,0,.85)}
+.pt .badge2{position:absolute;top:6px;left:6px;font-size:.66rem;font-weight:700;padding:2px 7px;border-radius:999px;background:var(--grad);color:#1a1405}
+
 @media (max-width:760px){
+  .pgr{grid-template-columns:repeat(3,1fr)}
   .vi{grid-template-columns:52px 1fr}
   .vi .th{width:52px;height:52px}
   .vi .acts{grid-column:1/-1;justify-content:flex-end}
@@ -161,6 +194,47 @@ main{padding:28px 0 80px}
       <button class="tab on" data-t="tabCal">Calendar</button>
       <button class="tab" data-t="tabReq">Cereri de rezervare <span class="badge hidden" id="badge"></span></button>
       <button class="tab" data-t="tabVid">Galerie video</button>
+      <button class="tab" data-t="tabFoto">Galerie foto</button>
+    </div>
+
+    <div id="tabFoto" class="hidden">
+      <div class="bar"><h1>Galerie <span class="gold">foto</span></h1>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><a class="lnk" href="galerie-foto.html" target="_blank" style="color:var(--gold2)">Vezi pagina publică ↗</a><button class="btn btn-gold btn-sm" id="aNew">+ Album nou</button></div></div>
+
+      <div id="aListWrap"><div class="albs" id="aList"></div></div>
+
+      <div id="aEdit" class="hidden">
+        <button class="back2" id="aBack">‹ Toate albumele</button>
+        <form class="vadd" id="aForm">
+          <h2 id="aTitleH" style="font-size:1.3rem;margin-bottom:14px">Album nou</h2>
+          <div class="g2">
+            <div class="f"><label for="aTitle">Titlu *</label><input id="aTitle" maxlength="120" required placeholder="ex. Nunta Ana & Mihai"></div>
+            <div class="f"><label for="aDate">Data evenimentului</label><input id="aDate"></div>
+            <div class="f"><label for="aType">Tip eveniment</label><select id="aType"></select></div>
+            <div class="f"><label for="aCity">Localitate</label><input id="aCity" maxlength="80"></div>
+            <div class="f"><label for="aVenue">Locație</label><input id="aVenue" maxlength="120"></div>
+            <div class="f"><label>&nbsp;</label><label class="chk"><input type="checkbox" id="aPub" checked> Vizibil pe site</label></div>
+          </div>
+          <div class="err" id="aerr"></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-gold btn-sm" id="aSave">Salvează albumul</button>
+            <button type="button" class="btn btn-ghost btn-sm hidden" id="aDel" style="color:#ff8f8f;border-color:rgba(255,143,143,.5)">Șterge albumul</button>
+          </div>
+        </form>
+
+        <div id="aPhotos" class="hidden">
+          <label class="drop" id="drop">
+            <input type="file" id="aFiles" accept="image/*" multiple hidden>
+            <svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>
+            <b>Apasă aici și alege pozele</b>
+            <span>sau trage-le aici · poți alege mai multe deodată · le micșorez automat</span>
+          </label>
+          <div class="prog hidden" id="prog"><div class="pbar"><i id="pfill"></i></div><span id="ptxt"></span></div>
+          <div class="err" id="perr" style="white-space:pre-line"></div>
+          <p class="hint2" id="pHint"></p>
+          <div class="pgr" id="pGrid"></div>
+        </div>
+      </div>
     </div>
 
     <div id="tabVid" class="hidden">
@@ -282,10 +356,147 @@ function show(logged){
 // ---------- tab-uri ----------
 document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
   document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === b));
-  ['tabCal','tabReq','tabVid'].forEach(id => $(id).classList.toggle('hidden', id !== b.dataset.t));
+  ['tabCal','tabReq','tabVid','tabFoto'].forEach(id => $(id).classList.toggle('hidden', id !== b.dataset.t));
   if (b.dataset.t === 'tabReq') loadReq();
   if (b.dataset.t === 'tabVid') loadVid();
+  if (b.dataset.t === 'tabFoto') loadAlbums();
 });
+
+// ---------- galerie foto ----------
+let albs = [], curAlb = null, aPhotos = [], uploading = false;
+const adp = TE.datePicker($('aDate'));
+TE.VCATS.forEach(c => $('aType').insertAdjacentHTML('beforeend', `<option>${c}</option>`));
+
+async function loadAlbums(){
+  const { data, error } = await sb.from('albums').select('*, photos(count)').order('event_date', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false });
+  if (error) { $('aList').innerHTML = `<div class="empty-l">Nu s-au putut încărca: ${TE.esc(error.message)}</div>`; return; }
+  albs = data;
+  // copertă: cea aleasă sau prima poză
+  const need = albs.filter(a => !a.cover_path && a.photos?.[0]?.count).map(a => a.id), first = {};
+  if (need.length) { const { data: ph } = await sb.from('photos').select('album_id,thumb').in('album_id', need).order('sort').order('created_at'); (ph || []).forEach(p => first[p.album_id] ||= p.thumb); }
+  $('aList').innerHTML = albs.length ? albs.map(a => {
+    const cv = a.cover_path || first[a.id], n = a.photos?.[0]?.count || 0;
+    return `<button class="ab" data-id="${a.id}"><div class="cv"${cv ? ` style="background-image:url('${TE.photoUrl(cv)}')"` : ''}></div>
+      <div class="in"><h3>${TE.esc(a.title)}</h3><small>${a.event_date ? TE.nice(a.event_date) + ' · ' : ''}${n} poze${a.published ? '' : ' · <span class="hid">ascuns</span>'}</small></div></button>`;
+  }).join('') : '<div class="empty-l" style="grid-column:1/-1">Niciun album încă. Apasă „+ Album nou”, completează titlul, apoi adaugă pozele.</div>';
+  $('aList').querySelectorAll('.ab').forEach(b => b.onclick = () => openAlb(albs.find(a => a.id === b.dataset.id)));
+}
+function showAlbList(){ if (uploading && !confirm('Se încarcă poze. Sigur ieși? Încărcarea se oprește.')) return; uploading = false; $('aEdit').classList.add('hidden'); $('aListWrap').classList.remove('hidden'); $('aNew').classList.remove('hidden'); loadAlbums(); }
+$('aBack').onclick = showAlbList;
+$('aNew').onclick = () => openAlb(null);
+function openAlb(a){
+  curAlb = a; $('aerr').textContent = ''; $('perr').textContent = '';
+  $('aListWrap').classList.add('hidden'); $('aEdit').classList.remove('hidden'); $('aNew').classList.add('hidden');
+  $('aTitleH').textContent = a ? 'Detalii album' : 'Album nou';
+  $('aTitle').value = a?.title || ''; adp.set(a?.event_date || ''); $('aType').value = a?.type || 'Nuntă';
+  $('aCity').value = a?.city || ''; $('aVenue').value = a?.venue || ''; $('aPub').checked = a ? a.published : true;
+  $('aDel').classList.toggle('hidden', !a);
+  $('aSave').textContent = a ? 'Salvează modificările' : 'Creează albumul';
+  $('aPhotos').classList.toggle('hidden', !a);
+  if (a) loadPhotos(); else $('aTitle').focus();
+}
+$('aForm').addEventListener('submit', async e => {
+  e.preventDefault(); $('aerr').textContent = '';
+  const typed = $('aDate').value.trim();
+  if (typed && !adp.get()) { $('aerr').textContent = 'Scrie data corect: zz/ll/aaaa.'; return; }
+  const row = { title: $('aTitle').value.trim(), event_date: adp.get() || null, type: $('aType').value, city: $('aCity').value.trim() || null, venue: $('aVenue').value.trim() || null, published: $('aPub').checked };
+  if (!row.title) { $('aerr').textContent = 'Scrie un titlu.'; return; }
+  $('aSave').disabled = true;
+  const q = curAlb ? sb.from('albums').update(row).eq('id', curAlb.id).select().single() : sb.from('albums').insert(row).select().single();
+  const { data, error } = await q;
+  $('aSave').disabled = false;
+  if (error) { $('aerr').textContent = 'Nu s-a salvat: ' + error.message; return; }
+  const wasNew = !curAlb; toast(wasNew ? 'Album creat ✓ Acum adaugă pozele.' : 'Salvat ✓');
+  openAlb(data);
+  if (wasNew) $('drop').scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
+$('aDel').onclick = async () => {
+  if (!curAlb || !confirm(`Ștergi albumul „${curAlb.title}” cu toate pozele lui? Nu se poate anula.`)) return;
+  const { data: ph } = await sb.from('photos').select('path,thumb').eq('album_id', curAlb.id);
+  const files = (ph || []).flatMap(p => [p.path, p.thumb]);
+  for (let i = 0; i < files.length; i += 100) await sb.storage.from('photos').remove(files.slice(i, i + 100));
+  const { error } = await sb.from('albums').delete().eq('id', curAlb.id);
+  if (error) { alert('Nu s-a șters: ' + error.message); return; }
+  toast('Album șters ✓'); curAlb = null; showAlbList();
+};
+
+async function loadPhotos(){
+  const { data, error } = await sb.from('photos').select('*').eq('album_id', curAlb.id).order('sort').order('created_at');
+  if (error) { $('pGrid').innerHTML = `<div class="empty-l">${TE.esc(error.message)}</div>`; return; }
+  aPhotos = data; renderPhotos();
+}
+function renderPhotos(){
+  const cover = curAlb.cover_path || aPhotos[0]?.thumb;
+  $('pHint').textContent = aPhotos.length ? `${aPhotos.length} poze · ⭐ = alege coperta albumului · 🗑 = șterge poza` : '';
+  $('pGrid').innerHTML = aPhotos.map(p => `<div class="pt${p.thumb === cover ? ' cov' : ''}"><img src="${TE.photoUrl(p.thumb)}" alt="" loading="lazy">
+    ${p.thumb === cover ? '<span class="badge2">copertă</span>' : ''}
+    <div class="pa"><button data-cov="${p.id}" class="${p.thumb === cover ? 'on' : ''}" title="Pune ca copertă">★</button><button data-pdel="${p.id}" title="Șterge poza">🗑</button></div></div>`).join('');
+  $('pGrid').querySelectorAll('[data-cov]').forEach(b => b.onclick = async () => {
+    const p = aPhotos.find(x => x.id === b.dataset.cov);
+    const { error } = await sb.from('albums').update({ cover_path: p.thumb }).eq('id', curAlb.id);
+    if (error) return alert(error.message);
+    curAlb.cover_path = p.thumb; renderPhotos(); toast('Copertă aleasă ✓');
+  });
+  $('pGrid').querySelectorAll('[data-pdel]').forEach(b => b.onclick = async () => {
+    const p = aPhotos.find(x => x.id === b.dataset.pdel);
+    if (!confirm('Ștergi poza?')) return;
+    await sb.storage.from('photos').remove([p.path, p.thumb]);
+    const { error } = await sb.from('photos').delete().eq('id', p.id);
+    if (error) return alert(error.message);
+    if (curAlb.cover_path === p.thumb) { await sb.from('albums').update({ cover_path: null }).eq('id', curAlb.id); curAlb.cover_path = null; }
+    aPhotos = aPhotos.filter(x => x.id !== p.id); renderPhotos(); toast('Poză ștearsă ✓');
+  });
+}
+
+// micșorează o poză în browser → JPEG (fără date GPS/EXIF)
+async function shrink(file, max, q){
+  let src;
+  try { src = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+  catch { src = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error('format necunoscut')); i.src = URL.createObjectURL(file); }); }
+  const s = Math.min(1, max / Math.max(src.width, src.height)), w = Math.round(src.width * s), h = Math.round(src.height * s);
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d'); g.imageSmoothingQuality = 'high'; g.drawImage(src, 0, 0, w, h);
+  const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', q));
+  if (!blob) throw new Error('nu s-a putut converti');
+  return { blob, w, h };
+}
+async function uploadFiles(files){
+  files = [...files].filter(f => f.type.startsWith('image/') || /\.(heic|heif|jpe?g|png|webp)$/i.test(f.name));
+  if (!files.length || !curAlb) return;
+  if (uploading) { alert('Așteaptă să se termine încărcarea în curs.'); return; }
+  uploading = true; $('perr').textContent = '';
+  const albId = curAlb.id, errs = []; let done = 0, next = 0;
+  let sort = aPhotos.reduce((m, p) => Math.max(m, p.sort), 0);
+  $('prog').classList.remove('hidden');
+  const upd = () => { $('pfill').style.width = (done / files.length * 100) + '%'; $('ptxt').textContent = `${done} / ${files.length} încărcate`; };
+  upd();
+  async function worker(){
+    while (uploading && next < files.length) {
+      const f = files[next++], mySort = ++sort;
+      try {
+        const big = await shrink(f, 1920, .84), small = await shrink(f, 600, .78);
+        const id = crypto.randomUUID(), path = `${albId}/${id}.jpg`, thumb = `${albId}/${id}_t.jpg`;
+        const o = { contentType: 'image/jpeg', cacheControl: '31536000', upsert: false };
+        let r = await sb.storage.from('photos').upload(path, big.blob, o); if (r.error) throw r.error;
+        r = await sb.storage.from('photos').upload(thumb, small.blob, o); if (r.error) throw r.error;
+        const { data, error } = await sb.from('photos').insert({ album_id: albId, path, thumb, w: big.w, h: big.h, sort: mySort }).select().single();
+        if (error) throw error;
+        if (curAlb?.id === albId) { aPhotos.push(data); renderPhotos(); }
+      } catch (ex) { errs.push(`${f.name}: ${ex.message || ex}`); }
+      done++; upd();
+    }
+  }
+  await Promise.all([worker(), worker(), worker()]);
+  uploading = false;
+  $('ptxt').textContent = `Gata: ${done - errs.length} din ${files.length} poze încărcate ✓`;
+  if (errs.length) $('perr').textContent = 'Nu s-au putut încărca:\n' + errs.join('\n') + (errs.some(e => /heic|format/i.test(e)) ? '\n(Pozele HEIC de pe iPhone: alege-le din aplicația Poze sau salvează-le ca JPG.)' : '');
+  toast('Poze încărcate ✓');
+}
+$('aFiles').addEventListener('change', e => { uploadFiles(e.target.files); e.target.value = ''; });
+['dragenter','dragover'].forEach(ev => $('drop').addEventListener(ev, e => { e.preventDefault(); $('drop').classList.add('over'); }));
+['dragleave','drop'].forEach(ev => $('drop').addEventListener(ev, e => { e.preventDefault(); $('drop').classList.remove('over'); }));
+$('drop').addEventListener('drop', e => uploadFiles(e.dataTransfer.files));
+addEventListener('beforeunload', e => { if (uploading) { e.preventDefault(); e.returnValue = ''; } });
 
 // ---------- galerie video ----------
 let vids = [];
