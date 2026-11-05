@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harta evenimentelor – The Entertainers</title>
+<meta name="description" content="Harta localităților din România în care The Entertainers a avut nunți, botezuri, majorate și evenimente corporate. Din Slatina, în toată țara.">
+<meta property="og:title" content="Harta evenimentelor – The Entertainers">
+<meta property="og:description" content="Din Slatina, în toată țara: vezi unde am adus petrecerea.">
+<meta property="og:image" content="assets/logo-gold.png">
+<meta name="theme-color" content="#0b0b0c">
+<link rel="icon" href="assets/mic-gold.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+.mstats{display:grid;grid-template-columns:repeat(3,1fr);max-width:760px;margin:0 auto 26px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.mstats div{padding:20px 14px;text-align:center;border-right:1px solid var(--line)}
+.mstats div:last-child{border-right:0}
+.mstats b{display:block;font-family:"Playfair Display",serif;font-size:2.2rem;line-height:1.1}
+.mstats span{font-size:.85rem;color:var(--muted)}
+.mapcard{position:relative;background:radial-gradient(ellipse at 50% 40%,rgba(212,175,55,.08),transparent 70%),var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:0 30px 60px -30px #000}
+.mapcard svg{display:block;width:100%;height:auto;overflow:visible}
+.jd{fill:#17171b;stroke:rgba(212,175,55,.35);stroke-width:.8;stroke-linejoin:round;transition:fill .25s;cursor:pointer}
+.jd:hover{fill:#24221a}
+.jd.v1{fill:rgba(212,175,55,.22)} .jd.v2{fill:rgba(212,175,55,.38)} .jd.v3{fill:rgba(212,175,55,.55)}
+.jd.v1:hover,.jd.v2:hover,.jd.v3:hover{fill:rgba(243,215,122,.65)}
+.jd.sel{stroke:var(--gold2);stroke-width:2.2}
+.jl{fill:rgba(242,239,230,.45);font-size:8.5px;font-family:Montserrat,sans-serif;font-weight:600;text-anchor:middle;pointer-events:none}
+.jl.v{fill:#fff3c8}
+.pin{cursor:pointer}
+.pin .c{fill:var(--gold2);stroke:#1a1405;stroke-width:1.2}
+.pin .r{fill:none;stroke:var(--gold2);stroke-width:1.2;opacity:0;transform-box:fill-box;transform-origin:center;animation:pulse 2.6s ease-out infinite}
+.pin:hover .c{fill:#fff}
+@keyframes pulse{0%{transform:scale(1);opacity:.9}100%{transform:scale(3.4);opacity:0}}
+.tip{position:absolute;z-index:5;pointer-events:none;padding:10px 14px;border-radius:12px;background:rgba(14,14,17,.95);border:1px solid rgba(212,175,55,.55);box-shadow:0 10px 30px -8px #000;font-size:.88rem;white-space:nowrap;translate:-50% calc(-100% - 14px);opacity:0;transition:opacity .15s}
+.tip.show{opacity:1}
+.tip b{display:block;font-family:"Playfair Display",serif;font-size:1.05rem;color:var(--gold2)}
+.tip span{color:#d6d2c6}
+.jpanel{margin-top:16px;padding:18px 20px;border-radius:14px;border:1px solid rgba(212,175,55,.4);background:rgba(212,175,55,.06);display:none}
+.jpanel.show{display:block}
+.jpanel h3{font-size:1.3rem;margin-bottom:6px}
+.jpanel p{color:var(--muted);font-size:.9rem;margin-bottom:10px}
+.plist{display:flex;flex-wrap:wrap;gap:8px}
+.plist button{padding:7px 13px;border-radius:999px;border:1px solid rgba(212,175,55,.35);background:#111114;color:#ede6cf;font-size:.86rem;cursor:pointer}
+.plist button:hover{border-color:var(--gold)}
+.plist button small{color:var(--gold2);font-weight:700;margin-left:6px}
+.allc{margin-top:46px}
+.allc h2{font-size:clamp(1.6rem,3.4vw,2.3rem);text-align:center;margin-bottom:24px}
+.cgrid{columns:3 260px;column-gap:20px}
+.cg{break-inside:avoid;margin:0 0 18px;padding:16px 18px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
+.cg h3{font-family:Montserrat,sans-serif;font-size:.95rem;font-weight:700;color:var(--gold2);margin-bottom:8px;display:flex;justify-content:space-between}
+.cg h3 small{color:var(--muted);font-weight:600}
+.cg p{color:#d6d2c6;font-size:.9rem;line-height:1.7}
+.src-note{text-align:center;color:#5f5c55;font-size:.75rem;margin-top:14px}
+.hmsg{text-align:center;color:var(--muted);padding:14px 0 0;min-height:1.6em}
+@media (max-width:600px){ .mstats b{font-size:1.6rem} .mapcard{padding:8px} .jl{display:none} }
+</style>
+</head>
+<body>
+
+<header class="hdr" id="hdr">
+  <div class="wrap">
+    <a href="index.html" class="brand"><img src="assets/logo-gold.png" alt="The Entertainers"></a>
+    <nav class="nav" id="nav">
+      <a href="index.html">Acasă</a>
+      <a href="despre.html">Despre</a>
+      <a href="cununie.html">Cununie civilă</a>
+      <a href="harta.html" class="on">Harta evenimentelor</a>
+      <a href="calendar.html">Calendar</a>
+      <a href="galerie-foto.html">Galerie foto</a>
+      <a href="galerie-video.html">Galerie video</a>
+      <a href="rezerva.html" class="btn btn-gold">Rezervă data</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Meniu" aria-expanded="false">☰</button>
+  </div>
+</header>
+
+<section class="phead">
+  <div class="wrap">
+    <span class="kicker">Harta evenimentelor</span>
+    <h1>Am adus petrecerea <span class="gold">în toată țara</span></h1>
+    <p class="lead">Pornim din Slatina, dar ne găsești peste tot. Fiecare punct auriu e o localitate în care am făcut ringul să vibreze. Apasă pe un punct sau pe un județ.</p>
+  </div>
+</section>
+
+<section style="padding:0 0 80px">
+  <div class="wrap">
+    <div class="mstats rv">
+      <div><b class="gold" id="sP">–</b><span>localități</span></div>
+      <div><b class="gold" id="sJ">–</b><span>județe</span></div>
+      <div><b class="gold" id="sE">–</b><span>evenimente</span></div>
+    </div>
+    <div class="mapcard rv" id="mapcard">
+      <svg id="map" role="img" aria-label="Harta României cu localitățile în care am avut evenimente"></svg>
+      <div class="tip" id="tip"></div>
+      <div class="hmsg" id="msg"><span class="spin"></span>Se încarcă harta…</div>
+    </div>
+    <div class="jpanel" id="jpanel"></div>
+
+    <div class="allc rv" id="allc" hidden>
+      <h2>Toate localitățile <span class="gold">pe județe</span></h2>
+      <div class="cgrid" id="cgrid"></div>
+    </div>
+    <p class="src-note">Contururile județelor: Code for America (click_that_hood), după date OpenStreetMap.</p>
+
+    <div class="cta" style="margin-top:30px">
+      <a href="rezerva.html" class="btn btn-gold">Adu-ne și la tine</a>
+      <a href="calendar.html" class="btn btn-ghost">Vezi datele libere</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="ft">
+      <div>
+        <a href="index.html" class="brand"><img src="assets/logo-gold.png" alt="The Entertainers" style="height:56px"></a>
+        <p style="margin-top:14px;max-width:340px">We love to entertain you! DJ, MC, sonorizare și lumini profesionale pentru evenimente, din 2005. Din Slatina, Olt, în toată țara.</p>
+        <div class="soc">
+          <a href="https://www.facebook.com/bacanucozmin" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M14 9V7c0-.9.6-1 1-1h2V2h-3c-3.3 0-4 2.4-4 4v3H8v4h2v9h4v-9h3l.5-4z"/></svg></a>
+          <a href="https://www.tiktok.com/@cozminbacanu" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M16.5 2h-3.3v13.2a2.9 2.9 0 11-2.9-2.9c.3 0 .6 0 .9.1V9a6.3 6.3 0 106.3 6.3V8.6a7.7 7.7 0 004.5 1.4V6.7a4.6 4.6 0 01-4.5-4.7z"/></svg></a>
+          <a href="https://wa.me/40727292171" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.6 15l-1.4 5 5.2-1.4A10 10 0 1012 2zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.6-1.2-3s.8-2.2 1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.6 2.1 1.1 1 2.1 1.3 2.4 1.4.3.2.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.7-.1 1.3z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4>Pagini</h4>
+        <ul>
+          <li><a href="index.html">Acasă</a></li>
+          <li><a href="despre.html">Despre noi</a></li>
+          <li><a href="cununie.html">Actor cununie civilă</a></li>
+          <li><a href="calendar.html">Calendar disponibilitate</a></li>
+          <li><a href="galerie-foto.html">Galerie foto</a></li>
+          <li><a href="galerie-video.html">Galerie video</a></li>
+          <li><a href="rezerva.html">Rezervă data</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a class="ct" href="tel:+40727292171"><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15 15 0 006.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 013 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>0727 292 171</a></li>
+          <li><a class="ct" href="mailto:bacanucozmin@yahoo.com"><svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 00-2 2v12c0 1.1.9 2 2 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4l-8 5-8-5V6l8 5 8-5z"/></svg>bacanucozmin@yahoo.com</a></li>
+          <li class="ct"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 00-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 00-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg>Slatina, Olt · în toată țara</li>
+        </ul>
+      </div>
+    </div>
+    <div class="copy">© <span id="yr">2026</span> The Entertainers · Băcanu Cozmin · We love to entertain you!</div>
+  </div>
+</footer>
+
+<a class="wa" href="https://wa.me/40727292171?text=Bun%C4%83%20ziua!%20A%C8%99%20dori%20o%20ofert%C4%83%20pentru%20un%20eveniment." target="_blank" rel="noopener" aria-label="Scrie-ne pe WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.6 15l-1.4 5 5.2-1.4A10 10 0 1012 2zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.6-1.2-3s.8-2.2 1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.6 2.1 1.1 1 2.1 1.3 2.4 1.4.3.2.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.7-.1 1.3z"/></svg></a>
+
+<script src="assets/site.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const svg = $('map'), tip = $('tip'), card = $('mapcard');
+const NS = 'http://www.w3.org/2000/svg';
+const evTxt = n => n + (n === 1 ? ' eveniment' : ' evenimente');
+let places = [], byCounty = {}, map;
+
+function showTip(html, x, y){ tip.innerHTML = html; tip.style.left = x + 'px'; tip.style.top = y + 'px'; tip.classList.add('show'); }
+function tipAt(el, html){ const r = el.getBoundingClientRect(), c = card.getBoundingClientRect(); showTip(html, r.left + r.width / 2 - c.left, r.top - c.top); }
+const hideTip = () => tip.classList.remove('show');
+
+function selectCounty(name){
+  svg.querySelectorAll('.jd').forEach(p => p.classList.toggle('sel', p.dataset.n === name));
+  const list = byCounty[name] || [], tot = list.reduce((s, p) => s + p.events, 0), panel = $('jpanel');
+  panel.innerHTML = list.length
+    ? `<h3>Județul <span class="gold">${TE.esc(name)}</span></h3><p>${list.length} ${list.length === 1 ? 'localitate' : 'localități'} · ${evTxt(tot)}</p>
+       <div class="plist">${list.map(p => `<button data-id="${p.id}">${TE.esc(p.name)}<small>${p.events}</small></button>`).join('')}</div>`
+    : `<h3>Județul <span class="gold">${TE.esc(name)}</span></h3><p>Încă n-am ajuns aici… dar putem veni oricând! <a href="rezerva.html" style="color:var(--gold2);font-weight:600">Rezervă data ›</a></p>`;
+  panel.classList.add('show');
+  panel.querySelectorAll('[data-id]').forEach(b => b.onclick = () => { const g = svg.querySelector(`.pin[data-id="${b.dataset.id}"]`); if (g) { const p = places.find(x => x.id === b.dataset.id); tipAt(g, `<b>${TE.esc(p.name)}</b><span>jud. ${TE.esc(p.county)} · ${evTxt(p.events)}</span>`); } });
+}
+
+function draw(){
+  svg.setAttribute('viewBox', map.view.join(' '));
+  const max = Math.max(1, ...Object.values(byCounty).map(l => l.reduce((s, p) => s + p.events, 0)));
+  let h = '';
+  map.judete.forEach(j => {
+    const list = byCounty[j.n], tot = list ? list.reduce((s, p) => s + p.events, 0) : 0;
+    const lvl = !tot ? '' : tot / max > .6 ? ' v3' : tot / max > .25 ? ' v2' : ' v1';
+    h += `<path class="jd${lvl}" data-n="${j.n}" d="${j.d}"><title>${j.n}</title></path>`;
+  });
+  map.judete.forEach(j => { if (j.n !== 'București' && j.n !== 'Ilfov') h += `<text class="jl${byCounty[j.n] ? ' v' : ''}" x="${j.cx}" y="${j.cy}">${j.n}</text>`; });
+  // punctele: întâi cele mici, ca cele mari să fie deasupra
+  places.slice().sort((a, b) => a.events - b.events).forEach((p, i) => {
+    const [x, y] = TE.proj(map, p.lat, p.lon), r = Math.min(7, 3.2 + Math.log2(p.events) * .8);
+    h += `<g class="pin" data-id="${p.id}" tabindex="0"><circle class="r" cx="${x}" cy="${y}" r="${r}" style="animation-delay:${(i % 9) * .3}s"/><circle class="c" cx="${x}" cy="${y}" r="${r}"/></g>`;
+  });
+  svg.innerHTML = h;
+
+  svg.querySelectorAll('.jd').forEach(el => {
+    el.addEventListener('click', () => selectCounty(el.dataset.n));
+    el.addEventListener('mousemove', e => { const c = card.getBoundingClientRect(), l = byCounty[el.dataset.n];
+      showTip(`<b>${el.dataset.n}</b><span>${l ? l.length + (l.length === 1 ? ' localitate' : ' localități') : 'încă nu am ajuns aici'}</span>`, e.clientX - c.left, e.clientY - c.top); });
+    el.addEventListener('mouseleave', hideTip);
+  });
+  svg.querySelectorAll('.pin').forEach(g => {
+    const p = places.find(x => x.id === g.dataset.id), html = `<b>${TE.esc(p.name)}</b><span>jud. ${TE.esc(p.county)} · ${evTxt(p.events)}</span>`;
+    g.addEventListener('mouseenter', () => tipAt(g, html));
+    g.addEventListener('mouseleave', hideTip);
+    g.addEventListener('click', e => { e.stopPropagation(); tipAt(g, html); selectCounty(p.county); });
+    g.addEventListener('focus', () => tipAt(g, html)); g.addEventListener('blur', hideTip);
+  });
+}
+
+function stats(){
+  const tot = places.reduce((s, p) => s + p.events, 0);
+  const counters = [['sP', places.length], ['sJ', Object.keys(byCounty).length], ['sE', tot]];
+  counters.forEach(([id, n]) => { const el = $(id), t0 = performance.now(); const tick = t => { const k = Math.min(1, (t - t0) / 1200); el.textContent = Math.round(n * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(tick); }; requestAnimationFrame(tick); });
+  const counties = Object.keys(byCounty).sort((a, b) => a.localeCompare(b, 'ro'));
+  $('cgrid').innerHTML = counties.map(c => { const l = byCounty[c]; return `<div class="cg"><h3>${TE.esc(c)}<small>${evTxt(l.reduce((s, p) => s + p.events, 0))}</small></h3><p>${l.map(p => TE.esc(p.name)).join(' · ')}</p></div>`; }).join('');
+  $('allc').hidden = !counties.length;
+}
+
+(async () => {
+  try {
+    const [m, r] = await Promise.all([TE.loadMap(), fetch(TE.SUPABASE_URL + '/rest/v1/places?select=id,name,county,lat,lon,events&order=name', { headers: { apikey: TE.SUPABASE_KEY } })]);
+    map = m;
+    places = r.ok ? await r.json() : [];
+    byCounty = {}; places.forEach(p => (byCounty[p.county] ||= []).push(p));
+    Object.values(byCounty).forEach(l => l.sort((a, b) => b.events - a.events || a.name.localeCompare(b.name, 'ro')));
+    draw(); stats();
+    $('msg').textContent = r.ok ? '' : 'Localitățile nu s-au putut încărca acum.';
+  } catch { $('msg').textContent = 'Harta nu s-a putut încărca acum.'; }
+})();
+document.addEventListener('click', e => { if (!e.target.closest('.pin,.plist')) hideTip(); });
+</script>
+</body>
+</html>

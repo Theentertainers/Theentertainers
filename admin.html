@@ -84,8 +84,9 @@ main{padding:28px 0 80px}
 .toast.show{opacity:1}
 
 /* tab-uri + cereri */
-.tabs{display:flex;gap:6px;margin-bottom:22px;border-bottom:1px solid var(--line)}
-.tab{padding:12px 18px;border:0;background:none;color:var(--muted);font-weight:600;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs{display:flex;gap:6px;margin-bottom:22px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;white-space:nowrap;padding:12px 18px;border:0;background:none;color:var(--muted);font-weight:600;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
 .tab.on{color:var(--gold2);border-bottom-color:var(--gold)}
 .badge{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:#e5484d;color:#fff;font-size:.75rem;margin-left:6px}
 .flt{padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:#0e0e11}
@@ -117,6 +118,20 @@ main{padding:28px 0 80px}
 .vi select{padding:6px 10px;border-radius:9px;border:1px solid var(--line);background:#0e0e11;font-size:.82rem}
 .vi .acts{gap:4px}
 .vi .ib{width:34px;height:34px}
+
+/* harta */
+.mres{display:grid;gap:6px;margin-top:10px}
+.mres button{display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;padding:11px 14px;border-radius:12px;border:1px solid var(--line);background:#0e0e11;cursor:pointer}
+.mres button:hover{border-color:var(--gold)}
+.mres small{color:var(--muted);font-size:.8rem}
+.mres .add{color:var(--gold2);font-weight:700;font-size:.85rem;white-space:nowrap}
+.pl{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:10px 14px;border-radius:12px;background:var(--card);border:1px solid var(--line)}
+.pl h3{font-family:Montserrat,sans-serif;font-size:.95rem;font-weight:700}
+.pl small{color:var(--muted);font-size:.8rem}
+.cnt{display:flex;align-items:center;gap:4px}
+.cnt button{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:#0e0e11;color:var(--gold2);font-size:1.1rem;cursor:pointer}
+.cnt input{width:62px;text-align:center;padding:6px;border-radius:9px;border:1px solid var(--line);background:#0e0e11}
+.cnt span{font-size:.75rem;color:var(--muted);margin-left:2px}
 
 /* galerie foto */
 .albs{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
@@ -195,6 +210,18 @@ main{padding:28px 0 80px}
       <button class="tab" data-t="tabReq">Cereri de rezervare <span class="badge hidden" id="badge"></span></button>
       <button class="tab" data-t="tabVid">Galerie video</button>
       <button class="tab" data-t="tabFoto">Galerie foto</button>
+      <button class="tab" data-t="tabMap">Harta</button>
+    </div>
+
+    <div id="tabMap" class="hidden">
+      <div class="bar"><h1>Harta <span class="gold">evenimentelor</span></h1><a class="lnk" href="harta.html" target="_blank" style="color:var(--gold2)">Vezi harta publică ↗</a></div>
+      <form class="vadd" id="mForm">
+        <div class="f" style="margin:0"><label for="mQ">Caută localitatea (oraș, comună sau sat)</label>
+          <div style="display:flex;gap:8px"><input id="mQ" placeholder="ex. Drăgășani, Corabia, Vădastra…" autocomplete="off"><button class="btn btn-gold btn-sm" id="mGo" style="flex:none">Caută</button></div></div>
+        <div class="mres" id="mRes"></div>
+        <div class="err" id="merr"></div>
+      </form>
+      <div class="list" id="mList"></div>
     </div>
 
     <div id="tabFoto" class="hidden">
@@ -356,10 +383,70 @@ function show(logged){
 // ---------- tab-uri ----------
 document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
   document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === b));
-  ['tabCal','tabReq','tabVid','tabFoto'].forEach(id => $(id).classList.toggle('hidden', id !== b.dataset.t));
+  ['tabCal','tabReq','tabVid','tabFoto','tabMap'].forEach(id => $(id).classList.toggle('hidden', id !== b.dataset.t));
+  if (b.dataset.t === 'tabMap') loadPlaces();
   if (b.dataset.t === 'tabReq') loadReq();
   if (b.dataset.t === 'tabVid') loadVid();
   if (b.dataset.t === 'tabFoto') loadAlbums();
+});
+
+// ---------- harta evenimentelor ----------
+let places = [];
+async function loadPlaces(){
+  const { data, error } = await sb.from('places').select('*').order('county').order('name');
+  if (error) { $('mList').innerHTML = `<div class="empty-l">Nu s-au putut încărca: ${TE.esc(error.message)}</div>`; return; }
+  places = data; renderPlaces();
+}
+function renderPlaces(){
+  const tot = places.reduce((s, p) => s + p.events, 0), jud = new Set(places.map(p => p.county)).size;
+  $('mList').innerHTML = `<h2 style="font-size:1.2rem;margin-top:10px">${places.length} localități · ${jud} județe · ${tot} evenimente</h2>` +
+    (places.length ? places.map(p => `<div class="pl"><div><h3>${TE.esc(p.name)}</h3><small>jud. ${TE.esc(p.county)}</small></div>
+      <div class="cnt"><button data-m="${p.id}" title="Mai puține">−</button><input data-e="${p.id}" type="number" min="1" value="${p.events}" inputmode="numeric"><button data-p="${p.id}" title="Mai multe">+</button><span>ev.</span></div>
+      <button class="ib del" data-pd="${p.id}" title="Scoate de pe hartă">${icoDel}</button></div>`).join('')
+      : '<div class="empty-l">Nicio localitate încă. Caută mai sus prima localitate.</div>');
+  const L = $('mList');
+  const setN = async (id, n) => { n = Math.max(1, Math.min(100000, parseInt(n, 10) || 1)); const p = places.find(x => x.id === id); if (p.events === n) return renderPlaces();
+    const { error } = await sb.from('places').update({ events: n }).eq('id', id); if (error) return alert(error.message); p.events = n; renderPlaces(); };
+  L.querySelectorAll('[data-m]').forEach(b => b.onclick = () => setN(b.dataset.m, places.find(x => x.id === b.dataset.m).events - 1));
+  L.querySelectorAll('[data-p]').forEach(b => b.onclick = () => setN(b.dataset.p, places.find(x => x.id === b.dataset.p).events + 1));
+  L.querySelectorAll('[data-e]').forEach(i => i.onchange = () => setN(i.dataset.e, i.value));
+  L.querySelectorAll('[data-pd]').forEach(b => b.onclick = async () => {
+    const p = places.find(x => x.id === b.dataset.pd); if (!confirm(`Scoți ${p.name} de pe hartă?`)) return;
+    const { error } = await sb.from('places').delete().eq('id', p.id); if (error) return alert(error.message);
+    places = places.filter(x => x.id !== p.id); renderPlaces(); toast('Scos de pe hartă ✓');
+  });
+}
+// căutare prin OpenStreetMap (Nominatim) – doar în România
+let mBusy = false;
+$('mForm').addEventListener('submit', async e => {
+  e.preventDefault(); const q = $('mQ').value.trim(); $('merr').textContent = '';
+  if (q.length < 2 || mBusy) return;
+  mBusy = true; $('mGo').disabled = true; $('mRes').innerHTML = '<div style="color:var(--muted);font-size:.9rem"><span class="spin"></span>Caut…</div>';
+  try {
+    const [map, res] = await Promise.all([TE.loadMap(), fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=ro&addressdetails=1&accept-language=ro&limit=10&q=' + encodeURIComponent(q)).then(r => r.json())]);
+    const okType = /^(city|town|village|hamlet|suburb|municipality|administrative|neighbourhood|quarter|locality|isolated_dwelling)$/;
+    const seen = new Set();
+    const list = res.filter(r => okType.test(r.addresstype || r.type)).map(r => {
+      const a = r.address || {}, name = r.name || a.city || a.town || a.village || a.hamlet || q;
+      const lat = +r.lat, lon = +r.lon, county = TE.countyAt(map, lat, lon);
+      const kind = { city: 'oraș', town: 'oraș', village: 'sat', hamlet: 'cătun', municipality: 'comună', suburb: 'cartier', neighbourhood: 'cartier', quarter: 'cartier' }[r.addresstype] || 'localitate';
+      return { name, lat, lon, county, kind, extra: a.municipality && a.municipality !== name ? 'com. ' + a.municipality : '' };
+    }).filter(x => { const k = TE.plain(x.name) + '|' + x.county; if (seen.has(k)) return false; seen.add(k); return true; });
+    if (!list.length) { $('mRes').innerHTML = '<div style="color:var(--muted);font-size:.9rem">N-am găsit nimic. Verifică scrierea sau adaugă și județul (ex. „Vădastra Olt”).</div>'; return; }
+    $('mRes').innerHTML = list.map((x, i) => {
+      const exists = places.some(p => TE.plain(p.name) === TE.plain(x.name) && p.county === x.county);
+      return `<button type="button" data-i="${i}"${exists ? ' disabled style="opacity:.5"' : ''}><span><b>${TE.esc(x.name)}</b> <small>${x.kind}${x.extra ? ' · ' + TE.esc(x.extra) : ''} · jud. ${TE.esc(x.county)}</small></span><span class="add">${exists ? 'e deja pe hartă' : '+ Adaugă'}</span></button>`;
+    }).join('');
+    $('mRes').querySelectorAll('[data-i]').forEach(b => b.onclick = async () => {
+      const x = list[+b.dataset.i], n = parseInt(prompt(`Câte evenimente ați avut în ${x.name}?`, '1'), 10);
+      if (!n || n < 1) return;
+      const { data, error } = await sb.from('places').insert({ name: x.name.slice(0, 80), county: x.county, lat: x.lat, lon: x.lon, events: Math.min(n, 100000) }).select().single();
+      if (error) { $('merr').textContent = /duplicate|unique/i.test(error.message) ? `${x.name} e deja pe hartă.` : 'Nu s-a adăugat: ' + error.message; return; }
+      places.push(data); places.sort((a, b) => a.county.localeCompare(b.county, 'ro') || a.name.localeCompare(b.name, 'ro'));
+      renderPlaces(); $('mRes').innerHTML = ''; $('mQ').value = ''; $('mQ').focus(); toast(`${x.name} adăugat pe hartă ✓`);
+    });
+  } catch (ex) { $('mRes').innerHTML = ''; $('merr').textContent = 'Căutarea nu a mers acum. Mai încearcă o dată peste câteva secunde.'; }
+  finally { setTimeout(() => { mBusy = false; $('mGo').disabled = false; }, 1100); } // max o căutare pe secundă (regula OpenStreetMap)
 });
 
 // ---------- galerie foto ----------
