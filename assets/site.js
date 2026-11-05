@@ -7,6 +7,24 @@ window.TE = {
   MONTHS: ['ianuarie','februarie','martie','aprilie','mai','iunie','iulie','august','septembrie','octombrie','noiembrie','decembrie'],
   DOW: ['Lun','Mar','Mie','Joi','Vin','Sâm','Dum'],
 
+  VCATS: ['Nuntă','Cununie civilă','Botez','Majorat','Corporate','Team building','Altele'],
+
+  // Recunoaște un link TikTok sau YouTube → { platform, id, short? }
+  parseVideo(url){
+    url = String(url || '').trim();
+    let m = url.match(/tiktok\.com\/(?:@[^/]+\/video|player\/v1|embed(?:\/v2)?|v)\/(\d{8,25})/i);
+    if (m) return { platform: 'tiktok', id: m[1] };
+    if (/(?:vm|vt)\.tiktok\.com\/|tiktok\.com\/t\//i.test(url)) return { platform: 'tiktok', short: true };
+    m = url.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/i);
+    if (m) return { platform: 'youtube', id: m[1], vertical: /shorts\//i.test(url) };
+    return null;
+  },
+  embedUrl(v){
+    return v.platform === 'tiktok'
+      ? `https://www.tiktok.com/player/v1/${v.video_id}?autoplay=1&music_info=1&description=0&rel=0&native_context_menu=0`
+      : `https://www.youtube-nocookie.com/embed/${v.video_id}?autoplay=1&rel=0&modestbranding=1`;
+  },
+
   iso(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); },
   nice(iso){ const [y,m,d] = iso.split('-').map(Number); return d + ' ' + TE.MONTHS[m-1] + ' ' + y; },
   esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); },
