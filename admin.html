@@ -222,6 +222,34 @@ main{padding:28px 0 80px}
       <button class="tab" data-t="tabVid">Galerie video</button>
       <button class="tab" data-t="tabFoto">Galerie foto</button>
       <button class="tab" data-t="tabMap">Harta</button>
+      <button class="tab" data-t="tabBtr">By The River</button>
+    </div>
+
+    <div id="tabBtr" class="hidden">
+      <div class="bar"><h1>By The <span class="gold">River</span></h1><a class="lnk" href="bytheriver.html" target="_blank" style="color:var(--gold2)">Vezi pagina publică ↗</a></div>
+      <form class="vadd" id="bForm">
+        <h2 id="bH" style="font-size:1.2rem;margin-bottom:14px">Ediție nouă</h2>
+        <div class="g2">
+          <div class="f"><label for="bDate">Data *</label><input id="bDate"></div>
+          <div class="f"><label for="bTime">Ora</label><input id="bTime" maxlength="20" placeholder="ex. 19:00 sau „de la apus”"></div>
+          <div class="f"><label for="bTitle">Titlu</label><input id="bTitle" maxlength="120" placeholder="ex. Ediția de vară"></div>
+          <div class="f"><label for="bLineup">Cine cântă</label><input id="bLineup" maxlength="300" placeholder="ex. DJ Ady · MC Cozmin"></div>
+          <div class="f"><label for="bCity">Localitate</label><input id="bCity" maxlength="80"></div>
+          <div class="f"><label for="bVenue">Locul</label><input id="bVenue" maxlength="120" placeholder="ex. Malul Oltului, la Ștrand"></div>
+        </div>
+        <div class="f"><label for="bDesc">Descriere</label><textarea id="bDesc" maxlength="2000" placeholder="Ce îi așteaptă pe oameni, intrare, ce să aducă…"></textarea></div>
+        <div class="g2">
+          <div class="f"><label for="bLink">Link (bilete / eveniment Facebook)</label><input id="bLink" maxlength="400" placeholder="https://…"></div>
+          <div class="f"><label>&nbsp;</label><label class="chk"><input type="checkbox" id="bPub" checked> Vizibilă pe site</label></div>
+        </div>
+        <div class="err" id="berr"></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-gold btn-sm" id="bSave">Adaugă ediția</button>
+          <button type="button" class="btn btn-ghost btn-sm hidden" id="bCancel">Renunță</button>
+        </div>
+        <p class="hint2" style="margin-top:12px">Pozele și clipurile de la By The River le adaugi în <b>Galerie foto</b> / <b>Galerie video</b>, cu categoria „By The River”. Apar automat pe pagină.</p>
+      </form>
+      <div class="list" id="bList"></div>
     </div>
 
     <div id="tabMap" class="hidden">
@@ -410,11 +438,60 @@ function show(logged){
 // ---------- tab-uri ----------
 document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
   document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === b));
-  ['tabCal','tabReq','tabVid','tabFoto','tabMap'].forEach(id => $(id).classList.toggle('hidden', id !== b.dataset.t));
+  ['tabCal','tabReq','tabVid','tabFoto','tabMap','tabBtr'].forEach(id => $(id).classList.toggle('hidden', id !== b.dataset.t));
+  if (b.dataset.t === 'tabBtr') loadBtr();
   if (b.dataset.t === 'tabMap') loadPlaces();
   if (b.dataset.t === 'tabReq') loadReq();
   if (b.dataset.t === 'tabVid') loadVid();
   if (b.dataset.t === 'tabFoto') loadAlbums();
+});
+
+// ---------- By The River: ediții ----------
+let btr = [], bEdit = null;
+const bdp = TE.datePicker($('bDate'));
+async function loadBtr(){
+  const { data, error } = await sb.from('btr_editions').select('*').order('date', { ascending: false });
+  if (error) { $('bList').innerHTML = `<div class="empty-l">Nu s-au putut încărca: ${TE.esc(error.message)}</div>`; return; }
+  btr = data; renderBtr();
+}
+function renderBtr(){
+  const today = TE.iso(new Date());
+  $('bList').innerHTML = `<h2 style="font-size:1.2rem;margin-top:10px">${btr.length} ediții</h2>` + (btr.length ? btr.map(e => `
+    <div class="ev${e.date < today ? '' : ' prov'}" style="${e.date < today ? 'opacity:.7' : 'border-style:solid;border-color:rgba(63,193,201,.6)'}">
+      <div class="dt">${TE.nice(e.date)}<small>${e.date < today ? 'trecută' : 'urmează'}${e.published ? '' : ' · ascunsă'}</small></div>
+      <div><h3>${TE.esc(e.title || 'By The River')}</h3>
+        <div class="meta">${[e.time && '🕖 ' + TE.esc(e.time), (e.venue || e.city) && '📍 ' + TE.esc([e.venue, e.city].filter(Boolean).join(', ')), e.lineup && '🎧 ' + TE.esc(e.lineup)].filter(Boolean).map(x => `<span>${x}</span>`).join('')}</div></div>
+      <div class="acts"><button class="ib" data-be="${e.id}" title="Modifică">${icoEdit}</button><button class="ib del" data-bd="${e.id}" title="Șterge">${icoDel}</button></div>
+    </div>`).join('') : '<div class="empty-l">Nicio ediție încă. Completează formularul de mai sus.</div>');
+  $('bList').querySelectorAll('[data-be]').forEach(b => b.onclick = () => bOpen(btr.find(x => x.id === b.dataset.be)));
+  $('bList').querySelectorAll('[data-bd]').forEach(b => b.onclick = async () => {
+    const e = btr.find(x => x.id === b.dataset.bd); if (!confirm(`Ștergi ediția din ${TE.nice(e.date)}?`)) return;
+    const { error } = await sb.from('btr_editions').delete().eq('id', e.id); if (error) return alert(error.message);
+    toast('Ediție ștearsă ✓'); if (bEdit?.id === e.id) bOpen(null); loadBtr();
+  });
+}
+function bOpen(e){
+  bEdit = e || null; $('berr').textContent = '';
+  $('bH').textContent = e ? 'Modifică ediția' : 'Ediție nouă'; $('bSave').textContent = e ? 'Salvează modificările' : 'Adaugă ediția';
+  $('bCancel').classList.toggle('hidden', !e);
+  bdp.set(e?.date || ''); $('bTime').value = e?.time || ''; $('bTitle').value = e?.title || ''; $('bLineup').value = e?.lineup || '';
+  $('bCity').value = e?.city || ''; $('bVenue').value = e?.venue || ''; $('bDesc').value = e?.description || ''; $('bLink').value = e?.link || '';
+  $('bPub').checked = e ? e.published : true;
+  if (e) $('bForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+$('bCancel').onclick = () => bOpen(null);
+$('bForm').addEventListener('submit', async ev => {
+  ev.preventDefault(); $('berr').textContent = '';
+  const link = $('bLink').value.trim();
+  const row = { date: bdp.get(), time: $('bTime').value.trim() || null, title: $('bTitle').value.trim() || null, lineup: $('bLineup').value.trim() || null,
+    city: $('bCity').value.trim() || null, venue: $('bVenue').value.trim() || null, description: $('bDesc').value.trim() || null,
+    link: link ? (/^https?:\/\//i.test(link) ? link : 'https://' + link) : null, published: $('bPub').checked };
+  if (!row.date) { $('berr').textContent = 'Scrie data corect: zz/ll/aaaa.'; $('bDate').focus(); return; }
+  $('bSave').disabled = true;
+  const q = bEdit ? sb.from('btr_editions').update(row).eq('id', bEdit.id) : sb.from('btr_editions').insert(row);
+  const { error } = await q; $('bSave').disabled = false;
+  if (error) { $('berr').textContent = 'Nu s-a salvat: ' + error.message; return; }
+  toast(bEdit ? 'Ediție modificată ✓' : 'Ediție adăugată ✓'); bOpen(null); loadBtr();
 });
 
 // ---------- harta evenimentelor ----------

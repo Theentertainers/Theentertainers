@@ -67,6 +67,7 @@
       <a href="index.html">Acasă</a>
       <a href="despre.html">Despre</a>
       <a href="cununie.html">Cununie civilă</a>
+      <a href="bytheriver.html">By The River</a>
       <a href="harta.html">Harta evenimentelor</a>
       <a href="calendar.html">Calendar</a>
       <a href="galerie-foto.html">Galerie foto</a>
@@ -178,6 +179,7 @@
           <li><a href="index.html">Acasă</a></li>
           <li><a href="despre.html">Despre noi</a></li>
           <li><a href="cununie.html">Actor cununie civilă</a></li>
+          <li><a href="bytheriver.html">By The River</a></li>
           <li><a href="harta.html">Harta evenimentelor</a></li>
           <li><a href="calendar.html">Calendar disponibilitate</a></li>
           <li><a href="galerie-foto.html">Galerie foto</a></li>
@@ -211,6 +213,11 @@ if (qd && /^\d{4}-\d{2}-\d{2}$/.test(qd) && qd >= today) dp.set(qd);
 if (new URLSearchParams(location.search).get('serviciu') === 'actor') {
   const a = document.querySelector('#svc input[value="Actor cununie civilă"]'); if (a) a.checked = true;
   $('type').value = 'Nuntă';
+}
+// venit de pe pagina By The River
+if (new URLSearchParams(location.search).get('serviciu') === 'btr') {
+  $('msg').value = 'Aș vrea o petrecere By The River (în aer liber). ';
+  ['DJ','Sonorizare','Lumini'].forEach(v => { const c = document.querySelector(`#svc input[value="${v}"]`); if (c) c.checked = true; });
 }
 
 // verificăm dacă data e liberă
