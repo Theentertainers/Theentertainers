@@ -83,6 +83,17 @@ main{padding:28px 0 80px}
 .toast{position:fixed;left:50%;bottom:24px;translate:-50% 0;z-index:90;padding:12px 20px;border-radius:999px;background:#1d1d22;border:1px solid var(--gold);color:var(--gold2);font-weight:600;font-size:.9rem;box-shadow:0 10px 30px -10px #000;transition:opacity .3s;opacity:0;pointer-events:none}
 .toast.show{opacity:1}
 
+/* culori eveniment */
+.sw{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sw button,.sw label.cu{position:relative;width:34px;height:34px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.15)}
+.sw button.on,.sw label.cu.on{border-color:#fff;box-shadow:0 0 0 2px var(--bg),0 0 0 4px rgba(255,255,255,.5)}
+.sw .none{background:var(--grad);font-size:0}
+.sw .none::after{content:"Auriu";position:absolute;top:100%;left:50%;translate:-50% 2px;font-size:.62rem;color:var(--muted);white-space:nowrap}
+.sw label.cu{display:grid;place-items:center;background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red)}
+.sw label.cu input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.sw label.cu span{width:16px;height:16px;border-radius:50%;background:#111;display:grid;place-items:center;color:#fff;font-size:.8rem;font-weight:700}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
+
 /* tab-uri + cereri */
 .tabs{display:flex;gap:6px;margin-bottom:22px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
@@ -334,6 +345,9 @@ main{padding:28px 0 80px}
         <label><input type="radio" name="st" value="provizoriu"> Provizoriu</label>
       </div>
     </div>
+    <div class="f"><label>Culoare în calendar <small style="font-weight:500;color:var(--muted)">(se vede și pe site)</small></label>
+      <div class="sw" id="fColors"></div>
+    </div>
     <div class="g2">
       <div class="f"><label for="fName">Nume client</label><input id="fName" maxlength="120"></div>
       <div class="f"><label for="fPhone">Telefon client</label><input id="fPhone" type="tel" maxlength="40"></div>
@@ -364,6 +378,19 @@ const now = new Date();
 let y = now.getFullYear(), m = now.getMonth(), events = [], editing = null;
 
 const fdp = TE.datePicker($('fDate'), { onChange: () => checkCap() });
+
+// alegerea culorii: auriu (fără culoare) + paletă + orice culoare
+let fColor = null;
+function renderColors(){
+  const custom = fColor && !TE.COLORS.includes(fColor.toLowerCase());
+  $('fColors').innerHTML = `<button type="button" class="none${!fColor ? ' on' : ''}" data-c="" title="Auriu (implicit)"></button>` +
+    TE.COLORS.map(c => `<button type="button" data-c="${c}" title="${c}" style="background:${c}"${fColor && fColor.toLowerCase() === c ? ' class="on"' : ''}></button>`).join('') +
+    `<label class="cu${custom ? ' on' : ''}" title="Altă culoare"${custom ? ` style="background:${fColor}"` : ''}><input type="color" id="fCustom" value="${fColor || '#d4af37'}"><span>+</span></label>`;
+  $('fColors').querySelectorAll('button').forEach(b => b.onclick = () => { fColor = b.dataset.c || null; renderColors(); });
+  // în timp ce tragi de selector doar colorăm butonul; redesenăm abia la final, ca să nu se închidă selectorul
+  $('fCustom').oninput = e => { fColor = e.target.value; const l = e.target.parentElement; l.style.background = fColor; $('fColors').querySelectorAll('.on').forEach(x => x.classList.remove('on')); l.classList.add('on'); };
+  $('fCustom').onchange = e => { fColor = e.target.value; renderColors(); };
+}
 TE.TYPES.forEach(t => $('fType').insertAdjacentHTML('beforeend', `<option>${t}</option>`));
 
 function toast(t){ const el = $('toast'); el.textContent = t; el.classList.add('show'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2400); }
@@ -797,7 +824,7 @@ function renderList(){
     ].filter(Boolean).map(x => `<span>${x}</span>`).join('');
     return `<div class="ev${e.status === 'provizoriu' ? ' prov' : ''}">
       <div class="dt">${d.getDate()} ${TE.MONTHS[d.getMonth()]}<small>${wd}</small></div>
-      <div><h3>${TE.esc(e.type)}<span class="tag ${e.status === 'provizoriu' ? 'p' : 'c'}">${e.status}</span></h3>
+      <div><h3>${TE.okColor(e.color) ? `<span class="dot" style="background:${e.color}"></span>` : ''}${TE.esc(e.type)}<span class="tag ${e.status === 'provizoriu' ? 'p' : 'c'}">${e.status}</span></h3>
         <div class="meta">${meta || '<span style="color:var(--muted)">Fără detalii</span>'}</div>
         ${e.notes ? `<div class="notes">${TE.esc(e.notes)}</div>` : ''}</div>
       <div class="acts"><button class="ib" data-e="${e.id}" title="Modifică">${icoEdit}</button><button class="ib del" data-x="${e.id}" title="Șterge">${icoDel}</button></div>
@@ -824,6 +851,7 @@ function openForm(ev, iso, dayEvents){
   $('fCity').value = ev?.city || ''; $('fVenue').value = ev?.venue || '';
   $('fPrice').value = ev?.price ?? ''; $('fDep').value = ev?.deposit ?? '';
   $('fNotes').value = ev?.notes || '';
+  fColor = TE.okColor(ev?.color) || null; renderColors();
   // evenimentele deja existente în acea zi
   const de = $('dayEv');
   if (!ev && dayEvents && dayEvents.length) {
@@ -863,7 +891,8 @@ $('form').addEventListener('submit', async e => {
     client_name: $('fName').value.trim() || null, client_phone: $('fPhone').value.trim() || null,
     city: $('fCity').value.trim() || null, venue: $('fVenue').value.trim() || null,
     price: num($('fPrice').value), deposit: num($('fDep').value),
-    notes: $('fNotes').value.trim() || null
+    notes: $('fNotes').value.trim() || null,
+    color: TE.okColor(fColor) || null
   };
   if (!row.date) { $('ferr').textContent = 'Scrie data corect: zz/ll/aaaa (ex. 14/06/2027).'; $('fDate').focus(); return; }
   if (row.price != null && row.deposit != null && row.deposit > row.price) { $('ferr').textContent = 'Avansul e mai mare decât prețul.'; return; }
