@@ -49,6 +49,11 @@
 .lb .x{top:16px;right:16px;width:46px;height:46px;font-size:1.4rem}
 .lb .nv{top:50%;translate:0 -50%;width:54px;height:54px;font-size:1.6rem}
 .lb .pv{left:16px}.lb .nx{right:16px}
+.pgrid button{position:relative}
+.pgrid .tb{position:absolute;right:8px;bottom:8px;padding:3px 9px;border-radius:999px;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);font-size:.75rem;font-weight:700;color:#fff;pointer-events:none}
+.lb .lbrx{position:absolute;bottom:58px;left:50%;translate:-50% 0;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);padding:8px;border-radius:999px;border:1px solid rgba(243,215,122,.25)}
+.lb .lbrx .rx{flex-wrap:nowrap}
+.lb img{max-height:calc(100vh - 160px)!important}
 .lb .ct2{position:absolute;bottom:18px;left:50%;translate:-50% 0;color:#cfcabe;font-size:.9rem;font-weight:600;background:rgba(0,0,0,.5);padding:6px 14px;border-radius:999px}
 @media (max-width:600px){ .lb .nv{width:44px;height:44px;font-size:1.3rem} .lb .pv{left:8px}.lb .nx{right:8px} .pgrid{columns:2 140px;column-gap:6px} .pgrid button{margin-bottom:6px;border-radius:8px} }
 </style>
@@ -100,6 +105,7 @@
   <button class="x" id="lbX" aria-label="Închide">✕</button>
   <button class="nv pv" id="lbP" aria-label="Poza anterioară">‹</button>
   <button class="nv nx" id="lbN" aria-label="Poza următoare">›</button>
+  <div class="lbrx" id="lbRx"></div>
   <span class="ct2" id="lbC"></span>
 </div>
 
@@ -146,7 +152,14 @@
 const $ = id => document.getElementById(id);
 const H = { apikey: TE.SUPABASE_KEY };
 const api = q => fetch(TE.SUPABASE_URL + '/rest/v1/' + q, { headers: H }).then(r => { if (!r.ok) throw r.status; return r.json(); });
-let albums = [], cat = 'Toate', photos = [], idx = 0;
+let albums = [], cat = 'Toate', photos = [], idx = 0, rx = {};
+const total = c => Object.values(c || {}).reduce((s, x) => s + x.n, 0);
+const tbHtml = id => { const t = total(rx[id]); return t ? `<span class="tb">❤️ ${t}</span>` : ''; };
+TE.reactInit((type, id, counts) => {
+  rx[id] = counts;
+  const b = document.querySelector(`.pgrid button[data-pid="${id}"]`);
+  if (b) { b.querySelector('.tb')?.remove(); b.insertAdjacentHTML('beforeend', tbHtml(id)); }
+});
 
 const metaHtml = a => [a.event_date && TE.nice(a.event_date), [a.venue, a.city].filter(Boolean).join(', ')].filter(Boolean).map(x => `<span>${TE.esc(x)}</span>`).join('');
 
@@ -176,10 +189,11 @@ async function openAlbum(id){
   $('pgrid').innerHTML = ''; $('msg').style.display = 'block'; $('msg').innerHTML = '<span class="spin"></span>Se încarcă pozele…';
   scrollTo({ top: $('album').offsetTop - 100, behavior: 'smooth' });
   try {
-    photos = await api(`photos?select=path,thumb,w,h&album_id=eq.${id}&order=sort.asc,created_at.asc`);
+    photos = await api(`photos?select=id,path,thumb,w,h&album_id=eq.${id}&order=sort.asc,created_at.asc`);
     $('msg').style.display = photos.length ? 'none' : 'block';
     if (!photos.length) $('msg').textContent = 'Albumul nu are încă poze.';
-    $('pgrid').innerHTML = photos.map((p, i) => `<button data-i="${i}" aria-label="Mărește poza ${i + 1}"><img src="${TE.photoUrl(p.thumb)}" alt="" loading="lazy"${p.w ? ` width="${p.w}" height="${p.h}"` : ''}></button>`).join('');
+    rx = await TE.reactLoad('photo', photos.map(p => p.id));
+    $('pgrid').innerHTML = photos.map((p, i) => `<button data-i="${i}" data-pid="${p.id}" aria-label="Mărește poza ${i + 1}"><img src="${TE.photoUrl(p.thumb)}" alt="" loading="lazy"${p.w ? ` width="${p.w}" height="${p.h}"` : ''}>${tbHtml(p.id)}</button>`).join('');
     $('pgrid').querySelectorAll('button').forEach(b => b.onclick = () => openLb(+b.dataset.i));
   } catch { $('msg').textContent = 'Pozele nu s-au putut încărca acum.'; }
 }
@@ -196,6 +210,7 @@ function showLb(){
   const p = photos[idx]; lbImg.style.opacity = .3;
   lbImg.onload = () => lbImg.style.opacity = 1; lbImg.src = TE.photoUrl(p.path);
   $('lbC').textContent = (idx + 1) + ' / ' + photos.length;
+  $('lbRx').innerHTML = TE.reactBar('photo', p.id, rx[p.id]);
   [photos[idx + 1], photos[idx - 1]].forEach(n => { if (n) new Image().src = TE.photoUrl(n.path); }); // preîncarcă vecinii
 }
 const step = d => { idx = (idx + d + photos.length) % photos.length; showLb(); };

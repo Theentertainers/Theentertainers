@@ -122,7 +122,8 @@
 const grid = document.getElementById('grid'), chips = document.getElementById('chips'), msg = document.getElementById('msg');
 const icoTT = '<svg viewBox="0 0 24 24"><path d="M16.5 2h-3.3v13.2a2.9 2.9 0 11-2.9-2.9c.3 0 .6 0 .9.1V9a6.3 6.3 0 106.3 6.3V8.6a7.7 7.7 0 004.5 1.4V6.7a4.6 4.6 0 01-4.5-4.7z"/></svg>';
 const icoYT = '<svg viewBox="0 0 24 24"><path d="M23 7.2a3 3 0 00-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 001 7.2 31 31 0 00.5 12a31 31 0 00.5 4.8 3 3 0 002.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 002.1-2.1 31 31 0 00.5-4.8 31 31 0 00-.5-4.8zM9.8 15.1V8.9l5.7 3.1z"/></svg>';
-let videos = [], cat = 'Toate';
+let videos = [], cat = 'Toate', rx = {};
+TE.reactInit((type, id, counts) => { rx[id] = counts; });
 
 function card(v){
   const yt = v.platform === 'youtube', vertical = !yt || /shorts\//i.test(v.url);
@@ -133,7 +134,8 @@ function card(v){
       ${thumb}<span class="src">${yt ? icoYT + 'YouTube' : icoTT + 'TikTok'}</span>
       <span class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
     </div>
-    <div class="vmeta">${v.title ? `<h3>${TE.esc(v.title)}</h3>` : ''}<span>${TE.esc(v.category)}</span></div>
+    <div class="vmeta">${v.title ? `<h3>${TE.esc(v.title)}</h3>` : ''}<span>${TE.esc(v.category)}</span>
+      <div style="margin-top:12px">${TE.reactBar('video', v.id, rx[v.id])}</div></div>
   </article>`;
 }
 function render(){
@@ -161,6 +163,7 @@ function renderChips(){
     const r = await fetch(TE.SUPABASE_URL + '/rest/v1/videos?select=*&order=sort.desc,created_at.desc', { headers: { apikey: TE.SUPABASE_KEY } });
     if (!r.ok) throw 0;
     videos = await r.json();
+    rx = await TE.reactLoad('video', videos.map(v => v.id));
     msg.style.display = videos.length ? 'none' : 'block';
     if (!videos.length) msg.textContent = 'În curând adăugăm clipuri. Până atunci, ne găsești pe TikTok.';
     renderChips(); render();
