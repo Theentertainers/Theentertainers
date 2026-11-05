@@ -97,6 +97,9 @@ window.TE = {
 
   photoUrl(path){ return TE.SUPABASE_URL + '/storage/v1/object/public/photos/' + path; },
 
+  okColor(c){ return /^#[0-9a-fA-F]{6}$/.test(c || '') ? c : ''; },
+  COLORS: ['#e5484d','#f76b15','#ffc53d','#46a758','#12a594','#0090ff','#3e63dd','#8e4ec6','#d6409f','#8d8d8d'],
+
   iso(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); },
   nice(iso){ const [y,m,d] = iso.split('-').map(Number); return d + ' ' + TE.MONTHS[m-1] + ' ' + y; },
   esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); },
@@ -179,9 +182,13 @@ window.TE = {
       if (iso === today) cls += ' today';
       const chips = ev.map(e => {
         const label = opts.admin ? (e.type + (e.city ? ' · ' + e.city : '')) : e.type;
-        return `<span class="chip${e.status === 'provizoriu' ? ' prov' : ''}" title="${TE.esc(label)}">${TE.esc(label)}</span>`;
+        const col = TE.okColor(e.color);
+        return `<span class="chip${e.status === 'provizoriu' ? ' prov' : ''}${col ? ' hc' : ''}"${col ? ` style="--ec:${col}"` : ''} title="${TE.esc(label)}">${TE.esc(label)}</span>`;
       }).join('');
-      h += `<div class="${cls}" data-d="${iso}" role="button" tabindex="0" aria-label="${TE.nice(iso)}: ${st || 'trecut'}"><span class="n">${d}</span>${chips}<span class="st">${st}</span></div>`;
+      // culoarea aleasă în admin pentru eveniment colorează toată ziua
+      const dc = ev.map(e => TE.okColor(e.color)).find(Boolean);
+      if (dc) cls += ' hc';
+      h += `<div class="${cls}"${dc ? ` style="--ec:${dc}"` : ''} data-d="${iso}" role="button" tabindex="0" aria-label="${TE.nice(iso)}: ${st || 'trecut'}"><span class="n">${d}</span>${chips}<span class="st">${st}</span></div>`;
     }
     el.innerHTML = h;
     if (opts.onDay) el.querySelectorAll('.day[data-d]').forEach(c => {

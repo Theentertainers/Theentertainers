@@ -99,6 +99,11 @@ footer{border-top:1px solid var(--line);background:#08080a;padding:60px 0 30px}
 .day.full .st{color:#ffe9a6}
 .chip{display:block;font-size:.7rem;font-weight:600;line-height:1.25;padding:3px 7px;border-radius:7px;background:rgba(212,175,55,.18);color:#f6e3a1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chip.prov{background:transparent;border:1px dashed rgba(243,215,122,.7);color:#e8d9a8}
+/* zi / eveniment cu culoarea aleasă în admin */
+.day.hc{background:linear-gradient(160deg,color-mix(in srgb,var(--ec) 42%,#111114),color-mix(in srgb,var(--ec) 14%,#111114));border-color:var(--ec)}
+.day.hc .st{color:#fff}
+.chip.hc{background:color-mix(in srgb,var(--ec) 55%,#111114);color:#fff}
+.chip.hc.prov{background:transparent;border-color:var(--ec)}
 .legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:18px;font-size:.85rem;color:var(--muted)}
 .legend span{display:inline-flex;align-items:center;gap:8px}
 .legend i{width:16px;height:16px;border-radius:5px;display:inline-block;border:1px solid var(--line);background:#111114}
