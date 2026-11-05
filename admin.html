@@ -83,6 +83,28 @@ main{padding:28px 0 80px}
 .toast{position:fixed;left:50%;bottom:24px;translate:-50% 0;z-index:90;padding:12px 20px;border-radius:999px;background:#1d1d22;border:1px solid var(--gold);color:var(--gold2);font-weight:600;font-size:.9rem;box-shadow:0 10px 30px -10px #000;transition:opacity .3s;opacity:0;pointer-events:none}
 .toast.show{opacity:1}
 
+/* tab-uri + cereri */
+.tabs{display:flex;gap:6px;margin-bottom:22px;border-bottom:1px solid var(--line)}
+.tab{padding:12px 18px;border:0;background:none;color:var(--muted);font-weight:600;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.on{color:var(--gold2);border-bottom-color:var(--gold)}
+.badge{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:#e5484d;color:#fff;font-size:.75rem;margin-left:6px}
+.flt{padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:#0e0e11}
+.rq{padding:18px 20px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
+.rq.new{border-color:rgba(212,175,55,.6);box-shadow:0 0 0 1px rgba(212,175,55,.25)}
+.rq-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.rq-h h3{font-family:Montserrat,sans-serif;font-size:1.05rem}
+.rq-h h3 span{color:var(--gold2)}
+.rq .when{font-size:.78rem;color:var(--muted)}
+.rq .meta{color:#cfcabe;font-size:.9rem;display:flex;flex-wrap:wrap;gap:4px 16px}
+.rq .meta a{color:var(--gold2)}
+.rq .msg{color:var(--muted);font-size:.88rem;margin-top:8px;white-space:pre-wrap}
+.rq .busy{color:#ffb38f;font-size:.85rem;font-weight:600;margin-top:8px}
+.rq-a{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.rq-a select{padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:#0e0e11;font-size:.88rem}
+.tag.n{background:rgba(229,72,77,.15);color:#ff9b9b}
+.tag.k{background:rgba(120,160,255,.14);color:#a9c1ff}
+.tag.r{background:rgba(255,255,255,.06);color:var(--muted)}
+
 @media (max-width:760px){
   .sum{grid-template-columns:1fr 1fr}
   .ev{grid-template-columns:1fr;gap:8px}
@@ -119,6 +141,26 @@ main{padding:28px 0 80px}
 
   <!-- APLICAȚIA -->
   <div class="hidden" id="app">
+    <div class="tabs">
+      <button class="tab on" data-t="tabCal">Calendar</button>
+      <button class="tab" data-t="tabReq">Cereri de rezervare <span class="badge hidden" id="badge"></span></button>
+    </div>
+
+    <div id="tabReq" class="hidden">
+      <div class="bar">
+        <h1>Cereri de <span class="gold">rezervare</span></h1>
+        <select id="reqFilter" class="flt">
+          <option value="active">Noi + contactate</option>
+          <option value="all">Toate</option>
+          <option value="nouă">Doar noi</option>
+          <option value="confirmat">Confirmate</option>
+          <option value="respins">Respinse</option>
+        </select>
+      </div>
+      <div class="list" id="reqList" style="margin-top:0"></div>
+    </div>
+
+    <div id="tabCal">
     <div class="bar">
       <h1>Calendar <span class="gold">evenimente</span></h1>
       <button class="btn btn-gold btn-sm" id="addBtn">+ Adaugă eveniment</button>
@@ -139,6 +181,7 @@ main{padding:28px 0 80px}
     </div>
     <div class="sum" id="sum"></div>
     <div class="list" id="list"></div>
+    </div>
   </div>
 </main>
 
@@ -201,7 +244,82 @@ function show(logged){
   $('loginBox').classList.toggle('hidden', logged);
   $('app').classList.toggle('hidden', !logged);
   $('logout').classList.toggle('hidden', !logged);
-  if (logged) draw(); else $('pw').focus();
+  if (logged) { draw(); loadReq(); } else $('pw').focus();
+}
+
+// ---------- tab-uri ----------
+document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === b));
+  ['tabCal','tabReq'].forEach(id => $(id).classList.toggle('hidden', id !== b.dataset.t));
+  if (b.dataset.t === 'tabReq') loadReq();
+});
+
+// ---------- cereri de rezervare ----------
+let reqs = [], fromReq = null;
+const ST = { 'nouă':'n', 'contactat':'k', 'confirmat':'c', 'respins':'r' };
+async function loadReq(){
+  const { data, error } = await sb.from('requests').select('*').order('created_at', { ascending: false }).limit(300);
+  if (error) { $('reqList').innerHTML = `<div class="empty-l">Cererile nu s-au putut încărca: ${TE.esc(error.message)}</div>`; return; }
+  reqs = data;
+  const n = reqs.filter(r => r.status === 'nouă').length;
+  $('badge').textContent = n; $('badge').classList.toggle('hidden', !n);
+  // ce date din cereri sunt deja ocupate
+  const dates = [...new Set(reqs.map(r => r.event_date))];
+  const taken = new Set();
+  if (dates.length) { const { data: ev } = await sb.from('events').select('date').in('date', dates); (ev || []).forEach(e => taken.add(e.date)); }
+  renderReq(taken);
+}
+$('reqFilter').onchange = () => loadReq();
+function renderReq(taken){
+  const f = $('reqFilter').value;
+  const list = reqs.filter(r => f === 'all' ? true : f === 'active' ? (r.status === 'nouă' || r.status === 'contactat') : r.status === f);
+  if (!list.length) { $('reqList').innerHTML = '<div class="empty-l">Nicio cerere aici.</div>'; return; }
+  $('reqList').innerHTML = list.map(r => {
+    const when = new Date(r.created_at).toLocaleString('ro-RO', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+    const meta = [
+      `📞 <a href="tel:${TE.esc(r.phone)}">${TE.esc(r.phone)}</a>`,
+      r.email && `✉️ <a href="mailto:${TE.esc(r.email)}">${TE.esc(r.email)}</a>`,
+      (r.city || r.venue) && `📍 ${TE.esc([r.venue, r.city].filter(Boolean).join(', '))}`,
+      r.guests && `👥 ~${r.guests} invitați`,
+      r.services?.length && `🎛 ${TE.esc(r.services.join(', '))}`
+    ].filter(Boolean).map(x => `<span>${x}</span>`).join('');
+    const wa = 'https://wa.me/' + r.phone.replace(/^\+/, '').replace(/^0/, '40');
+    const isBusy = taken.has(r.event_date) && !r.event_id;
+    return `<div class="rq${r.status === 'nouă' ? ' new' : ''}">
+      <div class="rq-h"><h3>${TE.esc(r.type)} · <span>${TE.nice(r.event_date)}</span> · ${TE.esc(r.name)}<span class="tag ${ST[r.status]}">${r.status}</span></h3><span class="when">primită ${when}</span></div>
+      <div class="meta">${meta}</div>
+      ${r.message ? `<div class="msg">${TE.esc(r.message)}</div>` : ''}
+      ${isBusy ? '<div class="busy">⚠ Data e deja ocupată în calendar.</div>' : ''}
+      <div class="rq-a">
+        <select data-s="${r.id}">${Object.keys(ST).map(s => `<option${s === r.status ? ' selected' : ''}>${s}</option>`).join('')}</select>
+        <a class="btn btn-ghost btn-sm" href="tel:${TE.esc(r.phone)}">Sună</a>
+        <a class="btn btn-ghost btn-sm" href="${wa}" target="_blank" rel="noopener">WhatsApp</a>
+        ${r.event_id ? '<span style="color:#7fcf9a;font-size:.85rem;font-weight:600">✓ e în calendar</span>' : `<button class="btn btn-gold btn-sm" data-c="${r.id}"${isBusy ? ' disabled' : ''}>Trece în calendar</button>`}
+        <button class="ib del" data-x="${r.id}" title="Șterge cererea" style="margin-left:auto">${icoDel}</button>
+      </div></div>`;
+  }).join('');
+  $('reqList').querySelectorAll('[data-s]').forEach(s => s.onchange = async () => {
+    const { error } = await sb.from('requests').update({ status: s.value }).eq('id', s.dataset.s);
+    if (error) alert('Nu s-a salvat: ' + error.message); else { toast('Statut schimbat ✓'); loadReq(); }
+  });
+  $('reqList').querySelectorAll('[data-c]').forEach(b => b.onclick = () => toCalendar(reqs.find(r => r.id === b.dataset.c)));
+  $('reqList').querySelectorAll('[data-x]').forEach(b => b.onclick = async () => {
+    const r = reqs.find(x => x.id === b.dataset.x);
+    if (!confirm(`Ștergi cererea lui ${r.name} (${TE.nice(r.event_date)})?`)) return;
+    const { error } = await sb.from('requests').delete().eq('id', r.id);
+    if (error) alert('Nu s-a șters: ' + error.message); else { toast('Cerere ștearsă ✓'); loadReq(); }
+  });
+}
+// deschide formularul de eveniment completat cu datele din cerere
+function toCalendar(r){
+  const d = new Date(r.event_date + 'T12:00'); y = d.getFullYear(); m = d.getMonth();
+  openForm(null, r.event_date);
+  fromReq = r.id;
+  $('fType').value = TE.TYPES.includes(r.type) ? r.type : 'Altul';
+  document.querySelector('input[name=st][value=provizoriu]').checked = true;
+  $('fName').value = r.name; $('fPhone').value = r.phone;
+  $('fCity').value = r.city || ''; $('fVenue').value = r.venue || '';
+  $('fNotes').value = [r.guests && `~${r.guests} invitați`, r.services?.length && 'Servicii: ' + r.services.join(', '), r.email && 'Email: ' + r.email, r.message].filter(Boolean).join('\n');
 }
 $('loginBox').addEventListener('submit', async e => {
   e.preventDefault();
@@ -275,7 +393,7 @@ function openDay(iso, dayEvents){
   if (dayEvents.length) openForm(dayEvents[0]); else openForm(null, iso);
 }
 function openForm(ev, iso, dayEvents){
-  editing = ev || null;
+  editing = ev || null; fromReq = null;
   $('ferr').textContent = '';
   $('fTitle').textContent = ev ? 'Modifică evenimentul' : 'Eveniment nou';
   $('fDel').classList.toggle('hidden', !ev);
@@ -312,7 +430,7 @@ function checkCap(){
   return busy;
 }
 $('fDate').addEventListener('change', checkCap);
-const close = () => { $('modal').classList.add('hidden'); editing = null; };
+const close = () => { $('modal').classList.add('hidden'); editing = null; fromReq = null; };
 $('fCancel').onclick = close;
 $('modal').addEventListener('click', e => { if (e.target.id === 'modal') close(); });
 addEventListener('keydown', e => { if (e.key === 'Escape' && !$('modal').classList.contains('hidden')) close(); });
@@ -335,10 +453,15 @@ $('form').addEventListener('submit', async e => {
   const { count } = await dq;
   if (count >= TE.CAPACITY) { $('ferr').textContent = `În ${TE.nice(row.date)} există deja un eveniment.`; return; }
   $('fSave').disabled = true;
-  const q = editing ? sb.from('events').update(row).eq('id', editing.id) : sb.from('events').insert(row);
-  const { error } = await q;
+  const q = editing ? sb.from('events').update(row).eq('id', editing.id) : sb.from('events').insert(row).select('id').single();
+  const { data: saved, error } = await q;
   $('fSave').disabled = false;
   if (error) { $('ferr').textContent = 'Nu s-a salvat: ' + error.message; return; }
+  // evenimentul a venit dintr-o cerere: legăm cererea de el
+  if (!editing && fromReq && saved) {
+    await sb.from('requests').update({ event_id: saved.id, status: row.status === 'confirmat' ? 'confirmat' : 'contactat' }).eq('id', fromReq);
+    loadReq();
+  }
   const wasEdit = !!editing;
   close(); toast(wasEdit ? 'Modificat ✓' : 'Eveniment adăugat ✓');
   const d = new Date(row.date + 'T12:00'); y = d.getFullYear(); m = d.getMonth();

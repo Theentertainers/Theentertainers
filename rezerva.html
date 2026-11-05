@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rezervă data – The Entertainers</title>
+<meta name="description" content="Rezervă-ți data pentru nuntă, botez, majorat sau eveniment corporate cu The Entertainers: DJ, MC, sonorizare și lumini profesionale.">
+<meta property="og:title" content="Rezervă data – The Entertainers">
+<meta property="og:description" content="Trimite-ne o cerere în mai puțin de un minut. Te sunăm noi pentru detalii.">
+<meta property="og:image" content="assets/logo-gold.png">
+<meta name="theme-color" content="#0b0b0c">
+<link rel="icon" href="assets/mic-gold.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+.lay{display:grid;grid-template-columns:1.6fr 1fr;gap:24px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:30px 28px;box-shadow:0 30px 60px -30px #000}
+.card h2{font-size:1.5rem;margin-bottom:6px}
+.card .sub{color:var(--muted);font-size:.9rem;margin-bottom:22px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;align-items:start}
+.f{display:grid;gap:6px;margin-bottom:16px}
+.f label,.lbl{font-size:.82rem;font-weight:600;color:#cfcabe;letter-spacing:.3px}
+.f label i,.lbl i{color:var(--gold2);font-style:normal}
+.f input,.f select,.f textarea{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:#0e0e11;outline:none;transition:border-color .2s}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--gold)}
+.f textarea{min-height:96px;resize:vertical}
+.f select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--gold2) 50%),linear-gradient(135deg,var(--gold2) 50%,transparent 50%);background-position:calc(100% - 20px) 55%,calc(100% - 15px) 55%;background-size:5px 5px;background-repeat:no-repeat}
+.dnote{font-size:.85rem;font-weight:600;min-height:1.3em}
+.dnote.ok{color:#7fcf9a}.dnote.busy{color:#ffb38f}.dnote.info{color:var(--gold2)}
+.svc{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 18px}
+.svc label{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:#0e0e11;cursor:pointer;font-size:.88rem;font-weight:500;color:#d6d2c6;transition:border-color .2s,background .2s,color .2s;user-select:none}
+.svc input{accent-color:var(--gold);width:16px;height:16px}
+.svc label:has(input:checked){border-color:var(--gold);background:rgba(212,175,55,.1);color:var(--gold2)}
+.agree{display:flex;gap:10px;align-items:flex-start;font-size:.85rem;color:var(--muted);margin:4px 0 18px;cursor:pointer}
+.agree input{accent-color:var(--gold);width:18px;height:18px;margin-top:2px;flex:none}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+.btns .btn{flex:1 1 220px}
+.btn-wa{background:#25d366;color:#fff;box-shadow:0 8px 28px -8px rgba(37,211,102,.55)}
+.btn-wa:hover{transform:translateY(-2px)}
+.btn-wa svg{width:20px;height:20px;fill:#fff}
+.err{color:#ff9b9b;font-size:.9rem;min-height:1.3em;margin-bottom:10px}
+.done{text-align:center;padding:40px 20px}
+.done .ok-ico{width:84px;height:84px;margin:0 auto 18px;border-radius:50%;display:grid;place-items:center;background:var(--grad);box-shadow:0 14px 40px -10px rgba(212,175,55,.6)}
+.done .ok-ico svg{width:40px;height:40px;stroke:#1a1405;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.done h2{font-size:1.8rem;margin-bottom:10px}
+.done p{color:#d6d2c6;max-width:440px;margin:0 auto 22px}
+.side .card{padding:26px 24px}
+.steps{list-style:none;display:grid;gap:16px;counter-reset:s}
+.steps li{display:flex;gap:14px;align-items:flex-start;color:#d6d2c6;font-size:.93rem}
+.steps li::before{counter-increment:s;content:counter(s);flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#1a1405;background:var(--grad)}
+.steps b{display:block;color:var(--text)}
+.side .ct{padding:10px 0;border-bottom:1px solid var(--line);font-size:.95rem}
+.side .ct:last-child{border-bottom:0}
+@media (max-width:960px){ .lay{grid-template-columns:1fr} }
+@media (max-width:600px){ .g2{grid-template-columns:1fr} .card{padding:24px 18px} }
+</style>
+</head>
+<body>
+
+<header class="hdr" id="hdr">
+  <div class="wrap">
+    <a href="index.html" class="brand"><img src="assets/logo-gold.png" alt="The Entertainers"></a>
+    <nav class="nav" id="nav">
+      <a href="index.html">Acasă</a>
+      <a href="despre.html">Despre</a>
+      <a href="calendar.html">Calendar</a>
+      <a href="galerie-foto.html">Galerie foto</a>
+      <a href="galerie-video.html">Galerie video</a>
+      <a href="rezerva.html" class="btn btn-gold">Rezervă data</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Meniu" aria-expanded="false">☰</button>
+  </div>
+</header>
+
+<section class="phead">
+  <div class="wrap">
+    <span class="kicker">Rezervă data</span>
+    <h1>Hai să facem <span class="gold">o petrecere</span></h1>
+    <p class="lead">Completează formularul în mai puțin de un minut. Te sunăm noi pentru detalii și o ofertă pe măsura evenimentului tău.</p>
+  </div>
+</section>
+
+<section style="padding:0 0 90px">
+  <div class="wrap lay">
+
+    <div class="card rv" id="formCard">
+      <form id="form" novalidate>
+        <h2>Detaliile evenimentului</h2>
+        <p class="sub">Câmpurile cu <span style="color:var(--gold2)">*</span> sunt obligatorii.</p>
+
+        <div class="g2">
+          <div class="f"><label for="date">Data evenimentului <i>*</i></label><input id="date" type="date" required><span class="dnote" id="dnote"></span></div>
+          <div class="f"><label for="type">Tip eveniment <i>*</i></label>
+            <select id="type" required><option value="">Alege…</option><option>Nuntă</option><option>Cununie</option><option>Botez</option><option>Majorat</option><option>Corporate</option><option>Team building</option><option>Altul</option></select></div>
+          <div class="f"><label for="city">Localitate</label><input id="city" maxlength="80" placeholder="ex. Slatina"></div>
+          <div class="f"><label for="venue">Locație (restaurant, sală)</label><input id="venue" maxlength="120" placeholder="ex. Restaurant …"></div>
+          <div class="f"><label for="guests">Număr aproximativ de invitați</label><input id="guests" type="number" min="1" max="5000" inputmode="numeric" placeholder="ex. 150"></div>
+        </div>
+
+        <span class="lbl">Ce servicii dorești?</span>
+        <div class="svc" id="svc">
+          <label><input type="checkbox" value="Sonorizare"> Sonorizare</label>
+          <label><input type="checkbox" value="Lumini"> Lumini</label>
+          <label><input type="checkbox" value="DJ"> DJ</label>
+          <label><input type="checkbox" value="MC"> MC</label>
+          <label><input type="checkbox" value="Entertainer"> Entertainer</label>
+          <label><input type="checkbox" value="Prezentare spectacole"> Prezentare spectacole</label>
+          <label><input type="checkbox" value="Efecte speciale"> Efecte speciale</label>
+        </div>
+
+        <h2 style="font-size:1.25rem;margin:6px 0 16px">Datele tale de contact</h2>
+        <div class="g2">
+          <div class="f"><label for="name">Nume și prenume <i>*</i></label><input id="name" autocomplete="name" maxlength="120" required></div>
+          <div class="f"><label for="phone">Telefon <i>*</i></label><input id="phone" type="tel" autocomplete="tel" maxlength="20" required placeholder="07xx xxx xxx"></div>
+        </div>
+        <div class="f"><label for="email">Email</label><input id="email" type="email" autocomplete="email" maxlength="160"></div>
+        <div class="f"><label for="msg">Mesaj (opțional)</label><textarea id="msg" maxlength="2000" placeholder="Orice detaliu ne ajută: ora de început, momente speciale, preferințe muzicale…"></textarea></div>
+        <div class="hp" aria-hidden="true"><label>Site <input id="site" tabindex="-1" autocomplete="off"></label></div>
+
+        <label class="agree"><input type="checkbox" id="agree"> <span>Sunt de acord ca The Entertainers să folosească aceste date doar pentru a mă contacta în legătură cu evenimentul meu.</span></label>
+
+        <div class="err" id="err" role="alert"></div>
+        <div class="btns">
+          <button class="btn btn-gold" id="send">Trimite cererea</button>
+          <button type="button" class="btn btn-wa" id="wa"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.6 15l-1.4 5 5.2-1.4A10 10 0 1012 2zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.6-1.2-3s.8-2.2 1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.6 2.1 1.1 1 2.1 1.3 2.4 1.4.3.2.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.7-.1 1.3z"/></svg>Trimite pe WhatsApp</button>
+        </div>
+      </form>
+
+      <div class="done hidden" id="done" style="display:none">
+        <div class="ok-ico"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <h2>Mulțumim, <span class="gold" id="doneName"></span>!</h2>
+        <p id="doneTxt">Am primit cererea ta. Te sunăm în cel mai scurt timp pentru detalii.</p>
+        <div class="cta">
+          <a class="btn btn-ghost" href="index.html">Înapoi acasă</a>
+          <a class="btn btn-wa" id="doneWa" target="_blank" rel="noopener">Scrie-ne și pe WhatsApp</a>
+        </div>
+      </div>
+    </div>
+
+    <aside class="side">
+      <div class="card rv" style="margin-bottom:20px">
+        <h2 style="font-size:1.3rem;margin-bottom:18px">Cum funcționează</h2>
+        <ol class="steps">
+          <li><span><b>Trimiți cererea</b>Prin formular sau pe WhatsApp, cum îți e mai simplu.</span></li>
+          <li><span><b>Te sunăm noi</b>Discutăm despre eveniment și îți facem o ofertă.</span></li>
+          <li><span><b>Blocăm data</b>După confirmare, data ta apare ocupată în calendar.</span></li>
+        </ol>
+      </div>
+      <div class="card rv">
+        <h2 style="font-size:1.3rem;margin-bottom:10px">Preferi să vorbim?</h2>
+        <a class="ct" href="tel:+40727292171"><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15 15 0 006.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 013 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>0727 292 171</a>
+        <a class="ct" href="mailto:bacanucozmin@yahoo.com"><svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 00-2 2v12c0 1.1.9 2 2 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4l-8 5-8-5V6l8 5 8-5z"/></svg>bacanucozmin@yahoo.com</a>
+        <a class="ct" href="calendar.html"><svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 16H5V9h14v11z"/></svg>Vezi calendarul cu datele libere</a>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="ft">
+      <div>
+        <a href="index.html" class="brand"><img src="assets/logo-gold.png" alt="The Entertainers" style="height:56px"></a>
+        <p style="margin-top:14px;max-width:340px">We love to entertain you! DJ, MC, sonorizare și lumini profesionale pentru evenimente, din 2005. Din Slatina, Olt, în toată țara.</p>
+        <div class="soc">
+          <a href="https://www.facebook.com/bacanucozmin" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M14 9V7c0-.9.6-1 1-1h2V2h-3c-3.3 0-4 2.4-4 4v3H8v4h2v9h4v-9h3l.5-4z"/></svg></a>
+          <a href="https://www.tiktok.com/@cozminbacanu" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M16.5 2h-3.3v13.2a2.9 2.9 0 11-2.9-2.9c.3 0 .6 0 .9.1V9a6.3 6.3 0 106.3 6.3V8.6a7.7 7.7 0 004.5 1.4V6.7a4.6 4.6 0 01-4.5-4.7z"/></svg></a>
+          <a href="https://wa.me/40727292171" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.6 15l-1.4 5 5.2-1.4A10 10 0 1012 2zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.6-1.2-3s.8-2.2 1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.6 2.1 1.1 1 2.1 1.3 2.4 1.4.3.2.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.7-.1 1.3z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4>Pagini</h4>
+        <ul>
+          <li><a href="index.html">Acasă</a></li>
+          <li><a href="despre.html">Despre noi</a></li>
+          <li><a href="calendar.html">Calendar disponibilitate</a></li>
+          <li><a href="galerie-foto.html">Galerie foto</a></li>
+          <li><a href="galerie-video.html">Galerie video</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a class="ct" href="tel:+40727292171"><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15 15 0 006.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 013 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>0727 292 171</a></li>
+          <li><a class="ct" href="mailto:bacanucozmin@yahoo.com"><svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 00-2 2v12c0 1.1.9 2 2 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4l-8 5-8-5V6l8 5 8-5z"/></svg>bacanucozmin@yahoo.com</a></li>
+          <li class="ct"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 00-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 00-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg>Slatina, Olt · în toată țara</li>
+        </ul>
+      </div>
+    </div>
+    <div class="copy">© <span id="yr">2026</span> The Entertainers · Băcanu Cozmin · We love to entertain you!</div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const t0 = Date.now();
+const today = TE.iso(new Date());
+$('date').min = today;
+
+// data venită din calendar (rezerva.html?data=2027-06-14)
+const qd = new URLSearchParams(location.search).get('data');
+if (qd && /^\d{4}-\d{2}-\d{2}$/.test(qd) && qd >= today) $('date').value = qd;
+
+// verificăm dacă data e liberă
+let busy = false;
+async function checkDate(){
+  const d = $('date').value, n = $('dnote');
+  busy = false;
+  if (!d) { n.textContent = ''; return; }
+  const words = new Date(d + 'T12:00').toLocaleDateString('ro-RO', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  if (d < today) { n.className = 'dnote busy'; n.textContent = 'Data a trecut.'; return; }
+  n.className = 'dnote info'; n.textContent = words + ' · verific…';
+  try {
+    const r = await fetch(TE.SUPABASE_URL + '/rest/v1/rpc/public_calendar', { method:'POST', headers:{ apikey: TE.SUPABASE_KEY, 'Content-Type':'application/json' }, body: JSON.stringify({ from_date: d, to_date: d }) });
+    const ev = r.ok ? await r.json() : [];
+    if (d !== $('date').value) return;
+    busy = ev.length >= TE.CAPACITY;
+    n.className = 'dnote ' + (busy ? 'busy' : 'ok');
+    n.textContent = words + (busy ? ' · din păcate e ocupată. Sună-ne, poate găsim o soluție.' : ' · e liberă ✓');
+  } catch { n.className = 'dnote info'; n.textContent = words; }
+}
+$('date').addEventListener('change', checkDate);
+checkDate();
+
+function data(){
+  return {
+    name: $('name').value.trim(), phone: $('phone').value.trim(), email: $('email').value.trim(),
+    date: $('date').value, type: $('type').value, city: $('city').value.trim(), venue: $('venue').value.trim(),
+    guests: $('guests').value ? parseInt($('guests').value, 10) : null,
+    services: [...document.querySelectorAll('#svc input:checked')].map(i => i.value),
+    msg: $('msg').value.trim()
+  };
+}
+function validate(d, full){
+  const bad = id => { $(id).focus(); return false; };
+  const say = (t, id) => { $('err').textContent = t; return bad(id); };
+  if (!d.date) return say('Alege data evenimentului.', 'date');
+  if (d.date < today) return say('Data a trecut. Alege o dată viitoare.', 'date');
+  if (!d.type) return say('Alege tipul evenimentului.', 'type');
+  if (!full) return true;
+  if (d.name.length < 2) return say('Scrie-ne numele tău.', 'name');
+  if (d.phone.replace(/[^0-9]/g, '').length < 9) return say('Scrie un număr de telefon valid, ca să te putem suna.', 'phone');
+  if (d.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) return say('Adresa de email nu pare corectă.', 'email');
+  if (!$('agree').checked) return say('Bifează acordul pentru folosirea datelor.', 'agree');
+  return true;
+}
+function waText(d){
+  const L = ['Bună ziua! Aș dori o ofertă pentru un eveniment:'];
+  if (d.type) L.push('• Eveniment: ' + d.type);
+  if (d.date) L.push('• Data: ' + TE.nice(d.date));
+  if (d.city || d.venue) L.push('• Locație: ' + [d.venue, d.city].filter(Boolean).join(', '));
+  if (d.guests) L.push('• Invitați: ~' + d.guests);
+  if (d.services.length) L.push('• Servicii: ' + d.services.join(', '));
+  if (d.msg) L.push('• Mesaj: ' + d.msg);
+  if (d.name) L.push('', 'Mă numesc ' + d.name + (d.phone ? ', telefon ' + d.phone : '') + '.');
+  return 'https://wa.me/40727292171?text=' + encodeURIComponent(L.join('\n'));
+}
+
+$('wa').onclick = () => {
+  $('err').textContent = '';
+  const d = data();
+  if (!validate(d, false)) return;
+  window.open(waText(d), '_blank', 'noopener');
+};
+
+$('form').addEventListener('submit', async e => {
+  e.preventDefault();
+  $('err').textContent = '';
+  const d = data();
+  if (!validate(d, true)) return;
+  if ($('site').value || Date.now() - t0 < 3000) { $('err').textContent = 'Te rugăm să mai încerci o dată.'; return; }
+  $('send').disabled = true; $('send').innerHTML = '<span class="spin"></span>Se trimite…';
+  try {
+    const r = await fetch(TE.SUPABASE_URL + '/rest/v1/rpc/submit_request', {
+      method: 'POST', headers: { apikey: TE.SUPABASE_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_name: d.name, p_phone: d.phone, p_email: d.email || null, p_date: d.date, p_type: d.type,
+        p_city: d.city || null, p_venue: d.venue || null, p_guests: d.guests, p_services: d.services, p_message: d.msg || null })
+    });
+    if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.message || 'Eroare ' + r.status); }
+    $('form').style.display = 'none';
+    $('doneName').textContent = d.name.split(' ')[0];
+    $('doneTxt').textContent = `Am primit cererea pentru ${d.type.toLowerCase()}, ${TE.nice(d.date)}. Te sunăm în cel mai scurt timp pentru detalii.`;
+    $('doneWa').href = waText(d);
+    $('done').style.display = 'block';
+    $('formCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (ex) {
+    $('err').textContent = /Numele|Telefonul|Emailul|Data|Tipul|Am primit|Prea multe/.test(ex.message) ? ex.message : 'Cererea nu s-a putut trimite acum. Te rugăm să folosești butonul WhatsApp sau să ne suni la 0727 292 171.';
+    $('send').disabled = false; $('send').textContent = 'Trimite cererea';
+  }
+});
+</script>
+</body>
+</html>
