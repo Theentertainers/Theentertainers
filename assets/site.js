@@ -7,7 +7,7 @@ window.TE = {
   MONTHS: ['ianuarie','februarie','martie','aprilie','mai','iunie','iulie','august','septembrie','octombrie','noiembrie','decembrie'],
   DOW: ['Lun','Mar','Mie','Joi','Vin','Sâm','Dum'],
 
-  VCATS: ['Nuntă','Cununie civilă','Botez','Majorat','Corporate','Team building','Altele'],
+  VCATS: ['Nuntă','Cununie civilă','Botez','Majorat','Corporate','Team building','By The River','Altele'],
 
   // Recunoaște un link TikTok sau YouTube → { platform, id, short? }
   parseVideo(url){
