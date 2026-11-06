@@ -240,7 +240,7 @@ lb.addEventListener('touchend', e => { if (tx === null) return; const dx = e.cha
 
 (async () => {
   try {
-    const list = await api('albums?select=id,title,event_date,type,city,venue,cover_path,photos(count)&order=event_date.desc.nullslast,created_at.desc');
+    const list = await api('albums?select=id,title,event_date,type,city,venue,cover_path,photos(count)&type=neq.MC%20Cozmin&order=event_date.desc.nullslast,created_at.desc');
     // coperta: cea aleasă sau prima poză din album
     const noCover = list.filter(a => !a.cover_path && a.photos?.[0]?.count).map(a => a.id);
     let first = {};
