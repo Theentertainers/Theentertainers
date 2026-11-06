@@ -42,8 +42,7 @@
   // pastila aurie care alunecă între linkuri (doar pe calculator)
   const pill = document.createElement('span'); pill.className = 'nav-pill'; nav.prepend(pill);
   const items = links.filter(a => !a.classList.contains('btn'));
-  const cur = items.find(a => a.classList.contains('on'));
-  const go = a => {
+  const cur = items.find(a => a.classList.contains('on'));  const go = a => {
     if (!wide.matches || !a) { pill.classList.remove('show'); return; }
     pill.style.left = a.offsetLeft + 'px'; pill.style.width = a.offsetWidth + 'px'; pill.classList.add('show');
   };

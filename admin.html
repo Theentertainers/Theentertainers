@@ -237,11 +237,12 @@ main{padding:28px 0 80px}
       <button class="tab" data-t="tabFoto">Galerie foto</button>
       <button class="tab" data-t="tabMap">Harta</button>
       <button class="tab" data-t="tabBtr">By The River</button>
-      <button class="tab" data-t="tabPar">Parteneri</button>
+      <button class="tab" data-t="tabPar">Parteneri <span class="badge hidden" id="pBadge"></span></button>
     </div>
 
     <div id="tabPar" class="hidden">
       <div class="bar"><h1><span class="gold">Parteneri</span> recomandați</h1><a class="lnk" href="parteneri.html" target="_blank" style="color:var(--gold2)">Vezi pagina publică ↗</a></div>
+      <div id="dReq"></div>
       <form class="vadd" id="pForm">
         <h2 id="pH" style="font-size:1.2rem;margin-bottom:14px">Partener nou</h2>
         <div class="g2">
@@ -484,7 +485,14 @@ async function boot(){
     return;
   }
   if (recovering && session) { showNewPw(); return; }
+  if (session && !isAdmin(session.user)) { await notAdmin(); return; }
   show(!!session);
+}
+// în admin intră doar contul tău (partenerii au conturi separate, pe cont-partener.html)
+const isAdmin = u => (u?.email || '').toLowerCase() === 'bacanucozmin@gmail.com';
+async function notAdmin(){
+  await sb.auth.signOut(); show(false);
+  $('lerr').innerHTML = 'Acest cont nu are acces la admin. Partenerii intră din <a href="cont-partener.html" style="color:var(--gold2)">contul de partener</a>.';
 }
 function showNewPw(){
   $('loginBox').classList.add('hidden'); $('app').classList.add('hidden'); $('logout').classList.add('hidden');
@@ -495,7 +503,7 @@ function show(logged){
   $('loginBox').classList.toggle('hidden', logged);
   $('app').classList.toggle('hidden', !logged);
   $('logout').classList.toggle('hidden', !logged);
-  if (logged) { draw(); loadReq(); } else $('pw').focus();
+  if (logged) { draw(); loadReq(); countDrafts(); } else $('pw').focus();
 }
 
 // ---------- tab-uri ----------
@@ -514,10 +522,44 @@ document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
 let par = [], pEdit = null, pPic = null;   // pPic: { file } nouă, { path } salvată, null = fără
 const url = v => { v = v.trim(); return v ? (/^https?:\/\//i.test(v) ? v : 'https://' + v) : null; };
 async function loadPar(){
-  const { data, error } = await sb.from('partners').select('*').order('category').order('sort', { ascending: false }).order('name');
-  if (error) { $('pList').innerHTML = `<div class="empty-l">Nu s-au putut încărca: ${TE.esc(error.message)}</div>`; return; }
-  par = data; renderPar();
+  const [r, d] = await Promise.all([sb.from('partners').select('*').order('category').order('sort', { ascending: false }).order('name'),
+    sb.from('partner_drafts').select('*').eq('status', 'pending').order('updated_at')]);
+  if (r.error) { $('pList').innerHTML = `<div class="empty-l">Nu s-au putut încărca: ${TE.esc(r.error.message)}</div>`; return; }
+  par = r.data; renderPar(); renderDrafts(d.data || []);
 }
+// cereri de la partenerii cu cont (fișe noi sau modificări), de aprobat
+function renderDrafts(list){
+  setPBadge(list.length);
+  if (!list.length) { $('dReq').innerHTML = ''; return; }
+  const F = [['name','Nume'],['category','Categorie'],['city','Oraș'],['phone','Telefon'],['description','Descriere'],['website','Site'],['facebook','Facebook'],['instagram','Instagram'],['logo','Poză']];
+  $('dReq').innerHTML = `<div class="vadd" style="border-color:rgba(255,197,61,.55);margin-bottom:18px">
+    <h2 style="font-size:1.2rem;margin-bottom:4px">Cereri de la parteneri <span style="color:#ffc53d">(${list.length})</span></h2>
+    <p class="hint2" style="margin-bottom:12px">Fișe trimise de parteneri din contul lor. Nu apar pe site până nu le aprobi. Câmpurile schimbate față de ce e acum pe site sunt marcate cu galben.</p>
+    ${list.map(d => { const cur = par.find(p => p.owner === d.owner);
+      const rows = F.map(([k, l]) => { const v = d[k], ch = cur && (cur[k] || null) !== (v || null);
+        const val = k === 'logo' ? (v ? `<img src="${TE.photoUrl(v)}" alt="" style="width:64px;height:64px;object-fit:cover;border-radius:10px">` : '–') : TE.esc(v || '–');
+        return `<div style="display:grid;grid-template-columns:100px 1fr;gap:10px;padding:5px 0;border-bottom:1px solid var(--line)${ch ? ';background:rgba(255,197,61,.08)' : ''}"><span style="color:var(--muted);font-size:.82rem">${l}${ch ? ' ✱' : ''}</span><span style="font-size:.9rem;word-break:break-word">${val}</span></div>`; }).join('');
+      return `<div style="padding:14px;border:1px solid var(--line);border-radius:12px;margin-bottom:12px;background:#0e0e11">
+        <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px"><b>${TE.esc(d.name)}</b><small style="color:var(--muted)">${cur ? 'modificare la un partener publicat' : 'partener nou'} · ${new Date(d.updated_at).toLocaleString('ro-RO')}</small></div>
+        ${rows}
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+          <button class="btn btn-gold btn-sm" data-ok="${d.owner}">✓ Aprobă și publică</button>
+          <button class="btn btn-ghost btn-sm" data-no="${d.owner}" style="color:#ff8f8f;border-color:rgba(255,143,143,.5)">Respinge…</button></div></div>`; }).join('')}
+  </div>`;
+  $('dReq').querySelectorAll('[data-ok]').forEach(b => b.onclick = async () => {
+    b.disabled = true; const { error } = await sb.rpc('approve_partner', { p_owner: b.dataset.ok });
+    if (error) { b.disabled = false; return alert('Nu s-a aprobat: ' + error.message); }
+    toast('Partener aprobat și publicat ✓'); loadPar();
+  });
+  $('dReq').querySelectorAll('[data-no]').forEach(b => b.onclick = async () => {
+    const note = prompt('Ce trebuie să modifice partenerul? (apare în contul lui)', ''); if (note === null) return;
+    const { error } = await sb.from('partner_drafts').update({ status: 'rejected', admin_note: note.trim().slice(0, 500) || null }).eq('owner', b.dataset.no);
+    if (error) return alert('Nu s-a salvat: ' + error.message);
+    toast('Cerere respinsă'); loadPar();
+  });
+}
+function setPBadge(n){ const el = $('pBadge'); el.textContent = n; el.classList.toggle('hidden', !n); }
+async function countDrafts(){ const { count } = await sb.from('partner_drafts').select('owner', { count: 'exact', head: true }).eq('status', 'pending'); setPBadge(count || 0); }
 function renderPar(){
   const cats = [...new Set([...TE.PCATS, ...par.map(p => p.category)])];
   $('pCats').innerHTML = cats.map(c => `<option value="${TE.esc(c)}">`).join('');
@@ -526,7 +568,7 @@ function renderPar(){
     `<h3 style="font-size:1rem;color:var(--gold2);margin:16px 0 8px">${TE.esc(c)} <small style="color:var(--muted)">(${l.length})</small></h3>` + l.map((p, i) => `
     <div class="vi"${p.published ? '' : ' style="opacity:.55"'}>
       <div style="width:64px;height:64px;border-radius:12px;background:#111 ${p.logo ? `url('${TE.photoUrl(p.logo)}')` : ''} center/cover no-repeat;border:1px solid var(--line)"></div>
-      <div><b>${TE.esc(p.name)}</b>${p.published ? '' : ' <small style="color:var(--muted)">· ascuns</small>'}
+      <div><b>${TE.esc(p.name)}</b>${p.owner ? ' <small style="color:var(--gold2)">· are cont</small>' : ''}${p.published ? '' : ' <small style="color:var(--muted)">· ascuns</small>'}
         <div style="font-size:.85rem;color:var(--muted)">${[p.city, p.phone].filter(Boolean).map(TE.esc).join(' · ') || '–'}</div></div>
       <div class="acts" style="display:flex;gap:6px">
         <button class="ib" data-pu="${p.id}" title="Mai sus"${i ? '' : ' disabled'}>↑</button><button class="ib" data-pd="${p.id}" title="Mai jos"${i < l.length - 1 ? '' : ' disabled'}>↓</button>
@@ -1009,10 +1051,12 @@ function toCalendar(r){
 $('loginBox').addEventListener('submit', async e => {
   e.preventDefault();
   $('lerr').textContent = ''; $('lbtn').disabled = true;
-  const { error } = await sb.auth.signInWithPassword({ email: $('em').value.trim(), password: $('pw').value });
+  const { data, error } = await sb.auth.signInWithPassword({ email: $('em').value.trim(), password: $('pw').value });
   $('lbtn').disabled = false;
   if (error) { $('lerr').textContent = /invalid/i.test(error.message) ? 'Email sau parolă greșită.' : 'Nu m-am putut conecta: ' + error.message; return; }
-  $('pw').value = ''; show(true);
+  $('pw').value = '';
+  if (!isAdmin(data.user)) { await notAdmin(); return; }
+  show(true);
 });
 $('logout').onclick = async () => { await sb.auth.signOut(); show(false); };
 

@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cont de partener – The Entertainers</title>
+<meta name="description" content="Fă-ți cont de partener The Entertainers și adaugă-ți serviciile pentru evenimente pe pagina noastră de parteneri recomandați.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b0b0c">
+<link rel="icon" href="assets/mic-gold.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+.hidden{display:none!important}
+.box{max-width:560px;margin:0 auto;padding:28px;border-radius:var(--r);background:linear-gradient(160deg,#1b1b20,#121215);border:1px solid var(--line)}
+.box.wide{max-width:820px}
+.box h2{font-size:1.5rem;margin-bottom:6px}
+.box .sub{color:var(--muted);font-size:.92rem;margin-bottom:18px}
+.f{margin-bottom:14px}
+.f label{display:block;font-size:.82rem;font-weight:600;color:#cfcabe;margin-bottom:6px}
+.f input,.f textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:#0e0e11;color:var(--text);font:500 .95rem Montserrat,sans-serif}
+.f textarea{min-height:96px;resize:vertical}
+.f input:focus,.f textarea:focus{outline:none;border-color:var(--gold)}
+.f small{color:var(--muted);font-size:.78rem}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.err{color:#ff9b9b;font-size:.88rem;min-height:1.2em;margin:4px 0 10px}
+.ok{color:#bfe8b6;font-size:.9rem;margin:10px 0}
+.tabs2{display:flex;gap:6px;padding:4px;border-radius:999px;background:#0e0e11;border:1px solid var(--line);margin-bottom:20px}
+.tabs2 button{flex:1;padding:10px;border-radius:999px;border:0;background:none;color:#cfcabe;font:600 .9rem Montserrat,sans-serif;cursor:pointer}
+.tabs2 button.on{background:var(--grad);color:#1a1405}
+.lnk2{background:none;border:0;color:var(--gold2);font:600 .86rem Montserrat,sans-serif;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:0}
+.st{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:14px;margin-bottom:20px;border:1px solid var(--line);background:#0e0e11}
+.st .dot{width:12px;height:12px;border-radius:50%;margin-top:5px;flex:none}
+.st b{display:block;font-size:1rem}
+.st p{color:#cfcabe;font-size:.88rem;margin-top:2px}
+.st.pending .dot{background:#ffc53d;box-shadow:0 0 0 4px rgba(255,197,61,.18)}
+.st.approved .dot{background:#46a758;box-shadow:0 0 0 4px rgba(70,167,88,.2)}
+.st.rejected .dot{background:#e5484d;box-shadow:0 0 0 4px rgba(229,72,77,.2)}
+.st.none .dot{background:#8d8d8d}
+.pic{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.pic .pv{width:80px;height:80px;border-radius:16px;border:1px solid var(--line);background:#111 center/cover no-repeat;flex:none}
+.top2{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.top2 span{color:var(--muted);font-size:.86rem}
+.perks{max-width:820px;margin:0 auto 22px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.perks div{padding:16px;border-radius:14px;border:1px solid var(--line);background:var(--card);font-size:.88rem;color:#cfcabe}
+.perks b{display:block;color:var(--gold2);font-size:.95rem;margin-bottom:4px}
+@media (max-width:600px){ .g2,.perks{grid-template-columns:1fr} .box{padding:20px} }
+</style>
+<link rel="stylesheet" href="assets/compact.css">
+<link rel="stylesheet" href="assets/menu.css">
+</head>
+<body>
+
+<header class="hdr" id="hdr">
+  <div class="wrap">
+    <a href="index.html" class="brand"><img src="assets/logo-gold.png" alt="The Entertainers"></a>
+    <nav class="nav" id="nav">
+      <a href="index.html">Acasă</a>
+      <a href="despre.html">Despre</a>
+      <a href="cununie.html">Cununie civilă</a>
+      <a href="bytheriver.html">By The River</a>
+      <a href="parteneri.html" class="on">Parteneri</a>
+      <a href="harta.html">Harta evenimentelor</a>
+      <a href="calendar.html">Calendar</a>
+      <a href="galerie-foto.html">Galerie foto</a>
+      <a href="galerie-video.html">Galerie video</a>
+      <a href="rezerva.html" class="btn btn-gold">Rezervă data</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Meniu" aria-expanded="false">☰</button>
+  </div>
+</header>
+
+<section class="phead">
+  <div class="wrap">
+    <span class="kicker">Pentru furnizori</span>
+    <h1>Devino <span class="gold">partener</span></h1>
+    <p class="lead">Ai o firmă de servicii pentru evenimente? Fă-ți cont, completează-ți fișa și, după ce o verificăm, apari pe pagina noastră de parteneri recomandați.</p>
+  </div>
+</section>
+
+<section style="padding:0 0 70px">
+  <div class="wrap">
+    <div class="perks" id="perks">
+      <div><b>1. Îți faci cont</b>Cu emailul tău și o parolă. Confirmi adresa din emailul primit.</div>
+      <div><b>2. Completezi fișa</b>Logo, ce oferi, orașul, telefon și linkuri.</div>
+      <div><b>3. Noi aprobăm</b>Verificăm fișa și o publicăm. Orice modificare trece tot pe la noi.</div>
+    </div>
+
+    <!-- LOGARE / CONT NOU -->
+    <form class="box hidden" id="authBox" autocomplete="on">
+      <div class="tabs2"><button type="button" class="on" data-m="in">Am deja cont</button><button type="button" data-m="up">Cont nou</button></div>
+      <div class="f"><label for="em">Email</label><input id="em" type="email" autocomplete="username" required maxlength="160"></div>
+      <div class="f"><label for="pw">Parolă</label><input id="pw" type="password" autocomplete="current-password" required minlength="8"><small id="pwHint" class="hidden">Minim 8 caractere, cu litere, cifre și un semn.</small></div>
+      <div class="f hidden" id="pw2Wrap"><label for="pw2">Scrie parola încă o dată</label><input id="pw2" type="password" autocomplete="new-password" minlength="8"></div>
+      <div class="err" id="aerr"></div>
+      <button class="btn btn-gold" style="width:100%" id="abtn">Intră în cont</button>
+      <div style="text-align:center;margin-top:14px"><button type="button" class="lnk2" id="forgot">Am uitat parola</button></div>
+      <div class="ok" id="amsg"></div>
+    </form>
+
+    <!-- PAROLĂ NOUĂ -->
+    <form class="box hidden" id="newPwBox" autocomplete="on">
+      <h2>Alege o <span class="gold">parolă nouă</span></h2>
+      <p class="sub">Minim 8 caractere, cu litere, cifre și un semn.</p>
+      <div class="f"><label for="np1">Parola nouă</label><input id="np1" type="password" autocomplete="new-password" minlength="8" required></div>
+      <div class="f"><label for="np2">Încă o dată</label><input id="np2" type="password" autocomplete="new-password" minlength="8" required></div>
+      <div class="err" id="nperr"></div>
+      <button class="btn btn-gold" style="width:100%" id="npbtn">Salvează parola</button>
+    </form>
+
+    <!-- FIȘA PARTENERULUI -->
+    <div class="box wide hidden" id="dash">
+      <div class="top2"><span id="who"></span><button type="button" class="btn btn-ghost btn-sm" id="logout">Ieși din cont</button></div>
+      <div class="st none" id="status"><span class="dot"></span><div><b id="stT">Fișa nu e completată încă</b><p id="stP">Completează formularul de mai jos și trimite-l spre aprobare.</p></div></div>
+      <form id="pForm">
+        <h2>Fișa ta de <span class="gold">partener</span></h2>
+        <p class="sub">Asta văd vizitatorii pe pagina Parteneri, după ce o aprobăm.</p>
+        <div class="g2">
+          <div class="f"><label for="pName">Numele firmei / serviciului *</label><input id="pName" maxlength="120" required placeholder="ex. Foto Studio Andrei"></div>
+          <div class="f"><label for="pCat">Categorie *</label><input id="pCat" maxlength="60" required list="pCats" placeholder="alege din listă sau scrie"><datalist id="pCats"></datalist></div>
+          <div class="f"><label for="pCity">Oraș</label><input id="pCity" maxlength="80" placeholder="ex. Slatina"></div>
+          <div class="f"><label for="pPhone">Telefon (și WhatsApp)</label><input id="pPhone" type="tel" maxlength="40" placeholder="ex. 0722 123 456"></div>
+        </div>
+        <div class="f"><label for="pDesc">Ce oferi (1-3 fraze)</label><textarea id="pDesc" maxlength="600" placeholder="ex. Fum greu pentru primul dans, artificii reci și confetti. Venim oriunde în județ."></textarea><small><span id="dCount">0</span>/600</small></div>
+        <div class="g2">
+          <div class="f"><label for="pWeb">Site</label><input id="pWeb" maxlength="300" placeholder="https://…"></div>
+          <div class="f"><label for="pFb">Facebook</label><input id="pFb" maxlength="300" placeholder="https://facebook.com/…"></div>
+          <div class="f"><label for="pIg">Instagram</label><input id="pIg" maxlength="300" placeholder="https://instagram.com/…"></div>
+          <div class="f"><label>Logo / poză</label>
+            <div class="pic"><div class="pv" id="pPrev"></div>
+              <label class="btn btn-ghost btn-sm" style="cursor:pointer">Alege poza<input type="file" id="pFile" accept="image/*" hidden></label>
+              <button type="button" class="btn btn-ghost btn-sm hidden" id="pNoPic">Scoate</button></div></div>
+        </div>
+        <div class="err" id="perr"></div>
+        <button class="btn btn-gold" id="pSave">Trimite spre aprobare</button>
+        <p class="sub" style="margin-top:12px;font-size:.82rem">Trimițând fișa, ești de acord să afișăm aceste informații public pe theentertainers.ro. O poți modifica sau ne poți cere oricând să o scoatem.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="copy">© <span id="yr">2026</span> The Entertainers · Băcanu Cozmin · <a href="parteneri.html" style="color:var(--gold2)">Vezi partenerii</a> · <a href="tel:+40727292171" style="color:var(--gold2)">0727 292 171</a></div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="assets/site.js"></script>
+<script>
+const sb = supabase.createClient(TE.SUPABASE_URL, TE.SUPABASE_KEY);
+const $ = id => document.getElementById(id);
+const ADMIN = 'bacanucozmin@gmail.com';
+const H0 = new URLSearchParams(location.hash.slice(1));
+const back = location.origin + location.pathname;
+let mode = 'in', user = null, draft = null, live = null, pic = null;   // pic: {file} nouă / {path} salvată / null
+
+$('pCats').innerHTML = TE.PCATS.map(c => `<option value="${TE.esc(c)}">`).join('');
+const url = v => { v = v.trim(); return v ? (/^https?:\/\//i.test(v) ? v : 'https://' + v) : null; };
+const only = id => ['authBox','newPwBox','dash'].forEach(x => $(x).classList.toggle('hidden', x !== id));
+
+// ---------- logare / cont nou ----------
+document.querySelectorAll('.tabs2 button').forEach(b => b.onclick = () => {
+  mode = b.dataset.m; document.querySelectorAll('.tabs2 button').forEach(x => x.classList.toggle('on', x === b));
+  const up = mode === 'up';
+  $('pw2Wrap').classList.toggle('hidden', !up); $('pwHint').classList.toggle('hidden', !up); $('forgot').parentElement.classList.toggle('hidden', up);
+  $('pw').autocomplete = up ? 'new-password' : 'current-password'; $('abtn').textContent = up ? 'Creează contul' : 'Intră în cont';
+  $('aerr').textContent = ''; $('amsg').textContent = '';
+});
+$('authBox').addEventListener('submit', async e => {
+  e.preventDefault(); $('aerr').textContent = ''; $('amsg').textContent = '';
+  const email = $('em').value.trim(), pw = $('pw').value;
+  if (email.toLowerCase() === ADMIN) { $('aerr').innerHTML = 'Acesta e contul de admin. Intră din <a href="admin.html" style="color:var(--gold2)">pagina de admin</a>.'; return; }
+  $('abtn').disabled = true;
+  if (mode === 'up') {
+    if (pw.length < 8) { $('abtn').disabled = false; $('aerr').textContent = 'Parola trebuie să aibă minim 8 caractere.'; return; }
+    if (pw !== $('pw2').value) { $('abtn').disabled = false; $('aerr').textContent = 'Cele două parole nu sunt la fel.'; return; }
+    const { data, error } = await sb.auth.signUp({ email, password: pw, options: { emailRedirectTo: back } });
+    $('abtn').disabled = false;
+    if (error) { $('aerr').textContent = /not allowed|disabled/i.test(error.message) ? 'Înscrierile nu sunt deschise momentan. Sună-ne la 0727 292 171.' : /weak|pwned|leaked|short/i.test(error.message) ? 'Parola e prea slabă. Alege una mai lungă, cu litere, cifre și semne.' : /registered|exists/i.test(error.message) ? 'Există deja un cont cu acest email. Intră din „Am deja cont”.' : 'Nu s-a putut crea contul: ' + error.message; return; }
+    if (data.session) { start(data.session.user); return; }
+    $('amsg').textContent = `Gata! Ți-am trimis un email la ${email}. Apasă linkul din el ca să-ți confirmi contul (verifică și Spam), apoi revino aici.`;
+    $('pw').value = $('pw2').value = '';
+  } else {
+    const { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
+    $('abtn').disabled = false;
+    if (error) { $('aerr').textContent = /confirm/i.test(error.message) ? 'Contul nu e confirmat încă. Apasă linkul din emailul primit la înscriere.' : /invalid/i.test(error.message) ? 'Email sau parolă greșită.' : 'Nu m-am putut conecta: ' + error.message; return; }
+    $('pw').value = ''; start(data.user);
+  }
+});
+$('forgot').onclick = async () => {
+  const email = $('em').value.trim(); $('aerr').textContent = ''; $('amsg').textContent = '';
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { $('aerr').textContent = 'Scrie mai întâi adresa de email a contului.'; $('em').focus(); return; }
+  $('forgot').disabled = true;
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: back });
+  $('forgot').disabled = false;
+  if (error) { $('aerr').textContent = /rate|seconds|many/i.test(error.message) ? 'Ai cerut deja un link de curând. Mai încearcă peste câteva minute.' : 'Nu s-a putut trimite emailul: ' + error.message; return; }
+  $('amsg').textContent = `Dacă există un cont cu ${email}, ți-am trimis un email cu link pentru parolă nouă.`;
+};
+$('newPwBox').addEventListener('submit', async e => {
+  e.preventDefault(); $('nperr').textContent = '';
+  const p1 = $('np1').value; if (p1.length < 8) { $('nperr').textContent = 'Minim 8 caractere.'; return; }
+  if (p1 !== $('np2').value) { $('nperr').textContent = 'Cele două parole nu sunt la fel.'; return; }
+  $('npbtn').disabled = true; const { data, error } = await sb.auth.updateUser({ password: p1 }); $('npbtn').disabled = false;
+  if (error) { $('nperr').textContent = /different|same/i.test(error.message) ? 'Parola nouă trebuie să fie diferită de cea veche.' : /weak|pwned|leaked|short/i.test(error.message) ? 'Parola e prea slabă.' : 'Nu s-a salvat: ' + error.message; return; }
+  history.replaceState(null, '', location.pathname); start(data.user);
+});
+$('logout').onclick = async () => { await sb.auth.signOut(); user = null; only('authBox'); $('perks').classList.remove('hidden'); };
+
+// ---------- fișa ----------
+function setStatus(){
+  const s = $('status'); let cls = 'none', t, p;
+  if (!draft) { t = 'Fișa nu e completată încă'; p = 'Completează formularul de mai jos și trimite-l spre aprobare.'; }
+  else if (draft.status === 'pending') { cls = 'pending'; t = 'În așteptarea aprobării'; p = live ? 'Ai trimis modificări. Până le aprobăm, pe site rămâne varianta veche.' : 'Am primit fișa ta și o verificăm în curând.'; }
+  else if (draft.status === 'rejected') { cls = 'rejected'; t = 'Fișa are nevoie de modificări'; p = draft.admin_note ? 'Mesaj de la noi: ' + draft.admin_note : 'Modific-o și trimite-o din nou, sau sună-ne la 0727 292 171.'; }
+  else { cls = 'approved'; t = live?.published === false ? 'Aprobată, dar ascunsă momentan' : live ? 'Aprobată și publicată pe site' : 'Aprobată'; p = live ? 'O găsești pe pagina <a href="parteneri.html" style="color:var(--gold2)">Parteneri</a>. Orice modificare trece din nou prin aprobare.' : 'Sună-ne dacă nu o vezi pe site.'; }
+  s.className = 'st ' + cls; $('stT').textContent = t; $('stP').innerHTML = p.startsWith('O găsești') || p.startsWith('Sună-ne dacă') ? p : TE.esc(p);
+  $('pSave').textContent = draft ? 'Trimite modificările spre aprobare' : 'Trimite spre aprobare';
+}
+function showPic(){ $('pPrev').style.backgroundImage = pic ? `url('${pic.file ? URL.createObjectURL(pic.file) : TE.photoUrl(pic.path)}')` : ''; $('pNoPic').classList.toggle('hidden', !pic); }
+$('pFile').onchange = () => { const f = $('pFile').files[0]; if (f) { pic = { file: f }; showPic(); } $('pFile').value = ''; };
+$('pNoPic').onclick = () => { pic = null; showPic(); };
+$('pDesc').oninput = () => $('dCount').textContent = $('pDesc').value.length;
+
+async function start(u){
+  user = u;
+  if ((u.email || '').toLowerCase() === ADMIN) { only('authBox'); $('aerr').innerHTML = 'Ești logat cu contul de admin. Partenerii îi aprobi din <a href="admin.html" style="color:var(--gold2)">admin</a>.'; return; }
+  $('who').textContent = 'Conectat ca ' + u.email; only('dash'); $('perks').classList.add('hidden');
+  const [d, l] = await Promise.all([sb.from('partner_drafts').select('*').eq('owner', u.id).maybeSingle(), sb.from('partners').select('id,published').eq('owner', u.id).maybeSingle()]);
+  draft = d.data || null; live = l.data || null;
+  const s = draft || {};
+  $('pName').value = s.name || ''; $('pCat').value = s.category || ''; $('pCity').value = s.city || ''; $('pPhone').value = s.phone || '';
+  $('pDesc').value = s.description || ''; $('dCount').textContent = $('pDesc').value.length;
+  $('pWeb').value = s.website || ''; $('pFb').value = s.facebook || ''; $('pIg').value = s.instagram || '';
+  pic = s.logo ? { path: s.logo } : null; showPic(); setStatus();
+}
+async function shrink(file, max, q){
+  let src; try { src = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+  catch { src = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error('format necunoscut')); i.src = URL.createObjectURL(file); }); }
+  const k = Math.min(1, max / Math.max(src.width, src.height)), w = Math.round(src.width * k), h = Math.round(src.height * k);
+  const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.imageSmoothingQuality = 'high'; g.drawImage(src, 0, 0, w, h);
+  const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', q)); if (!blob) throw new Error('nu s-a putut converti'); return blob;
+}
+$('pForm').addEventListener('submit', async e => {
+  e.preventDefault(); $('perr').textContent = '';
+  const row = { owner: user.id, name: $('pName').value.trim(), category: $('pCat').value.trim(), city: $('pCity').value.trim() || null, phone: $('pPhone').value.trim() || null,
+    description: $('pDesc').value.trim() || null, website: url($('pWeb').value), facebook: url($('pFb').value), instagram: url($('pIg').value) };
+  if (!row.name || !row.category) { $('perr').textContent = 'Completează numele și categoria.'; return; }
+  if (!row.phone && !row.website && !row.facebook && !row.instagram) { $('perr').textContent = 'Pune măcar o modalitate de contact: telefon sau un link.'; return; }
+  $('pSave').disabled = true;
+  try {
+    if (pic?.file) { const b = await shrink(pic.file, 800, .86); const path = `partners/${user.id}/${crypto.randomUUID()}.jpg`;
+      const r = await sb.storage.from('photos').upload(path, b, { contentType: 'image/jpeg', cacheControl: '31536000', upsert: false }); if (r.error) throw r.error; pic = { path }; }
+  } catch (ex) { $('pSave').disabled = false; $('perr').textContent = 'Poza nu s-a încărcat: ' + (ex.message || ex); return; }
+  row.logo = pic?.path || null;
+  const { data, error } = await sb.from('partner_drafts').upsert(row, { onConflict: 'owner' }).select().single();
+  $('pSave').disabled = false;
+  if (error) { $('perr').textContent = 'Nu s-a salvat: ' + error.message; return; }
+  draft = data; showPic(); setStatus(); $('status').scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
+
+// ---------- pornire ----------
+sb.auth.onAuthStateChange(ev => { if (ev === 'PASSWORD_RECOVERY') only('newPwBox'); });
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (H0.get('error_description')) {
+    history.replaceState(null, '', location.pathname); only('authBox');
+    $('aerr').textContent = /expired|invalid/i.test(H0.get('error_description')) ? 'Linkul a expirat sau a fost deja folosit. Încearcă din nou.' : 'Linkul nu a mers: ' + H0.get('error_description'); return;
+  }
+  if (H0.get('type') === 'recovery' && session) { only('newPwBox'); return; }
+  if (H0.get('type') === 'signup') history.replaceState(null, '', location.pathname);
+  if (session) start(session.user); else only('authBox');
+})();
+</script>
+<script src="assets/menu.js"></script>
+</body>
+</html>
