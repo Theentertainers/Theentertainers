@@ -14,8 +14,7 @@ section.sec{padding:36px 0}
 .phead{padding:112px 0 26px}
 
 /* ---------- hero ---------- */
-.hero{min-height:80svh}
-@media (max-aspect-ratio:1/1){ .hero{min-height:0} }   /* telefon/tabletă în picioare: clipul sus, textul dedesubt */
+/* hero-ul de pe prima pagină se ancorează de clip (vezi index.html), fără înălțime minimă */
 .hero p.lead{margin-bottom:24px}
 .stats{margin-top:-30px}
 .stat{padding:20px 12px}
