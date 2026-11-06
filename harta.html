@@ -3,11 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Harta evenimentelor – The Entertainers</title>
+<title>Harta evenimentelor – DJ în Olt și în toată țara | The Entertainers</title>
 <meta name="description" content="Harta localităților din România în care The Entertainers a avut nunți, botezuri, majorate și evenimente corporate. Din Slatina, în toată țara.">
 <meta property="og:title" content="Harta evenimentelor – The Entertainers">
 <meta property="og:description" content="Din Slatina, în toată țara: vezi unde am adus petrecerea.">
-<meta property="og:image" content="assets/logo-gold.png">
+<meta property="og:image" content="https://www.theentertainers.ro/assets/logo-gold.png">
+<link rel="canonical" href="https://www.theentertainers.ro/harta.html">
+<meta property="og:url" content="https://www.theentertainers.ro/harta.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Entertainers">
+<meta property="og:locale" content="ro_RO">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0b0b0c">
 <link rel="icon" href="assets/mic-gold.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -187,7 +193,7 @@ function draw(){
   map.judete.forEach(j => {
     const list = byCounty[j.n], tot = list ? list.reduce((s, p) => s + p.events, 0) : 0;
     const lvl = !tot ? '' : tot / max > .6 ? ' v3' : tot / max > .25 ? ' v2' : ' v1';
-    h += `<path class="jd${lvl}" data-n="${j.n}" d="${j.d}"><title>${j.n}</title></path>`;
+    h += `<path class="jd${lvl}" data-n="${j.n}" d="${j.d}"><title>Harta evenimentelor – DJ în Olt și în toată țara | The Entertainers</title></path>`;
   });
   map.judete.forEach(j => { if (j.n !== 'București' && j.n !== 'Ilfov') h += `<text class="jl${byCounty[j.n] ? ' v' : ''}" x="${j.cx}" y="${j.cy}">${j.n}</text>`; });
   // punctele: întâi cele mici, ca cele mari să fie deasupra
