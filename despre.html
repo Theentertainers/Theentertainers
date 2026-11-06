@@ -81,8 +81,11 @@ section.alt{background:var(--bg2);border-block:1px solid var(--line)}
 .team{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .mem{position:relative;padding:34px 26px 30px;border-radius:var(--r);text-align:center;background:linear-gradient(160deg,#1b1b20,#121215);border:1px solid var(--line);overflow:hidden;transition:transform .3s,border-color .3s}
 .mem:hover{transform:translateY(-6px);border-color:rgba(212,175,55,.5)}
-.avatar{width:108px;height:108px;margin:0 auto 18px;border-radius:50%;display:grid;place-items:center;font-family:"Playfair Display",serif;font-size:2.4rem;font-weight:700;color:#1a1405;background:var(--grad);box-shadow:0 0 0 5px var(--bg2),0 0 0 6px rgba(212,175,55,.45),0 14px 40px -10px rgba(212,175,55,.5)}
-.avatar svg{width:50px;height:50px;stroke:#1a1405;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.avatar{width:140px;height:140px;margin:0 auto 18px;border-radius:50%;display:grid;place-items:center;font-family:"Playfair Display",serif;font-size:2.4rem;font-weight:700;color:#1a1405;background:var(--grad);box-shadow:0 0 0 5px var(--bg2),0 0 0 6px rgba(212,175,55,.45),0 14px 40px -10px rgba(212,175,55,.5)}
+.avatar.ph{width:140px;height:140px;overflow:hidden;background:#111}
+.avatar.ph img{width:100%;height:100%;object-fit:cover;border-radius:50%;transition:transform .5s}
+.mem:hover .avatar.ph img{transform:scale(1.06)}
+.avatar svg{width:60px;height:60px;stroke:#1a1405;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .mem h3{font-size:1.4rem;margin-bottom:4px}
 .role{display:block;color:var(--gold2);font-size:.8rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
 .mem p{color:var(--muted);font-size:.94rem}
@@ -224,19 +227,19 @@ footer{border-top:1px solid var(--line);background:#08080a;padding:60px 0 30px}
     </div>
     <div class="team">
       <article class="mem rv">
-        <div class="avatar">CB</div>
+        <div class="avatar ph"><img src="assets/cozmin.webp" width="480" height="480" alt="Cozmin Băcanu" loading="lazy"></div>
         <h3>Cozmin Băcanu</h3>
         <span class="role">Fondator · MC / Entertainer</span>
         <p>A pus bazele The Entertainers în 2005. Are grijă ca fiecare eveniment să curgă perfect: moderare, momente speciale și buna dispoziție a invitaților.</p>
       </article>
       <article class="mem rv">
-        <div class="avatar">A</div>
+        <div class="avatar ph"><img src="assets/ady.webp" width="480" height="480" alt="Dj Ady" loading="lazy"></div>
         <h3>Dj Ady</h3>
         <span class="role">DJ</span>
         <p>Citește sala și știe exact ce melodie trebuie să urmeze. De la muzica de petrecere românească la hiturile momentului, ringul rămâne plin.</p>
       </article>
       <article class="mem rv">
-        <div class="avatar"><svg viewBox="0 0 24 24"><circle cx="8" cy="7" r="3"/><circle cx="16" cy="7" r="3"/><path d="M2 20c0-3.3 2.7-6 6-6s6 2.7 6 6M10 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg></div>
+        <div class="avatar ph"><img src="assets/echipa.webp" width="480" height="480" alt="Echipa tehnică The Entertainers" loading="lazy"></div>
         <h3>Echipa tehnică</h3>
         <span class="role">Sunet · Lumini · Montaj</span>
         <p>Colegii care montează, reglează și supraveghează tot echipamentul, ca sunetul și luminile să fie impecabile toată seara.</p>
