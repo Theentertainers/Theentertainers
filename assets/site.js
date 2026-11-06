@@ -3,11 +3,18 @@ window.TE = {
   SUPABASE_URL: 'https://mmnulrkqnbopkxuooocs.supabase.co',
   SUPABASE_KEY: 'sb_publishable_o6j_hu_VXCTltuxERfXzEQ_gaJSC6JY', // cheie publică, e făcută să stea pe site
   CAPACITY: 1, // câte evenimente putem face într-o zi
-  TYPES: ['Nuntă','Cununie','Botez','Majorat','Corporate','Team building','Altul'],
+  // tipurile de evenimente (aceeași listă e și în baza de date: supabase/12-tipuri-evenimente.sql)
+  TYPES: ['Nuntă','Cununie','Botez','Majorat','Aniversare','Petrecere copii','Logodnă & cerere','Burlaci / burlăcițe',
+    'Aniversare căsătorie','Revelion','Petrecere tematică','Petrecere în aer liber','Banchet & bal absolvire','Balul bobocilor',
+    'Serbare școlară','Întâlnire de promoție','Corporate','Team building','Festival & zilele orașului','Concert & spectacol',
+    'Lansare & inaugurare','Conferință & gală','Altul'],
   MONTHS: ['ianuarie','februarie','martie','aprilie','mai','iunie','iulie','august','septembrie','octombrie','noiembrie','decembrie'],
   DOW: ['Lun','Mar','Mie','Joi','Vin','Sâm','Dum'],
 
-  VCATS: ['Nuntă','Cununie civilă','Botez','Majorat','Corporate','Team building','By The River','Altele'],
+  VCATS: ['Nuntă','Cununie civilă','Botez','Majorat','Aniversare','Petrecere copii','Logodnă & cerere','Burlaci / burlăcițe',
+    'Aniversare căsătorie','Revelion','Petrecere tematică','Petrecere în aer liber','Banchet & bal absolvire','Balul bobocilor',
+    'Serbare școlară','Întâlnire de promoție','Corporate','Team building','Festival & zilele orașului','Concert & spectacol',
+    'Lansare & inaugurare','Conferință & gală','By The River','Altele'],
 
   // Recunoaște un link TikTok sau YouTube → { platform, id, short? }
   parseVideo(url){
@@ -98,6 +105,16 @@ window.TE = {
   photoUrl(path){ return TE.SUPABASE_URL + '/storage/v1/object/public/photos/' + path; },
 
   okColor(c){ return /^#[0-9a-fA-F]{6}$/.test(c || '') ? c : ''; },
+  // culoarea fiecărui tip de eveniment în calendar (automat, nu se mai alege de mână)
+  TYPE_COLORS: {
+    'Nuntă': '#ff4f8b', 'Cununie': '#ffb3cf', 'Botez': '#74d0ff', 'Majorat': '#b07cff',
+    'Aniversare': '#ff9142', 'Petrecere copii': '#ffe14d', 'Logodnă & cerere': '#e5383b', 'Burlaci / burlăcițe': '#ff2bd6',
+    'Aniversare căsătorie': '#d9b26f', 'Revelion': '#d4dbe6', 'Petrecere tematică': '#6246ea', 'Petrecere în aer liber': '#19b8a8',
+    'Banchet & bal absolvire': '#2f6bff', 'Balul bobocilor': '#a8e63a', 'Serbare școlară': '#9be3c0', 'Întâlnire de promoție': '#b5764a',
+    'Corporate': '#7d93b0', 'Team building': '#2fa84f', 'Festival & zilele orașului': '#c2410c', 'Concert & spectacol': '#00e0ff',
+    'Lansare & inaugurare': '#ff6f61', 'Conferință & gală': '#9c1b5a', 'Altul': '#8d8d8d'
+  },
+  typeColor(t){ return TE.TYPE_COLORS[t] || ''; },
   COLORS: ['#e5484d','#f76b15','#ffc53d','#46a758','#12a594','#0090ff','#3e63dd','#8e4ec6','#d6409f','#8d8d8d'],
 
   iso(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); },
@@ -182,11 +199,11 @@ window.TE = {
       if (iso === today) cls += ' today';
       const chips = ev.map(e => {
         const label = opts.admin ? (e.type + (e.city ? ' · ' + e.city : '')) : e.type;
-        const col = TE.okColor(e.color);
+        const col = TE.typeColor(e.type) || TE.okColor(e.color);
         return `<span class="chip${e.status === 'provizoriu' ? ' prov' : ''}${col ? ' hc' : ''}"${col ? ` style="--ec:${col}"` : ''} title="${TE.esc(label)}">${TE.esc(label)}</span>`;
       }).join('');
       // culoarea aleasă în admin pentru eveniment colorează toată ziua
-      const dc = ev.map(e => TE.okColor(e.color)).find(Boolean);
+      const dc = ev.map(e => TE.typeColor(e.type) || TE.okColor(e.color)).find(Boolean);
       if (dc) cls += ' hc';
       h += `<div class="${cls}"${dc ? ` style="--ec:${dc}"` : ''} data-d="${iso}" role="button" tabindex="0" aria-label="${TE.nice(iso)}: ${st || 'trecut'}"><span class="n">${d}</span>${chips}<span class="st">${st}</span></div>`;
     }
