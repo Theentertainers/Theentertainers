@@ -138,6 +138,34 @@ footer{border-top:1px solid var(--line);background:#08080a;padding:60px 0 30px}
 @keyframes wheel{0%{opacity:0;transform:translateY(0)}30%{opacity:1}100%{opacity:0;transform:translateY(12px)}}
 @keyframes ping{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.6);opacity:0}}
 
+/* ---------- Trending YouTube ---------- */
+.yt{background:var(--bg2);border-block:1px solid var(--line)}
+.yt .sec-head{margin-bottom:34px}
+.yt .live{display:inline-flex;align-items:center;gap:8px}
+.yt .live::before{content:"";width:8px;height:8px;border-radius:50%;background:#ff3b3b;box-shadow:0 0 0 0 rgba(255,59,59,.6);animation:lv 1.6s infinite}
+@keyframes lv{70%{box-shadow:0 0 0 8px rgba(255,59,59,0)}100%{box-shadow:0 0 0 0 rgba(255,59,59,0)}}
+.ytbox{position:relative}
+.ytrow{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(260px,calc((100% - 54px)/4));gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 14px;scrollbar-width:thin;scrollbar-color:var(--gold3) transparent}
+.ytc{scroll-snap-align:start;border-radius:var(--r);overflow:hidden;background:var(--card);border:1px solid var(--line);transition:transform .3s,border-color .3s}
+.ytc:hover{transform:translateY(-4px);border-color:rgba(212,175,55,.5)}
+.ytv{position:relative;aspect-ratio:16/9;background:#000;cursor:pointer;overflow:hidden}
+.ytv img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.ytc:hover .ytv img{transform:scale(1.04)}
+.ytv iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.ytv .rk{position:absolute;left:10px;top:10px;min-width:30px;height:30px;padding:0 8px;border-radius:999px;display:grid;place-items:center;font-weight:700;font-size:.85rem;color:#1a1405;background:var(--grad)}
+.ytv .du{position:absolute;right:8px;bottom:8px;font-size:.75rem;font-weight:600;padding:2px 6px;border-radius:6px;background:rgba(0,0,0,.8)}
+.ytv .pl{position:absolute;left:50%;top:50%;translate:-50% -50%;width:58px;height:40px;border-radius:12px;background:rgba(255,0,0,.9);display:grid;place-items:center;opacity:.9;transition:opacity .3s}
+.ytv .pl svg{width:22px;height:22px;fill:#fff}
+.ytm{padding:12px 14px 14px}
+.ytm h3{font-family:Montserrat,sans-serif;font-size:.92rem;font-weight:600;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.7em}
+.ytm small{display:block;color:var(--muted);font-size:.8rem;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ytnav{position:absolute;top:calc(50% - 40px);width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:rgba(11,11,12,.85);color:var(--gold2);font-size:1.4rem;cursor:pointer;display:grid;place-items:center;z-index:2}
+.ytnav.l{left:-14px}.ytnav.r{right:-14px}
+.ytnav:hover{border-color:var(--gold)}
+.ytup{text-align:center;color:var(--muted);font-size:.8rem;margin-top:10px}
+@media (max-width:960px){ .ytrow{grid-auto-columns:minmax(240px,46%)} .ytnav{display:none} }
+@media (max-width:600px){ .ytrow{grid-auto-columns:82%} }
+
 /* ---------- Responsive ---------- */
 @media (max-width:960px){
   .burger{display:block}
@@ -273,6 +301,22 @@ footer{border-top:1px solid var(--line);background:#08080a;padding:60px 0 30px}
   </div>
 </section>
 
+<section class="sec yt" id="trending" hidden>
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="kicker live">Live din YouTube</span>
+      <h2>Ce e <span class="gold">trending în România</span></h2>
+      <p>Cele mai urmărite clipuri de pe YouTube din România în acest moment.</p>
+    </div>
+    <div class="ytbox rv">
+      <button class="ytnav l" id="ytL" aria-label="Înapoi">‹</button>
+      <div class="ytrow" id="ytRow"></div>
+      <button class="ytnav r" id="ytR" aria-label="Înainte">›</button>
+    </div>
+    <p class="ytup" id="ytUp"></p>
+  </div>
+</section>
+
 <section class="band">
   <div class="wrap rv">
     <span class="kicker">Disponibilitate</span>
@@ -353,6 +397,32 @@ const hv = document.getElementById('heroVid');
 const vs = +hv.dataset.start || 0, ve = +hv.dataset.end || 0;
 if (ve) hv.addEventListener('timeupdate', () => { if (hv.currentTime >= ve || hv.currentTime < vs - 1) hv.currentTime = vs; });
 if (matchMedia('(prefers-reduced-motion: reduce)').matches) hv.pause();
+
+// trending YouTube România (lista e adusă de Supabase la fiecare 30 de minute)
+(async () => {
+  const URL_ = 'https://mmnulrkqnbopkxuooocs.supabase.co/rest/v1/yt_trending?select=items,updated_at&id=eq.1';
+  const KEY = 'sb_publishable_o6j_hu_VXCTltuxERfXzEQ_gaJSC6JY';
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const views = n => n >= 1e6 ? (n / 1e6).toFixed(n >= 1e7 ? 0 : 1).replace('.', ',') + ' mil. vizualizări' : n >= 1e3 ? Math.round(n / 1e3) + ' mii vizualizări' : n + ' vizualizări';
+  const dur = d => { const m = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/.exec(d || ''); if (!m) return ''; const h = +m[1] || 0, mi = +m[2] || 0, s = +m[3] || 0; return (h ? h + ':' + String(mi).padStart(2, '0') : mi) + ':' + String(s).padStart(2, '0'); };
+  try {
+    const r = await fetch(URL_, { headers: { apikey: KEY } }); if (!r.ok) return;
+    const [row] = await r.json(); const items = (row?.items || []).filter(v => /^[\w-]{11}$/.test(v.id));
+    if (!items.length) return;
+    const box = document.getElementById('ytRow');
+    box.innerHTML = items.map((v, i) => `<article class="ytc"><div class="ytv" data-id="${v.id}" role="button" tabindex="0" aria-label="Pornește: ${esc(v.t)}">
+      <img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"><span class="rk">#${i + 1}</span>${v.d ? `<span class="du">${dur(v.d)}</span>` : ''}
+      <span class="pl"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+      <div class="ytm"><h3 title="${esc(v.t)}">${esc(v.t)}</h3><small>${esc(v.c)} · ${views(v.v || 0)}</small></div></article>`).join('');
+    const play = el => { el.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${el.dataset.id}?autoplay=1&rel=0" title="YouTube" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`; el.style.cursor = 'auto'; };
+    box.querySelectorAll('.ytv').forEach(el => { el.addEventListener('click', () => play(el), { once: true }); el.addEventListener('keydown', e => { if (e.key === 'Enter' && !el.querySelector('iframe')) play(el); }); });
+    const step = () => box.querySelector('.ytc').offsetWidth + 18;
+    document.getElementById('ytL').onclick = () => box.scrollBy({ left: -step() * 2, behavior: 'smooth' });
+    document.getElementById('ytR').onclick = () => box.scrollBy({ left: step() * 2, behavior: 'smooth' });
+    if (row.updated_at) { const d = new Date(row.updated_at); document.getElementById('ytUp').textContent = 'Actualizat la ' + d.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' }) + ', ' + d.toLocaleDateString('ro-RO'); }
+    const sec = document.getElementById('trending'); sec.hidden = false; sec.querySelectorAll('.rv').forEach(el => io.observe(el));
+  } catch {}
+})();
 </script>
 </body>
 </html>
