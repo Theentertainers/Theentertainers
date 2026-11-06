@@ -397,5 +397,6 @@ const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting
 document.querySelectorAll('.rv').forEach((el,i) => { el.style.transitionDelay = (el.classList.contains('mem') ? (i%3)*90 : 0) + 'ms'; io.observe(el); });
 </script>
 <script src="assets/menu.js"></script>
+<script src="assets/track.js" defer></script>
 </body>
 </html>

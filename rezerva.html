@@ -316,6 +316,7 @@ $('form').addEventListener('submit', async e => {
     if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.message || 'Eroare ' + r.status); }
     $('form').style.display = 'none';
     $('doneName').textContent = d.name.split(' ')[0];
+    window.teTrack && teTrack('rezerva');
     $('doneTxt').textContent = `Am primit cererea pentru ${d.type.toLowerCase()}, ${TE.nice(d.date)}. Te sunăm în cel mai scurt timp pentru detalii.`;
     $('doneWa').href = waText(d);
     $('done').style.display = 'block';
@@ -327,5 +328,6 @@ $('form').addEventListener('submit', async e => {
 });
 </script>
 <script src="assets/menu.js"></script>
+<script src="assets/track.js" defer></script>
 </body>
 </html>

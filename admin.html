@@ -119,6 +119,34 @@ main{padding:28px 0 80px}
 
 /* galerie video */
 .vadd{padding:20px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
+/* statistici */
+.st-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
+.st-tile{padding:16px 14px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
+.st-tile b{display:block;font-family:"Playfair Display",serif;font-size:1.8rem;color:var(--gold2);line-height:1.1}
+.st-tile span{display:block;font-weight:600;margin-top:2px}
+.st-tile small{display:block;color:var(--muted);font-size:.78rem;margin-top:2px}
+.st-card{padding:18px;border-radius:14px;background:var(--card);border:1px solid var(--line);margin-bottom:14px}
+.st-card h3{font-size:1rem;margin-bottom:12px}
+.st-g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.st-g2 .st-card{margin-bottom:0}
+.st-cols{display:flex;align-items:flex-end;gap:2px;height:180px;padding-bottom:22px;border-bottom:1px solid var(--line);position:relative}
+.st-col{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;position:relative;outline:none}
+.st-col i{display:block;background:var(--gold);border-radius:4px 4px 0 0;min-width:2px;transition:background .15s}
+.st-col:hover i,.st-col:focus i{background:var(--gold2)}
+.st-col em{position:absolute;bottom:-20px;left:50%;translate:-50% 0;font-style:normal;font-size:.68rem;color:var(--muted);white-space:nowrap}
+.st-col .tip{position:absolute;bottom:calc(100% + 6px);left:50%;translate:-50% 0;z-index:3;display:none;white-space:nowrap;padding:7px 10px;border-radius:9px;background:#1d1d22;border:1px solid var(--line);font-size:.78rem;color:var(--text);box-shadow:0 8px 20px -8px #000}
+.st-col:hover .tip,.st-col:focus .tip{display:block}
+.st-col:first-child .tip{left:0;translate:0 0}.st-col:last-child .tip{left:auto;right:0;translate:0 0}
+.st-max{font-size:.75rem;color:var(--muted);margin-top:26px;text-align:right}
+.st-one{font-size:1rem;color:var(--muted)}.st-one b{font-family:"Playfair Display",serif;font-size:2rem;color:var(--gold2)}
+.st-row{position:relative;display:flex;justify-content:space-between;gap:10px;padding:8px 10px;margin-bottom:6px;border-radius:9px;overflow:hidden;font-size:.9rem;background:#0f0f12}
+.st-row i{position:absolute;left:0;top:0;bottom:0;background:rgba(212,175,55,.16);border-right:2px solid var(--gold);z-index:0}
+.st-row .l,.st-row .v{position:relative;z-index:1}
+.st-row .v{font-weight:700;white-space:nowrap}.st-row .v small{color:var(--muted);font-weight:500}
+#stDays input{position:absolute;opacity:0;pointer-events:none}
+#stDays label{white-space:nowrap}
+.st-gsc p{color:var(--muted);font-size:.9rem;margin-bottom:12px}
+@media (max-width:860px){ .st-tiles{grid-template-columns:repeat(2,1fr)} .st-tiles .st-tile:first-child{grid-column:1/-1} .st-g2{grid-template-columns:1fr} }
 .vdet{font-size:.85rem;font-weight:600;min-height:1.2em}
 .vdet.ok{color:#7fcf9a}.vdet.bad{color:#ff9b9b}
 .vi{display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
@@ -232,6 +260,7 @@ main{padding:28px 0 80px}
   <div class="hidden" id="app">
     <div class="tabs">
       <button class="tab on" data-t="tabCal">Calendar</button>
+      <button class="tab" data-t="tabStat">📊 Statistici</button>
       <button class="tab" data-t="tabReq">Cereri de rezervare <span class="badge hidden" id="badge"></span></button>
       <button class="tab" data-t="tabVid">Galerie video</button>
       <button class="tab" data-t="tabFoto">Galerie foto</button>
@@ -239,6 +268,24 @@ main{padding:28px 0 80px}
       <button class="tab" data-t="tabBtr">By The River</button>
       <button class="tab" data-t="tabPar">Parteneri <span class="badge hidden" id="pBadge"></span></button>
       <button class="tab" data-t="tabFoto" data-me="1">⭐ Pozele mele</button>
+    </div>
+
+    <div id="tabStat" class="hidden">
+      <div class="bar"><h1>Statistici <span class="gold">site</span></h1>
+        <div class="seg" id="stDays"><label><input type="radio" name="std" value="1"> Azi</label><label><input type="radio" name="std" value="7" checked> 7 zile</label><label><input type="radio" name="std" value="30"> 30 zile</label><label><input type="radio" name="std" value="90"> 90 zile</label></div></div>
+      <div class="st-tiles" id="stTiles"></div>
+      <div class="st-card"><h3>Vizitatori pe zi</h3><div class="st-chart" id="stChart"></div></div>
+      <div class="st-g2">
+        <div class="st-card"><h3>Cele mai vizitate pagini</h3><div id="stPages"></div></div>
+        <div class="st-card"><h3>De unde vin vizitatorii</h3><div id="stSrc"></div>
+          <h3 style="margin-top:18px">De pe ce dispozitiv</h3><div id="stDev"></div></div>
+      </div>
+      <div class="st-card st-gsc">
+        <h3>🔎 Ce caută oamenii pe Google când te găsesc</h3>
+        <p>Cuvintele căutate pe Google le vede doar Google. Le găsești în Search Console, la <b>Performanță → Interogări</b>: ce au scris oamenii, de câte ori ai apărut și câți au dat click.</p>
+        <a class="btn btn-gold btn-sm" href="https://search.google.com/search-console/performance/search-analytics?resource_id=https%3A%2F%2Fwww.theentertainers.ro%2F" target="_blank" rel="noopener">Deschide căutările din Google ↗</a>
+      </div>
+      <p class="hint2" style="margin-top:12px">Statisticile sunt anonime: fără cookie-uri și fără date personale. Vizitele tale din acest browser nu se numără.</p>
     </div>
 
     <div id="tabPar" class="hidden">
@@ -508,13 +555,14 @@ function show(logged){
   $('loginBox').classList.toggle('hidden', logged);
   $('app').classList.toggle('hidden', !logged);
   $('logout').classList.toggle('hidden', !logged);
-  if (logged) { draw(); loadReq(); countDrafts(); } else $('pw').focus();
+  if (logged) { try { localStorage.setItem('te_notrack', '1'); } catch {} draw(); loadReq(); countDrafts(); } else $('pw').focus();
 }
 
 // ---------- tab-uri ----------
 document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
   document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === b));
-  ['tabCal','tabReq','tabVid','tabFoto','tabMap','tabBtr','tabPar'].forEach(id => $(id).classList.toggle('hidden', id !== b.dataset.t));
+  ['tabCal','tabStat','tabReq','tabVid','tabFoto','tabMap','tabBtr','tabPar'].forEach(id => $(id).classList.toggle('hidden', id !== b.dataset.t));
+  if (b.dataset.t === 'tabStat') loadStats();
   if (b.dataset.t === 'tabBtr') loadBtr();
   if (b.dataset.t === 'tabPar') loadPar();
   if (b.dataset.t === 'tabMap') loadPlaces();
@@ -522,6 +570,41 @@ document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
   if (b.dataset.t === 'tabVid') loadVid();
   if (b.dataset.t === 'tabFoto') { if (b.dataset.me) openMe(); else showAlbList(true); }
 });
+
+// ---------- Statistici ----------
+const ST_PAGES = { index: 'Prima pagină', despre: 'Despre noi', 'cozmin-bacanu': 'Cozmin Băcanu (pozele tale)', cununie: 'Cununie civilă', bytheriver: 'By The River', parteneri: 'Parteneri',
+  harta: 'Harta evenimentelor', calendar: 'Calendar', 'galerie-foto': 'Galerie foto', 'galerie-video': 'Galerie video', rezerva: 'Rezervă data',
+  'dj-nunta-slatina': 'DJ nuntă Slatina', 'dj-botez-slatina': 'DJ botez Slatina', 'dj-majorat-slatina': 'DJ majorat Slatina' };
+const ST_SRC = { direct: 'Direct / link salvat', google: 'Google', facebook: 'Facebook', instagram: 'Instagram', tiktok: 'TikTok', bing: 'Bing', chatgpt: 'ChatGPT', whatsapp: 'WhatsApp', duckduckgo: 'DuckDuckGo', yahoo: 'Yahoo' };
+const stNum = n => Number(n || 0).toLocaleString('ro-RO');
+function stBars(rows, label, val){
+  if (!rows.length) return '<div class="empty-l">Încă nu sunt date.</div>';
+  const max = Math.max(...rows.map(val)), tot = rows.reduce((s, r) => s + val(r), 0);
+  return rows.map(r => `<div class="st-row" title="${TE.esc(label(r))}: ${stNum(val(r))}"><span class="l">${TE.esc(label(r))}</span><span class="v">${stNum(val(r))} <small>${Math.round(val(r) / tot * 100)}%</small></span><i style="width:${Math.max(2, val(r) / max * 100)}%"></i></div>`).join('');
+}
+async function loadStats(){
+  const days = +document.querySelector('input[name="std"]:checked').value;
+  $('stTiles').innerHTML = '<div class="empty-l" style="grid-column:1/-1"><span class="spin"></span> Se încarcă…</div>';
+  const { data: s, error } = await sb.rpc('admin_stats', { p_days: days });
+  if (error) { $('stTiles').innerHTML = `<div class="empty-l" style="grid-column:1/-1">Nu s-au putut încărca: ${TE.esc(error.message)}</div>`; return; }
+  const tile = (n, t, sub) => `<div class="st-tile"><b>${stNum(n)}</b><span>${t}</span>${sub ? `<small>${sub}</small>` : ''}</div>`;
+  $('stTiles').innerHTML = tile(s.visitors, 'vizitatori', 'unici pe zi') + tile(s.views, 'pagini văzute', s.visitors ? (s.views / s.visitors).toFixed(1).replace('.', ',') + ' pagini / vizitator' : '')
+    + tile(s.tel, 'apeluri', 'click pe telefon') + tile(s.wa, 'WhatsApp', 'click pe WhatsApp') + tile(s.rezerva, 'cereri trimise', 'formularul Rezervă data');
+  // grafic pe zile (inclusiv zilele fără vizite)
+  const byDay = {}; (s.days || []).forEach(d => byDay[d.day] = d);
+  const list = []; const start = new Date(s.since);
+  for (let i = 0; i < days; i++) { const d = new Date(start.getTime() + i * 864e5); const k = d.toLocaleDateString('sv-SE', { timeZone: 'Europe/Bucharest' }); list.push({ k, v: byDay[k]?.visitors || 0, p: byDay[k]?.views || 0 }); }
+  const mx = Math.max(1, ...list.map(x => x.v));
+  const lbl = k => { const [y, m, d] = k.split('-'); return `${+d} ${TE.MONTHS[+m - 1].slice(0, 3)}`; };
+  const every = Math.ceil(list.length / 10);
+  $('stChart').innerHTML = days === 1
+    ? `<div class="st-one"><b>${stNum(list[0].v)}</b> vizitatori azi · ${stNum(list[0].p)} pagini văzute</div>`
+    : `<div class="st-cols">${list.map((x, i) => `<div class="st-col" tabindex="0"><span class="tip">${lbl(x.k)}<br><b>${stNum(x.v)}</b> vizitatori · ${stNum(x.p)} pagini</span><i style="height:${x.v ? Math.max(3, x.v / mx * 100) : 0}%"></i><em>${i % every === 0 ? lbl(x.k) : ''}</em></div>`).join('')}</div><div class="st-max">max. ${stNum(mx)} / zi</div>`;
+  $('stPages').innerHTML = stBars(s.pages || [], r => ST_PAGES[r.path] || r.path, r => +r.views);
+  $('stSrc').innerHTML = stBars(s.sources || [], r => ST_SRC[r.src] || r.src, r => +r.visitors);
+  $('stDev').innerHTML = stBars(s.devices || [], r => ({ mobil: '📱 Telefon', 'tabletă': '📲 Tabletă', calculator: '💻 Calculator' })[r.device] || r.device, r => +r.visitors);
+}
+document.querySelectorAll('input[name="std"]').forEach(r => r.onchange = loadStats);
 
 // ---------- Parteneri recomandați ----------
 let par = [], pEdit = null, pPic = null;   // pPic: { file } nouă, { path } salvată, null = fără
