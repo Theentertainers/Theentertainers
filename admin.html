@@ -381,8 +381,8 @@ main{padding:28px 0 80px}
         <label><input type="radio" name="st" value="provizoriu"> Provizoriu</label>
       </div>
     </div>
-    <div class="f"><label>Culoare în calendar <small style="font-weight:500;color:var(--muted)">(se vede și pe site)</small></label>
-      <div class="sw" id="fColors"></div>
+    <div class="f"><label>Culoare în calendar <small style="font-weight:500;color:var(--muted)">(automată, după tipul evenimentului)</small></label>
+      <div id="fColorInfo" style="display:flex;align-items:center;gap:10px;font-size:.92rem"></div>
     </div>
     <div class="g2">
       <div class="f"><label for="fName">Nume client</label><input id="fName" maxlength="120"></div>
@@ -415,19 +415,13 @@ let y = now.getFullYear(), m = now.getMonth(), events = [], editing = null;
 
 const fdp = TE.datePicker($('fDate'), { onChange: () => checkCap() });
 
-// alegerea culorii: auriu (fără culoare) + paletă + orice culoare
-let fColor = null;
+// culoarea vine automat din tipul evenimentului (lista în site.js → TYPE_COLORS)
 function renderColors(){
-  const custom = fColor && !TE.COLORS.includes(fColor.toLowerCase());
-  $('fColors').innerHTML = `<button type="button" class="none${!fColor ? ' on' : ''}" data-c="" title="Auriu (implicit)"></button>` +
-    TE.COLORS.map(c => `<button type="button" data-c="${c}" title="${c}" style="background:${c}"${fColor && fColor.toLowerCase() === c ? ' class="on"' : ''}></button>`).join('') +
-    `<label class="cu${custom ? ' on' : ''}" title="Altă culoare"${custom ? ` style="background:${fColor}"` : ''}><input type="color" id="fCustom" value="${fColor || '#d4af37'}"><span>+</span></label>`;
-  $('fColors').querySelectorAll('button').forEach(b => b.onclick = () => { fColor = b.dataset.c || null; renderColors(); });
-  // în timp ce tragi de selector doar colorăm butonul; redesenăm abia la final, ca să nu se închidă selectorul
-  $('fCustom').oninput = e => { fColor = e.target.value; const l = e.target.parentElement; l.style.background = fColor; $('fColors').querySelectorAll('.on').forEach(x => x.classList.remove('on')); l.classList.add('on'); };
-  $('fCustom').onchange = e => { fColor = e.target.value; renderColors(); };
+  const t = $('fType').value, c = TE.typeColor(t) || '#d4af37';
+  $('fColorInfo').innerHTML = `<span style="width:26px;height:26px;border-radius:8px;background:${c};border:1px solid rgba(255,255,255,.25);flex:none"></span><span>${TE.esc(t)}</span>`;
 }
 TE.TYPES.forEach(t => $('fType').insertAdjacentHTML('beforeend', `<option>${t}</option>`));
+$('fType').addEventListener('change', renderColors);
 
 function toast(t){ const el = $('toast'); el.textContent = t; el.classList.add('show'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2400); }
 
@@ -871,7 +865,7 @@ function toCalendar(r){
   const d = new Date(r.event_date + 'T12:00'); y = d.getFullYear(); m = d.getMonth();
   openForm(null, r.event_date);
   fromReq = r.id;
-  $('fType').value = TE.TYPES.includes(r.type) ? r.type : 'Altul';
+  $('fType').value = TE.TYPES.includes(r.type) ? r.type : 'Altul'; renderColors();
   document.querySelector('input[name=st][value=provizoriu]').checked = true;
   $('fName').value = r.name; $('fPhone').value = r.phone;
   $('fCity').value = r.city || ''; $('fVenue').value = r.venue || '';
@@ -933,7 +927,7 @@ function renderList(){
     ].filter(Boolean).map(x => `<span>${x}</span>`).join('');
     return `<div class="ev${e.status === 'provizoriu' ? ' prov' : ''}">
       <div class="dt">${d.getDate()} ${TE.MONTHS[d.getMonth()]}<small>${wd}</small></div>
-      <div><h3>${TE.okColor(e.color) ? `<span class="dot" style="background:${e.color}"></span>` : ''}${TE.esc(e.type)}<span class="tag ${e.status === 'provizoriu' ? 'p' : 'c'}">${e.status}</span></h3>
+      <div><h3>${TE.typeColor(e.type) ? `<span class="dot" style="background:${TE.typeColor(e.type)}"></span>` : ''}${TE.esc(e.type)}<span class="tag ${e.status === 'provizoriu' ? 'p' : 'c'}">${e.status}</span></h3>
         <div class="meta">${meta || '<span style="color:var(--muted)">Fără detalii</span>'}</div>
         ${e.notes ? `<div class="notes">${TE.esc(e.notes)}</div>` : ''}</div>
       <div class="acts"><button class="ib" data-e="${e.id}" title="Modifică">${icoEdit}</button><button class="ib del" data-x="${e.id}" title="Șterge">${icoDel}</button></div>
@@ -960,7 +954,7 @@ function openForm(ev, iso, dayEvents){
   $('fCity').value = ev?.city || ''; $('fVenue').value = ev?.venue || '';
   $('fPrice').value = ev?.price ?? ''; $('fDep').value = ev?.deposit ?? '';
   $('fNotes').value = ev?.notes || '';
-  fColor = TE.okColor(ev?.color) || null; renderColors();
+  renderColors();
   // evenimentele deja existente în acea zi
   const de = $('dayEv');
   if (!ev && dayEvents && dayEvents.length) {
@@ -1001,7 +995,7 @@ $('form').addEventListener('submit', async e => {
     city: $('fCity').value.trim() || null, venue: $('fVenue').value.trim() || null,
     price: num($('fPrice').value), deposit: num($('fDep').value),
     notes: $('fNotes').value.trim() || null,
-    color: TE.okColor(fColor) || null
+    color: TE.typeColor($('fType').value) || null
   };
   if (!row.date) { $('ferr').textContent = 'Scrie data corect: zz/ll/aaaa (ex. 14/06/2027).'; $('fDate').focus(); return; }
   if (row.price != null && row.deposit != null && row.deposit > row.price) { $('ferr').textContent = 'Avansul e mai mare decât prețul.'; return; }
