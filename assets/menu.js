@@ -11,6 +11,7 @@
     'despre.html': '<circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 20c0-3.3 2.7-6 6-6s6 2.7 6 6M14 15c3.5 0 7 1.5 7 5"/>',
     'cununie.html': '<circle cx="9" cy="14" r="5"/><circle cx="15" cy="14" r="5"/><path d="M10 4h4l-2 3z"/>',
     'bytheriver.html': '<circle cx="12" cy="9" r="3.5"/><path d="M2 17c2 0 2-1.5 4-1.5S8 17 10 17s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5M2 21c2 0 2-1.5 4-1.5S8 21 10 21s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5"/>',
+    'parteneri.html': '<path d="M3 11l4-4 5 3 5-3 4 4"/><path d="M7 7l-4 8 5 4 2-2M17 7l4 8-5 4-6-5"/><path d="M10 14l2 2M12 12l3 3"/>',
     'harta.html': '<path d="M12 21s-7-7.8-7-12a7 7 0 0114 0c0 4.2-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>',
     'calendar.html': '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
     'galerie-foto.html': '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/>',

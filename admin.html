@@ -237,6 +237,39 @@ main{padding:28px 0 80px}
       <button class="tab" data-t="tabFoto">Galerie foto</button>
       <button class="tab" data-t="tabMap">Harta</button>
       <button class="tab" data-t="tabBtr">By The River</button>
+      <button class="tab" data-t="tabPar">Parteneri</button>
+    </div>
+
+    <div id="tabPar" class="hidden">
+      <div class="bar"><h1><span class="gold">Parteneri</span> recomandați</h1><a class="lnk" href="parteneri.html" target="_blank" style="color:var(--gold2)">Vezi pagina publică ↗</a></div>
+      <form class="vadd" id="pForm">
+        <h2 id="pH" style="font-size:1.2rem;margin-bottom:14px">Partener nou</h2>
+        <div class="g2">
+          <div class="f"><label for="pName">Nume *</label><input id="pName" maxlength="120" required placeholder="ex. Foto Studio Andrei"></div>
+          <div class="f"><label for="pCat">Categorie *</label><input id="pCat" maxlength="60" required list="pCats" placeholder="alege sau scrie una nouă"><datalist id="pCats"></datalist></div>
+          <div class="f"><label for="pCity">Oraș</label><input id="pCity" maxlength="80" placeholder="ex. Slatina"></div>
+          <div class="f"><label for="pPhone">Telefon (și WhatsApp)</label><input id="pPhone" type="tel" maxlength="40" placeholder="ex. 0722 123 456"></div>
+        </div>
+        <div class="f"><label for="pDesc">Scurtă descriere</label><textarea id="pDesc" maxlength="600" placeholder="1-2 fraze: ce oferă, de ce îl recomanzi"></textarea></div>
+        <div class="g2">
+          <div class="f"><label for="pWeb">Site</label><input id="pWeb" maxlength="300" placeholder="https://…"></div>
+          <div class="f"><label for="pFb">Facebook</label><input id="pFb" maxlength="300" placeholder="https://facebook.com/…"></div>
+          <div class="f"><label for="pIg">Instagram</label><input id="pIg" maxlength="300" placeholder="https://instagram.com/…"></div>
+          <div class="f"><label>&nbsp;</label><label class="chk"><input type="checkbox" id="pPub" checked> Vizibil pe site</label></div>
+          <div class="f"><label>Poză / logo</label>
+            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+              <div id="pPrev" style="width:72px;height:72px;border-radius:14px;border:1px solid var(--line);background:#111 center/cover no-repeat;flex:none"></div>
+              <label class="btn btn-ghost btn-sm" style="cursor:pointer">Alege poza<input type="file" id="pFile" accept="image/*" hidden></label>
+              <button type="button" class="btn btn-ghost btn-sm hidden" id="pNoPic">Scoate poza</button>
+            </div></div>
+        </div>
+        <div class="err" id="perr2"></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-gold btn-sm" id="pSave">Adaugă partenerul</button>
+          <button type="button" class="btn btn-ghost btn-sm hidden" id="pCancel">Renunță</button>
+        </div>
+      </form>
+      <div class="list" id="pList"></div>
     </div>
 
     <div id="tabBtr" class="hidden">
@@ -468,12 +501,86 @@ function show(logged){
 // ---------- tab-uri ----------
 document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
   document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === b));
-  ['tabCal','tabReq','tabVid','tabFoto','tabMap','tabBtr'].forEach(id => $(id).classList.toggle('hidden', id !== b.dataset.t));
+  ['tabCal','tabReq','tabVid','tabFoto','tabMap','tabBtr','tabPar'].forEach(id => $(id).classList.toggle('hidden', id !== b.dataset.t));
   if (b.dataset.t === 'tabBtr') loadBtr();
+  if (b.dataset.t === 'tabPar') loadPar();
   if (b.dataset.t === 'tabMap') loadPlaces();
   if (b.dataset.t === 'tabReq') loadReq();
   if (b.dataset.t === 'tabVid') loadVid();
   if (b.dataset.t === 'tabFoto') loadAlbums();
+});
+
+// ---------- Parteneri recomandați ----------
+let par = [], pEdit = null, pPic = null;   // pPic: { file } nouă, { path } salvată, null = fără
+const url = v => { v = v.trim(); return v ? (/^https?:\/\//i.test(v) ? v : 'https://' + v) : null; };
+async function loadPar(){
+  const { data, error } = await sb.from('partners').select('*').order('category').order('sort', { ascending: false }).order('name');
+  if (error) { $('pList').innerHTML = `<div class="empty-l">Nu s-au putut încărca: ${TE.esc(error.message)}</div>`; return; }
+  par = data; renderPar();
+}
+function renderPar(){
+  const cats = [...new Set([...TE.PCATS, ...par.map(p => p.category)])];
+  $('pCats').innerHTML = cats.map(c => `<option value="${TE.esc(c)}">`).join('');
+  const groups = cats.map(c => [c, par.filter(p => p.category === c)]).filter(g => g[1].length);
+  $('pList').innerHTML = `<h2 style="font-size:1.2rem;margin-top:10px">${par.length} parteneri</h2>` + (groups.length ? groups.map(([c, l]) =>
+    `<h3 style="font-size:1rem;color:var(--gold2);margin:16px 0 8px">${TE.esc(c)} <small style="color:var(--muted)">(${l.length})</small></h3>` + l.map((p, i) => `
+    <div class="vi"${p.published ? '' : ' style="opacity:.55"'}>
+      <div style="width:64px;height:64px;border-radius:12px;background:#111 ${p.logo ? `url('${TE.photoUrl(p.logo)}')` : ''} center/cover no-repeat;border:1px solid var(--line)"></div>
+      <div><b>${TE.esc(p.name)}</b>${p.published ? '' : ' <small style="color:var(--muted)">· ascuns</small>'}
+        <div style="font-size:.85rem;color:var(--muted)">${[p.city, p.phone].filter(Boolean).map(TE.esc).join(' · ') || '–'}</div></div>
+      <div class="acts" style="display:flex;gap:6px">
+        <button class="ib" data-pu="${p.id}" title="Mai sus"${i ? '' : ' disabled'}>↑</button><button class="ib" data-pd="${p.id}" title="Mai jos"${i < l.length - 1 ? '' : ' disabled'}>↓</button>
+        <button class="ib" data-pe="${p.id}" title="Modifică">${icoEdit}</button><button class="ib del" data-px="${p.id}" title="Șterge">${icoDel}</button></div>
+    </div>`).join('')).join('') : '<div class="empty-l">Niciun partener încă. Completează formularul de mai sus.</div>');
+  const find = id => par.find(p => p.id === id);
+  $('pList').querySelectorAll('[data-pe]').forEach(b => b.onclick = () => pOpen(find(b.dataset.pe)));
+  $('pList').querySelectorAll('[data-px]').forEach(b => b.onclick = async () => {
+    const p = find(b.dataset.px); if (!confirm(`Ștergi partenerul „${p.name}”?`)) return;
+    const { error } = await sb.from('partners').delete().eq('id', p.id); if (error) return alert(error.message);
+    if (p.logo) await sb.storage.from('photos').remove([p.logo]);
+    toast('Partener șters ✓'); if (pEdit?.id === p.id) pOpen(null); loadPar();
+  });
+  // ordinea în categorie: schimbăm „sort” cu vecinul
+  const move = async (id, dir) => {
+    const p = find(id), l = par.filter(x => x.category === p.category), i = l.indexOf(p); if (!l[i + dir]) return;
+    [l[i], l[i + dir]] = [l[i + dir], l[i]];   // schimbăm locul, apoi renumerotăm categoria (primul are numărul cel mai mare)
+    await Promise.all(l.map((x, k) => sb.from('partners').update({ sort: l.length - k }).eq('id', x.id)));
+    loadPar();
+  };
+  $('pList').querySelectorAll('[data-pu]').forEach(b => b.onclick = () => move(b.dataset.pu, -1));
+  $('pList').querySelectorAll('[data-pd]').forEach(b => b.onclick = () => move(b.dataset.pd, 1));
+}
+function pShowPic(){ $('pPrev').style.backgroundImage = pPic ? `url('${pPic.file ? URL.createObjectURL(pPic.file) : TE.photoUrl(pPic.path)}')` : ''; $('pNoPic').classList.toggle('hidden', !pPic); }
+$('pFile').onchange = () => { const f = $('pFile').files[0]; if (f) { pPic = { file: f }; pShowPic(); } $('pFile').value = ''; };
+$('pNoPic').onclick = () => { pPic = null; pShowPic(); };
+function pOpen(p){
+  pEdit = p || null; $('perr2').textContent = '';
+  $('pH').textContent = p ? 'Modifică partenerul' : 'Partener nou'; $('pSave').textContent = p ? 'Salvează modificările' : 'Adaugă partenerul';
+  $('pCancel').classList.toggle('hidden', !p);
+  $('pName').value = p?.name || ''; $('pCat').value = p?.category || ''; $('pCity').value = p?.city || ''; $('pPhone').value = p?.phone || '';
+  $('pDesc').value = p?.description || ''; $('pWeb').value = p?.website || ''; $('pFb').value = p?.facebook || ''; $('pIg').value = p?.instagram || '';
+  $('pPub').checked = p ? p.published : true; pPic = p?.logo ? { path: p.logo } : null; pShowPic();
+  if (p) $('pForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+$('pCancel').onclick = () => pOpen(null);
+$('pForm').addEventListener('submit', async ev => {
+  ev.preventDefault(); $('perr2').textContent = '';
+  const row = { name: $('pName').value.trim(), category: $('pCat').value.trim(), city: $('pCity').value.trim() || null, phone: $('pPhone').value.trim() || null,
+    description: $('pDesc').value.trim() || null, website: url($('pWeb').value), facebook: url($('pFb').value), instagram: url($('pIg').value), published: $('pPub').checked };
+  if (!row.name || !row.category) { $('perr2').textContent = 'Completează numele și categoria.'; return; }
+  if (!pEdit) row.sort = Math.max(0, ...par.filter(p => p.category === row.category).map(p => p.sort)) + 1;
+  $('pSave').disabled = true;
+  const old = pEdit?.logo || null; let upl = null;
+  try {
+    if (pPic?.file) { const s = await shrink(pPic.file, 800, .86); upl = `partners/${crypto.randomUUID()}.jpg`;
+      const r = await sb.storage.from('photos').upload(upl, s.blob, { contentType: 'image/jpeg', cacheControl: '31536000', upsert: false }); if (r.error) throw r.error; }
+  } catch (ex) { $('pSave').disabled = false; $('perr2').textContent = 'Poza nu s-a încărcat: ' + (ex.message || ex); return; }
+  row.logo = upl || pPic?.path || null;
+  const { error } = await (pEdit ? sb.from('partners').update(row).eq('id', pEdit.id) : sb.from('partners').insert(row));
+  $('pSave').disabled = false;
+  if (error) { if (upl) sb.storage.from('photos').remove([upl]); $('perr2').textContent = 'Nu s-a salvat: ' + error.message; return; }
+  if (old && old !== row.logo) sb.storage.from('photos').remove([old]);
+  toast(pEdit ? 'Partener modificat ✓' : 'Partener adăugat ✓'); pOpen(null); loadPar();
 });
 
 // ---------- By The River: ediții ----------

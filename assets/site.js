@@ -104,6 +104,8 @@ window.TE = {
 
   photoUrl(path){ return TE.SUPABASE_URL + '/storage/v1/object/public/photos/' + path; },
 
+  // categoriile de pe pagina Parteneri (în admin se pot scrie și altele noi)
+  PCATS: ['Efecte speciale', 'Foto & video', 'Băuturi & dulciuri', 'Locații & decor'],
   okColor(c){ return /^#[0-9a-fA-F]{6}$/.test(c || '') ? c : ''; },
   // culoarea fiecărui tip de eveniment în calendar (automat, nu se mai alege de mână)
   TYPE_COLORS: {
