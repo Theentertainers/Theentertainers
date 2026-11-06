@@ -22,6 +22,7 @@
 .hint{text-align:center;color:var(--muted);font-size:.9rem;margin-top:22px}
 </style>
 <link rel="stylesheet" href="assets/compact.css">
+<link rel="stylesheet" href="assets/menu.css">
 </head>
 <body>
 
@@ -165,5 +166,6 @@ prev.onclick = () => { if (--m < 0) { m = 11; y--; } draw(); };
 next.onclick = () => { if (++m > 11) { m = 0; y++; } draw(); };
 draw();
 </script>
+<script src="assets/menu.js"></script>
 </body>
 </html>

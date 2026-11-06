@@ -172,6 +172,7 @@ footer{border-top:1px solid var(--line);background:#08080a;padding:60px 0 30px}
 }
 </style>
 <link rel="stylesheet" href="assets/compact.css">
+<link rel="stylesheet" href="assets/menu.css">
 </head>
 <body>
 
@@ -380,5 +381,6 @@ nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { nav.c
 const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), {threshold:.12});
 document.querySelectorAll('.rv').forEach((el,i) => { el.style.transitionDelay = (el.classList.contains('mem') ? (i%3)*90 : 0) + 'ms'; io.observe(el); });
 </script>
+<script src="assets/menu.js"></script>
 </body>
 </html>

@@ -1,0 +1,46 @@
+/* Meniu interactiv – se încarcă după celelalte stiluri, pe toate paginile publice */
+
+.nav a .mi{display:none}   /* iconițele apar doar în meniul de telefon */
+
+/* ---------- calculator: pastila aurie care alunecă ---------- */
+@media (min-width:1281px){
+  .nav{position:relative}
+  .nav a:not(.btn){position:relative;z-index:1;background:none!important;transition:color .25s}
+  .nav a:not(.btn):hover,.nav a.on:not(.btn){color:var(--gold2)}
+  .nav-pill{position:absolute;top:50%;left:0;height:36px;width:0;translate:0 -50%;border-radius:999px;z-index:0;pointer-events:none;
+    background:linear-gradient(135deg,rgba(243,215,122,.16),rgba(212,175,55,.08));border:1px solid rgba(243,215,122,.35);
+    box-shadow:0 0 18px -4px rgba(212,175,55,.45),inset 0 0 12px -6px rgba(243,215,122,.5);opacity:0;
+    transition:left .38s cubic-bezier(.3,1.35,.5,1),width .38s cubic-bezier(.3,1.35,.5,1),opacity .25s}
+  .nav-pill.show{opacity:1}
+}
+
+/* ---------- telefon / tabletă: meniu pe tot ecranul ---------- */
+.burger{position:relative;z-index:3}
+.burger .bl{position:absolute;left:12px;right:12px;height:2px;border-radius:2px;background:var(--gold2);transition:transform .35s cubic-bezier(.6,.05,.3,1),opacity .2s,top .35s}
+.burger .bl:nth-child(1){top:14px}.burger .bl:nth-child(2){top:21px}.burger .bl:nth-child(3){top:28px}
+.burger.x .bl:nth-child(1){top:21px;transform:rotate(45deg)}
+.burger.x .bl:nth-child(2){opacity:0;transform:scaleX(.2)}
+.burger.x .bl:nth-child(3){top:21px;transform:rotate(-45deg)}
+
+@media (max-width:1280px){
+  .hdr.menu-open{backdrop-filter:none;-webkit-backdrop-filter:none;background:transparent;box-shadow:none}
+  .nav{position:fixed;inset:0;width:auto;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+    padding:90px 24px 40px;overflow-y:auto;border:0;transform:none;visibility:hidden;opacity:0;
+    background:radial-gradient(ellipse at 50% 0%,rgba(212,175,55,.14),transparent 60%),rgba(8,8,10,.97);
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);transition:opacity .35s ease,visibility 0s linear .35s}
+  .nav.open{visibility:visible;opacity:1;transition:opacity .35s ease}
+  .nav a{display:flex;align-items:center;gap:14px;width:min(340px,100%);padding:13px 18px;font-size:1.12rem;border-radius:14px;
+    opacity:0;transform:translateY(16px);transition:opacity .35s ease,transform .45s cubic-bezier(.2,.9,.3,1.2),background .2s,color .2s}
+  .nav.open a{opacity:1;transform:none;transition-delay:calc(var(--i,0) * 45ms + 80ms),calc(var(--i,0) * 45ms + 80ms),0s,0s}
+  .nav a .mi{display:grid;width:36px;height:36px;flex:none;border-radius:11px;display:grid;place-items:center;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.25)}
+  .nav a .mi svg{width:19px;height:19px;stroke:var(--gold2);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .nav a.on{background:rgba(212,175,55,.1);color:var(--gold2)}
+  .nav a.on .mi{background:var(--grad);border-color:transparent}
+  .nav a.on .mi svg{stroke:#1a1405}
+  .nav .btn{justify-content:center;margin:14px 0 0;color:#1a1405}
+  .nav .btn .mi{display:none}
+  body.menu-lock{overflow:hidden}
+  .hdr.menu-open .brand{position:relative;z-index:3}
+  body.menu-lock .wa{opacity:0;pointer-events:none;transition:opacity .2s}
+}
+@media (prefers-reduced-motion:reduce){ .nav a,.nav.open a,.nav-pill,.burger .bl{transition:none!important} }
