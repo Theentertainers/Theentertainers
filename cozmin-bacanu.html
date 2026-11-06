@@ -48,10 +48,25 @@ section.alt{background:var(--bg2);border-block:1px solid var(--line)}
 .sec-head .kicker{margin-bottom:14px}
 .sec-head h2{font-size:clamp(1.8rem,3.6vw,2.6rem);margin-bottom:10px}
 .sec-head p{color:var(--muted)}
-.pgrid{columns:4 220px;column-gap:10px}
-.pgrid button{display:block;width:100%;margin:0 0 10px;padding:0;border:0;border-radius:12px;overflow:hidden;cursor:zoom-in;background:#111;break-inside:avoid}
-.pgrid img{width:100%;height:auto;display:block;transition:transform .5s}
-.pgrid button:hover img{transform:scale(1.04)}
+/* poze cu ramă aurie strălucitoare + reacții */
+@property --a{syntax:'<angle>';initial-value:0deg;inherits:false}
+.pgrid{columns:3 260px;column-gap:22px}
+.pc{position:relative;break-inside:avoid;margin:0 0 22px;padding:3px;border-radius:20px;
+  background:conic-gradient(from var(--a),#f3d77a,#a8841f 18%,rgba(212,175,55,.08) 32%,#f3d77a 50%,#a8841f 68%,rgba(212,175,55,.08) 82%,#f3d77a);
+  animation:spin 6s linear infinite;box-shadow:0 0 22px -3px rgba(243,215,122,.6),0 18px 40px -18px #000;transition:box-shadow .4s,transform .4s}
+.pc:nth-child(3n+2){animation-delay:-2s}.pc:nth-child(3n){animation-delay:-4s}
+.pc::before{content:"";position:absolute;inset:-10px;z-index:-1;border-radius:28px;background:radial-gradient(ellipse at 50% 40%,rgba(243,215,122,.28),transparent 70%);opacity:.55;filter:blur(8px);transition:opacity .4s;animation:breathe 3.2s ease-in-out infinite}
+.pc:hover{transform:translateY(-6px);box-shadow:0 0 34px -2px rgba(243,215,122,.75),0 24px 50px -18px #000}
+.pc:hover::before{opacity:1}
+@keyframes spin{to{--a:360deg}}
+@keyframes breathe{50%{opacity:.95}}
+.pc .in{border-radius:18px;overflow:hidden;background:#0d0d10}
+.pc .ph{display:block;width:100%;padding:0;border:0;background:#111;cursor:zoom-in;overflow:hidden}
+.pc .ph img{width:100%;height:auto;display:block;transition:transform .6s}
+.pc:hover .ph img{transform:scale(1.05)}
+.pc .rx{justify-content:center;padding:10px 8px 12px;background:linear-gradient(180deg,#141418,#0d0d10)}
+.pc .rx-b{padding:5px 10px;font-size:.85rem}
+@media (prefers-reduced-motion:reduce){.pc,.pc::before{animation:none}}
 .gmsg{text-align:center;color:var(--muted);padding:30px 0}
 .lb{position:fixed;inset:0;z-index:100;background:rgba(5,5,6,.96);display:none;align-items:center;justify-content:center}
 .lb.open{display:flex}
@@ -60,9 +75,12 @@ section.alt{background:var(--bg2);border-block:1px solid var(--line)}
 .lb .x{top:16px;right:16px;width:46px;height:46px;font-size:1.4rem}
 .lb .nv{top:50%;translate:0 -50%;width:54px;height:54px;font-size:1.6rem}
 .lb .pv{left:16px}.lb .nx{right:16px}
+.lb .lbrx{position:absolute;bottom:58px;left:50%;translate:-50% 0;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);padding:8px;border-radius:999px;border:1px solid rgba(243,215,122,.35);box-shadow:0 0 24px -6px rgba(243,215,122,.5)}
+.lb .lbrx .rx{flex-wrap:nowrap}
+.lb img{max-height:calc(100vh - 170px)}
 .lb .ct2{position:absolute;bottom:18px;left:50%;translate:-50% 0;color:#cfcabe;font-size:.9rem;font-weight:600;background:rgba(0,0,0,.5);padding:6px 14px;border-radius:999px}
 @media (max-width:760px){ .prof{grid-template-columns:1fr;justify-items:center;text-align:center;gap:24px} .prof .av{width:170px;height:170px} .prof .cta,.tags{justify-content:center} }
-@media (max-width:600px){ .pgrid{columns:2 140px;column-gap:6px} .pgrid button{margin-bottom:6px;border-radius:8px} .lb .nv{width:44px;height:44px;font-size:1.3rem} .lb .pv{left:8px}.lb .nx{right:8px} }
+@media (max-width:600px){ .pgrid{columns:1;max-width:420px;margin:0 auto} .lb .nv{width:44px;height:44px;font-size:1.3rem} .lb .pv{left:8px}.lb .nx{right:8px} }
 </style>
 <link rel="stylesheet" href="assets/compact.css">
 <link rel="stylesheet" href="assets/menu.css">
@@ -176,6 +194,7 @@ section.alt{background:var(--bg2);border-block:1px solid var(--line)}
   <button class="nv pv" id="lbP" aria-label="Poza anterioară">‹</button>
   <img id="lbImg" alt="Cozmin Băcanu la eveniment">
   <button class="nv nx" id="lbN" aria-label="Poza următoare">›</button>
+  <div class="lbrx" id="lbRx"></div>
   <span class="ct2" id="lbC"></span>
 </div>
 
@@ -185,23 +204,28 @@ section.alt{background:var(--bg2);border-block:1px solid var(--line)}
 <script>
 // pozele din albumul special „MC Cozmin” (se încarcă din admin → Galerie foto → ⭐ Pozele mele)
 const $ = id => document.getElementById(id);
-let photos = [], idx = 0;
+let photos = [], idx = 0, rx = {};
+// reacțiile ❤️ 👏 🔥 😍 (aceleași ca în galeria foto); o reacție dată în poza mărită se vede și sub poză
+TE.reactInit((type, id, counts) => { rx[id] = counts; });
 (async () => {
   const H = { apikey: TE.SUPABASE_KEY };
   const get = q => fetch(TE.SUPABASE_URL + '/rest/v1/' + q, { headers: H }).then(r => { if (!r.ok) throw r.status; return r.json(); });
   try {
     const al = await get('albums?select=id&type=eq.MC%20Cozmin');
-    photos = al.length ? await get('photos?select=path,thumb,w,h&album_id=in.(' + al.map(a => a.id).join(',') + ')&order=sort.asc,created_at.asc') : [];
+    photos = al.length ? await get('photos?select=id,path,thumb,w,h&album_id=in.(' + al.map(a => a.id).join(',') + ')&order=sort.asc,created_at.asc') : [];
     if (!photos.length) { $('msg').textContent = 'Pozele de la evenimente vin în curând.'; return; }
+    rx = await TE.reactLoad('photo', photos.map(p => p.id));
     $('msg').style.display = 'none';
-    $('pgrid').innerHTML = photos.map((p, i) => `<button data-i="${i}" aria-label="Mărește poza ${i + 1}"><img src="${TE.photoUrl(p.thumb)}" alt="Cozmin Băcanu la eveniment" loading="lazy"${p.w ? ` width="${p.w}" height="${p.h}"` : ''}></button>`).join('');
-    $('pgrid').querySelectorAll('button').forEach(b => b.onclick = () => openLb(+b.dataset.i));
+    $('pgrid').innerHTML = photos.map((p, i) => `<div class="pc"><div class="in">
+      <button class="ph" data-i="${i}" aria-label="Mărește poza ${i + 1}"><img src="${TE.photoUrl(p.thumb)}" alt="Cozmin Băcanu la eveniment" loading="lazy"${p.w ? ` width="${p.w}" height="${p.h}"` : ''}></button>
+      ${TE.reactBar('photo', p.id, rx[p.id])}</div></div>`).join('');
+    $('pgrid').querySelectorAll('.ph').forEach(b => b.onclick = () => openLb(+b.dataset.i));
   } catch { $('msg').textContent = 'Pozele nu s-au putut încărca acum.'; }
 })();
 const lb = $('lb'), lbImg = $('lbImg');
 function openLb(i){ idx = i; show(); lb.classList.add('open'); document.body.style.overflow = 'hidden'; }
 function closeLb(){ lb.classList.remove('open'); document.body.style.overflow = ''; }
-function show(){ const p = photos[idx]; lbImg.style.opacity = .3; lbImg.onload = () => lbImg.style.opacity = 1; lbImg.src = TE.photoUrl(p.path); $('lbC').textContent = (idx + 1) + ' / ' + photos.length; }
+function show(){ const p = photos[idx]; lbImg.style.opacity = .3; lbImg.onload = () => lbImg.style.opacity = 1; lbImg.src = TE.photoUrl(p.path); $('lbC').textContent = (idx + 1) + ' / ' + photos.length; $('lbRx').innerHTML = TE.reactBar('photo', p.id, rx[p.id]); }
 const go = d => { idx = (idx + d + photos.length) % photos.length; show(); };
 $('lbX').onclick = closeLb; $('lbP').onclick = () => go(-1); $('lbN').onclick = () => go(1);
 lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
