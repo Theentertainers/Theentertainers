@@ -52,7 +52,7 @@ h1,h2,h3{font-family:"Playfair Display",serif;line-height:1.15}
 /* ANCORĂ: clipul ocupă toată lățimea (16:9) și totul se măsoară în vw, adică în procente din lățimea clipului.
    Așa, textul „Din 2005…” cade mereu chiar sub „WE LOVE TO ENTERTAIN YOU” din clip (66–72% din înălțimea clipului),
    indiferent de rezoluție. --vh = înălțimea clipului, --vt = cât urcă clipul sub meniu, --at = unde începe textul. */
-.hero{--vh:56.25vw;--vt:calc(var(--vh) * -.29);--at:calc(var(--vh) * .735);
+.hero{--vh:56.25vw;--vt:calc(82px - var(--vh) * .245);--at:calc(var(--vh) * .735);   /* logo-ul din clip (de la 24,5%) începe la 82 px, sub meniu */
   position:relative;display:block;text-align:center;overflow:hidden;padding:calc(var(--vt) + var(--at)) 0 44px}
 .hero .scroll-hint{display:none}
 .hero video{position:absolute;left:0;top:var(--vt);width:100%;height:var(--vh);object-fit:cover;z-index:-2;
