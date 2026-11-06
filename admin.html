@@ -212,6 +212,20 @@ main{padding:28px 0 80px}
     <div class="f"><label for="pw">Parolă</label><input id="pw" type="password" autocomplete="current-password" required></div>
     <div class="err" id="lerr"></div>
     <button class="btn btn-gold" style="width:100%" id="lbtn">Intră</button>
+    <button type="button" id="forgot" style="display:block;margin:16px auto 0;background:none;border:0;color:var(--gold2);font:600 .88rem Montserrat,sans-serif;cursor:pointer;text-decoration:underline;text-underline-offset:3px">Am uitat parola</button>
+    <div id="fmsg" style="margin-top:12px;font-size:.88rem;color:#cfe9c9;text-align:center"></div>
+  </form>
+
+  <!-- PAROLĂ NOUĂ (după linkul din email) -->
+  <form class="login hidden" id="newPwBox" autocomplete="on">
+    <img src="assets/mic-gold.png" alt="">
+    <h1>Alege o <span class="gold">parolă nouă</span></h1>
+    <input type="email" autocomplete="username" value="bacanucozmin@gmail.com" hidden>
+    <div class="f"><label for="np1">Parola nouă</label><input id="np1" type="password" autocomplete="new-password" minlength="8" required></div>
+    <div class="f"><label for="np2">Scrie-o încă o dată</label><input id="np2" type="password" autocomplete="new-password" minlength="8" required></div>
+    <div style="font-size:.8rem;color:var(--muted);margin:-4px 0 12px">Minim 8 caractere. Folosește litere, cifre și un semn.</div>
+    <div class="err" id="nperr"></div>
+    <button class="btn btn-gold" style="width:100%" id="npbtn">Salvează parola și intră</button>
   </form>
 
   <!-- APLICAȚIA -->
@@ -426,11 +440,25 @@ $('fType').addEventListener('change', renderColors);
 function toast(t){ const el = $('toast'); el.textContent = t; el.classList.add('show'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2400); }
 
 // ---------- login ----------
+// venit din linkul de resetare a parolei? (#...type=recovery) sau link expirat (#error=...)
+const H0 = new URLSearchParams(location.hash.slice(1));
+let recovering = H0.get('type') === 'recovery';
 async function boot(){
   const { data: { session } } = await sb.auth.getSession();
+  if (H0.get('error_description')) {
+    history.replaceState(null, '', location.pathname); show(false);
+    $('lerr').textContent = /expired|invalid/i.test(H0.get('error_description')) ? 'Linkul de resetare a expirat sau a fost deja folosit. Cere unul nou cu „Am uitat parola”.' : 'Linkul nu a mers: ' + H0.get('error_description');
+    return;
+  }
+  if (recovering && session) { showNewPw(); return; }
   show(!!session);
 }
+function showNewPw(){
+  $('loginBox').classList.add('hidden'); $('app').classList.add('hidden'); $('logout').classList.add('hidden');
+  $('newPwBox').classList.remove('hidden'); setTimeout(() => $('np1').focus(), 50);
+}
 function show(logged){
+  $('newPwBox').classList.add('hidden');
   $('loginBox').classList.toggle('hidden', logged);
   $('app').classList.toggle('hidden', !logged);
   $('logout').classList.toggle('hidden', !logged);
@@ -881,6 +909,30 @@ $('loginBox').addEventListener('submit', async e => {
 });
 $('logout').onclick = async () => { await sb.auth.signOut(); show(false); };
 
+// „Am uitat parola”: Supabase trimite pe email un link care te aduce înapoi aici
+$('forgot').onclick = async () => {
+  const email = $('em').value.trim(); $('lerr').textContent = ''; $('fmsg').textContent = '';
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { $('lerr').textContent = 'Scrie mai întâi adresa de email a contului de admin.'; $('em').focus(); return; }
+  $('forgot').disabled = true;
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
+  $('forgot').disabled = false;
+  if (error) { $('lerr').textContent = /rate|seconds|many/i.test(error.message) ? 'Ai cerut deja un link de curând. Mai încearcă peste câteva minute.' : 'Nu s-a putut trimite emailul: ' + error.message; return; }
+  $('fmsg').textContent = `Ți-am trimis un email la ${email}. Deschide linkul din el (verifică și Spam) ca să alegi o parolă nouă.`;
+};
+$('newPwBox').addEventListener('submit', async e => {
+  e.preventDefault(); $('nperr').textContent = '';
+  const p1 = $('np1').value, p2 = $('np2').value;
+  if (p1.length < 8) { $('nperr').textContent = 'Parola trebuie să aibă minim 8 caractere.'; return; }
+  if (p1 !== p2) { $('nperr').textContent = 'Cele două parole nu sunt la fel.'; $('np2').focus(); return; }
+  $('npbtn').disabled = true;
+  const { error } = await sb.auth.updateUser({ password: p1 });
+  $('npbtn').disabled = false;
+  if (error) { $('nperr').textContent = /different|same/i.test(error.message) ? 'Parola nouă trebuie să fie diferită de cea veche.' : /weak|short|pwned|leaked/i.test(error.message) ? 'Parola e prea slabă. Alege una mai lungă, cu litere, cifre și semne.' : 'Nu s-a salvat: ' + error.message; return; }
+  $('np1').value = $('np2').value = ''; recovering = false;
+  history.replaceState(null, '', location.pathname);
+  show(true); toast('Parola a fost schimbată ✓');
+});
+
 // ---------- calendar ----------
 async function draw(){
   $('title').textContent = TE.MONTHS[m] + ' ' + y;
@@ -1029,7 +1081,10 @@ async function del(ev){
 $('fDel').onclick = () => del(editing);
 $('addBtn').onclick = () => openForm(null, TE.iso(new Date(y, m, Math.min(now.getDate(), 28))));
 
-sb.auth.onAuthStateChange((ev) => { if (ev === 'SIGNED_OUT') show(false); });
+sb.auth.onAuthStateChange((ev) => {
+  if (ev === 'PASSWORD_RECOVERY') { recovering = true; showNewPw(); }
+  else if (ev === 'SIGNED_OUT') show(false);
+});
 boot();
 </script>
 </body>
