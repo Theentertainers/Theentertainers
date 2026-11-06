@@ -238,6 +238,7 @@ main{padding:28px 0 80px}
       <button class="tab" data-t="tabMap">Harta</button>
       <button class="tab" data-t="tabBtr">By The River</button>
       <button class="tab" data-t="tabPar">Parteneri <span class="badge hidden" id="pBadge"></span></button>
+      <button class="tab" data-t="tabFoto" data-me="1">⭐ Pozele mele</button>
     </div>
 
     <div id="tabPar" class="hidden">
@@ -320,8 +321,8 @@ main{padding:28px 0 80px}
     </div>
 
     <div id="tabFoto" class="hidden">
-      <div class="bar"><h1>Galerie <span class="gold">foto</span></h1>
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><a class="lnk" href="galerie-foto.html" target="_blank" style="color:var(--gold2)">Vezi pagina publică ↗</a><button class="btn btn-ghost btn-sm" id="aMe">⭐ Pozele mele (Cozmin)</button><button class="btn btn-gold btn-sm" id="aNew">+ Album nou</button></div></div>
+      <div class="bar"><h1 id="fotoH">Galerie <span class="gold">foto</span></h1>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><a class="lnk" id="fotoLnk" href="galerie-foto.html" target="_blank" style="color:var(--gold2)">Vezi pagina publică ↗</a><button class="btn btn-gold btn-sm" id="aNew">+ Album nou</button></div></div>
 
       <div id="aListWrap"><div class="albs" id="aList"></div></div>
 
@@ -329,7 +330,7 @@ main{padding:28px 0 80px}
         <button class="back2" id="aBack">‹ Toate albumele</button>
         <div class="vadd hidden" id="aMeHead">
           <h2 style="font-size:1.3rem;margin-bottom:8px">⭐ Pozele mele de la evenimente</h2>
-          <p class="hint2" style="margin:0">Pozele de aici apar pe pagina ta, <b>Cozmin Băcanu – MC</b>, la care se ajunge din <b>Despre noi</b>, cu click pe poza ta. Nu apar în galeria foto generală. <a class="lnk" href="cozmin-bacanu.html" target="_blank" style="color:var(--gold2)">Vezi pagina ↗</a></p>
+          <p class="hint2" style="margin:0">Pozele de aici apar pe pagina ta, <b>Cozmin Băcanu – MC</b>, la care se ajunge din <b>Despre noi</b>, cu click pe poza ta. Nu apar în galeria foto generală. Apasă pe zona de mai jos ca să adaugi poze, iar 🗑 pe o poză o șterge. <a class="lnk" href="cozmin-bacanu.html" target="_blank" style="color:var(--gold2)">Vezi pagina ↗</a></p>
         </div>
         <form class="vadd" id="aForm">
           <h2 id="aTitleH" style="font-size:1.3rem;margin-bottom:14px">Album nou</h2>
@@ -519,7 +520,7 @@ document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
   if (b.dataset.t === 'tabMap') loadPlaces();
   if (b.dataset.t === 'tabReq') loadReq();
   if (b.dataset.t === 'tabVid') loadVid();
-  if (b.dataset.t === 'tabFoto') loadAlbums();
+  if (b.dataset.t === 'tabFoto') { if (b.dataset.me) openMe(); else showAlbList(true); }
 });
 
 // ---------- Parteneri recomandați ----------
@@ -780,25 +781,31 @@ async function loadAlbums(){
   }).join('') : '<div class="empty-l" style="grid-column:1/-1">Niciun album încă. Apasă „+ Album nou”, completează titlul, apoi adaugă pozele.</div>';
   $('aList').querySelectorAll('.ab').forEach(b => b.onclick = () => openAlb(albs.find(a => a.id === b.dataset.id)));
 }
-function showAlbList(){ if (uploading && !confirm('Se încarcă poze. Sigur ieși? Încărcarea se oprește.')) return; uploading = false; $('aEdit').classList.add('hidden'); $('aListWrap').classList.remove('hidden'); $('aNew').classList.remove('hidden'); $('aMe').classList.remove('hidden'); loadAlbums(); }
-$('aBack').onclick = showAlbList;
+function setFotoHead(me){
+  $('fotoH').innerHTML = me ? '⭐ Pozele <span class="gold">mele</span>' : 'Galerie <span class="gold">foto</span>';
+  $('fotoLnk').href = me ? 'cozmin-bacanu.html' : 'galerie-foto.html';
+  $('aBack').classList.toggle('hidden', me);
+}
+function showAlbList(force){ if (!force && uploading && !confirm('Se încarcă poze. Sigur ieși? Încărcarea se oprește.')) return; if (!force) uploading = false; setFotoHead(false); $('aEdit').classList.add('hidden'); $('aListWrap').classList.remove('hidden'); $('aNew').classList.remove('hidden'); loadAlbums(); }
+$('aBack').onclick = () => showAlbList();
 $('aNew').onclick = () => openAlb(null);
-$('aMe').onclick = async () => {
-  $('aMe').disabled = true;
+async function openMe(){
+  setFotoHead(true);
+  $('aListWrap').classList.add('hidden'); $('aNew').classList.add('hidden'); $('aEdit').classList.add('hidden');
   let { data } = await sb.from('albums').select('*').eq('type', MC_TYPE).order('created_at').limit(1);
   let a = data?.[0];
   if (!a) {
     const r = await sb.from('albums').insert({ title: 'Cozmin Băcanu – MC', type: MC_TYPE, published: true }).select().single();
-    if (r.error) { $('aMe').disabled = false; alert('Nu s-a putut deschide: ' + r.error.message); return; }
+    if (r.error) { alert('Nu s-a putut deschide: ' + r.error.message); return; }
     a = r.data;
   }
-  $('aMe').disabled = false;
   openAlb(a);
-};
+}
 function openAlb(a){
   curAlb = a; $('aerr').textContent = ''; $('perr').textContent = '';
   const me = a?.type === MC_TYPE;
-  $('aMeHead').classList.toggle('hidden', !me); $('aForm').classList.toggle('hidden', me); $('aMe').classList.add('hidden');
+  setFotoHead(me);
+  $('aMeHead').classList.toggle('hidden', !me); $('aForm').classList.toggle('hidden', me);
   $('aListWrap').classList.add('hidden'); $('aEdit').classList.remove('hidden'); $('aNew').classList.add('hidden');
   $('aTitleH').textContent = a ? 'Detalii album' : 'Album nou';
   $('aTitle').value = a?.title || ''; adp.set(a?.event_date || ''); $('aType').value = a?.type || 'Nuntă';
