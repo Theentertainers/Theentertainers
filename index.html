@@ -153,8 +153,14 @@ h1,h2,h3{font-family:"Playfair Display",serif;line-height:1.15}
   border:1px solid rgba(243,215,122,.35);box-shadow:0 10px 30px -12px #000,0 0 24px -10px rgba(212,175,55,.5);
   font-size:.84rem;color:#e3dfd3;opacity:0;transform:translateY(-8px);transition:opacity .6s,transform .6s}
 .acum.on{opacity:1;transform:none}
-.acum>span{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
-.acum>span[hidden]{display:none}
+.acum>span,.acum>.a-loc{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.acum>span[hidden],.acum>.a-loc[hidden]{display:none}
+.acum .a-loc{font:inherit;color:inherit;background:none;border:0;padding:3px 6px;margin:-3px -6px;border-radius:999px;cursor:pointer;transition:background .2s}
+.acum .a-loc:hover,.acum .a-loc:focus-visible{background:rgba(243,215,122,.12);outline:none}
+.acum .a-loc .a-gps{width:14px;height:14px;opacity:.75}
+.acum .a-loc.exact .a-gps{display:none}
+.acum .a-loc.busy .a-gps{animation:aSpin 1s linear infinite}
+@keyframes aSpin{to{transform:rotate(360deg)}}
 .acum svg{width:16px;height:16px;flex:none;stroke:#f3d77a;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .acum b{color:#f3d77a;font-weight:700}
 .acum .a-time{font-variant-numeric:tabular-nums;min-width:4.6em}
@@ -353,7 +359,7 @@ footer{border-top:1px solid var(--line);background:#08080a;padding:60px 0 30px}
   </video>
   <div class="wrap">
     <div class="acum" id="acum" aria-label="Data, ora și vremea">
-      <span class="a-loc" hidden><svg viewBox="0 0 24 24"><path d="M12 21s-7-7.8-7-12a7 7 0 0114 0c0 4.2-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg><b class="a-city"></b></span>
+      <button type="button" class="a-loc" hidden title="Nu e localitatea ta? Apasă pentru locația exactă"><svg viewBox="0 0 24 24"><path d="M12 21s-7-7.8-7-12a7 7 0 0114 0c0 4.2-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg><b class="a-city"></b><svg class="a-gps" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
       <span><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span class="a-date"></span></span>
       <span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b class="a-time"></b></span>
       <span class="a-wx" hidden><i class="a-ico"></i><b class="a-temp"></b><span class="a-desc"></span></span>

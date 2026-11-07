@@ -49,10 +49,33 @@
       .catch(() => { hpl.closest('section').hidden = true; });
   }
 
-  fetch('/api/vreme')
+  // Localitatea: întâi după IP (aproximativ – pe date mobile poate arăta orașul operatorului).
+  // Apăsând pe localitate, vizitatorul poate permite locația exactă; ținem minte alegerea pe acest dispozitiv.
+  const loc = $('.a-loc');
+  const KEY = 'te_geo';
+  const store = { get: () => { try { return localStorage.getItem(KEY); } catch { return null; } },
+                  set: v => { try { localStorage.setItem(KEY, v); } catch {} } };
+  function precise(ask) {
+    if (!navigator.geolocation) return;
+    if (ask) loc.classList.add('busy');
+    navigator.geolocation.getCurrentPosition(p => {
+      store.set('1');
+      load(`/api/vreme?lat=${p.coords.latitude.toFixed(3)}&lon=${p.coords.longitude.toFixed(3)}`);
+    }, err => {
+      loc.classList.remove('busy');
+      if (err.code === 1) store.set('0');
+      if (ask) loc.title = err.code === 1 ? 'Locația nu este permisă în browser' : 'Nu am putut afla locația';
+    }, { enableHighAccuracy: false, timeout: 12000, maximumAge: 30 * 60e3 });
+  }
+  loc.addEventListener('click', () => precise(true));
+
+  function load(url) {
+  return fetch(url)
     .then(r => (r.ok ? r.json() : Promise.reject()))
     .then(w => {
-      if (w.city) { $('.a-city').textContent = w.city; $('.a-loc').hidden = false; }
+      loc.classList.remove('busy');
+      if (w.exact) { loc.classList.add('exact'); loc.title = 'Localitatea ta, după locația dispozitivului'; }
+      if (w.city) { $('.a-city').textContent = w.city; loc.hidden = false; }
       if (w.temp != null) {
         const m = meteo(w.symbol) || ['🌡️', ''];
         $('.a-ico').textContent = m[0];
@@ -63,5 +86,13 @@
       }
       box.classList.add('full');
     })
-    .catch(() => {});
+    .catch(() => { loc.classList.remove('busy'); });
+  }
+
+  load('/api/vreme').then(() => {
+    // dacă vizitatorul a permis deja locația (acum sau la o vizită anterioară), o folosim fără să mai întrebăm
+    if (store.get() === '1') precise(false);
+    else if (navigator.permissions && store.get() !== '0')
+      navigator.permissions.query({ name: 'geolocation' }).then(s => { if (s.state === 'granted') precise(false); }).catch(() => {});
+  });
 })();
