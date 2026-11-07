@@ -177,3 +177,12 @@ footer{border-top:1px solid var(--line);background:#08080a;padding:60px 0 30px}
   *,*::before,*::after{animation:none!important;transition:none!important}
   .rv{opacity:1;transform:none}
 }
+
+/* comutator Foto / Video în galerie */
+.gsw{display:inline-flex;align-items:center;gap:4px;padding:5px;border-radius:999px;background:rgba(0,0,0,.4);border:1px solid rgba(243,215,122,.35);margin-bottom:18px}
+.gsw a{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:999px;font-size:.88rem;font-weight:600;color:#ddd8cb;transition:background .2s,color .2s}
+.gsw a:hover{color:var(--gold2)}
+.gsw a.on{background:var(--grad);color:#1a1405}
+.gsw a.bk{color:var(--muted);padding-left:10px}
+.gsw svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:420px){.gsw a{padding:8px 12px}.gsw a.bk{font-size:0;gap:0}}
