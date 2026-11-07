@@ -133,6 +133,20 @@ h1,h2,h3{font-family:"Playfair Display",serif;line-height:1.15}
 .hero h1.motto{font-family:"Great Vibes",cursive;font-weight:400;font-size:clamp(2.6rem,7vw,5.2rem);line-height:1.2;padding:0 .2em;filter:drop-shadow(0 4px 18px rgba(0,0,0,.8));text-shadow:none}
 .hero p.lead{font-size:clamp(1rem,1.6vw,1.2rem);color:#e3dfd3;max-width:680px;margin:0 auto 32px;text-shadow:0 2px 12px rgba(0,0,0,.7)}
 .cta{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+/* piese propuse de vizitatori */
+.hpl{list-style:none;display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:1000px;margin:0 auto;counter-reset:hp}
+.hpl li{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;background:var(--card);border:1px solid var(--line);min-width:0;transition:border-color .2s,transform .2s}
+.hpl li:hover{border-color:rgba(212,175,55,.5);transform:translateY(-2px)}
+.hpl li::before{counter-increment:hp;content:counter(hp);flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:700 .9rem "Playfair Display",serif;color:#1a1405;background:var(--grad)}
+.hpl li.hpl-e{grid-column:1/-1;justify-content:center;color:var(--muted);border-style:dashed}
+.hpl li.hpl-e::before{display:none}
+.hpl .t{min-width:0;flex:1}
+.hpl .t a{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hpl .t a:hover{color:var(--gold2)}
+.hpl .by{font-size:.8rem;color:var(--muted)}
+.hpl .by b{color:#d6d2c6;font-weight:600}
+.hpl .g{flex:none;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:999px;border:1px solid rgba(212,175,55,.35);color:var(--gold2);white-space:nowrap}
+@media (max-width:760px){.hpl{grid-template-columns:1fr}.hpl .g{display:none}}
 /* caseta „acum”: localitate · dată · oră · vreme */
 .acum{position:absolute;top:92px;right:max(16px,calc((100% - 1200px)/2));z-index:3;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 16px;
   padding:9px 18px;border-radius:999px;background:rgba(11,11,12,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
@@ -327,6 +341,7 @@ footer{border-top:1px solid var(--line);background:#08080a;padding:60px 0 30px}
       <a href="calendar.html">Calendar</a>
       <a href="galerie-foto.html">Galerie foto</a>
       <a href="galerie-video.html">Galerie video</a>
+      <a href="propune-playlist.html">Propune playlist</a>
       <a href="rezerva.html" class="btn btn-gold">Rezervă data</a>
     </nav>
     <button class="burger" id="burger" aria-label="Meniu" aria-expanded="false">☰</button>
@@ -433,6 +448,18 @@ footer{border-top:1px solid var(--line);background:#08080a;padding:60px 0 30px}
   </div>
 </section>
 
+<section class="sec" id="playlist">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="kicker">Propune playlist</span>
+      <h2>Piese propuse <span class="gold">de voi</span></h2>
+      <p>Ce vor oamenii să audă la petrecere. Ai și tu o piesă preferată? Trimite-ne-o!</p>
+    </div>
+    <ol class="hpl rv" id="hpl"><li class="hpl-e">Se încarcă…</li></ol>
+    <div style="text-align:center;margin-top:24px"><a href="propune-playlist.html" class="btn btn-gold">🎵 Propune o piesă</a></div>
+  </div>
+</section>
+
 <section class="band">
   <div class="wrap rv">
     <span class="kicker">Disponibilitate</span>
@@ -471,6 +498,7 @@ footer{border-top:1px solid var(--line);background:#08080a;padding:60px 0 30px}
           <li><a href="calendar.html">Calendar disponibilitate</a></li>
           <li><a href="galerie-foto.html">Galerie foto</a></li>
           <li><a href="galerie-video.html">Galerie video</a></li>
+          <li><a href="propune-playlist.html">Propune playlist</a></li>
           <li><a href="rezerva.html">Rezervă data</a></li>
         </ul>
       </div>

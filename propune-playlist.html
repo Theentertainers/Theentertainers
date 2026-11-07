@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Propune playlist – ce melodie vrei la petrecere? | The Entertainers</title>
+<meta name="description" content="Propune o melodie pentru playlistul The Entertainers: lipește link-ul piesei, alege genul muzical și spune-ne la ce moment ai vrea s-o auzi la nuntă, botez sau petrecere.">
+<meta property="og:title" content="Propune playlist – The Entertainers">
+<meta property="og:description" content="Ce melodie vrei să auzi la petrecere? Trimite-ne piesa și intră în playlistul nostru.">
+<meta property="og:image" content="https://www.theentertainers.ro/assets/logo-gold.png">
+<link rel="canonical" href="https://www.theentertainers.ro/propune-playlist.html">
+<meta property="og:url" content="https://www.theentertainers.ro/propune-playlist.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Entertainers">
+<meta property="og:locale" content="ro_RO">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0b0b0c">
+<link rel="icon" href="assets/mic-gold.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+.lay{display:grid;grid-template-columns:1.25fr 1fr;gap:24px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:30px 28px;box-shadow:0 30px 60px -30px #000}
+.card h2{font-size:1.5rem;margin-bottom:6px}
+.card .sub{color:var(--muted);font-size:.9rem;margin-bottom:22px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;align-items:start}
+.f{display:grid;gap:6px;margin-bottom:16px}
+.f label{font-size:.82rem;font-weight:600;color:#cfcabe;letter-spacing:.3px}
+.f label i{color:var(--gold2);font-style:normal}
+.f input,.f select,.f textarea{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:#0e0e11;outline:none;transition:border-color .2s}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--gold)}
+.f textarea{min-height:84px;resize:vertical}
+.f select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--gold2) 50%),linear-gradient(135deg,var(--gold2) 50%,transparent 50%);background-position:calc(100% - 20px) 55%,calc(100% - 15px) 55%;background-size:5px 5px;background-repeat:no-repeat}
+.f small{color:var(--muted);font-size:.78rem}
+.lnk-row{position:relative}
+.lnk-row input{padding-left:44px}
+.lnk-row svg{position:absolute;left:14px;top:50%;width:18px;height:18px;margin-top:-9px;stroke:var(--gold2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pv{display:none;align-items:center;gap:12px;padding:10px;border-radius:12px;background:#0e0e11;border:1px solid rgba(212,175,55,.35);margin:-6px 0 16px}
+.pv.on{display:flex}
+.pv img{width:72px;height:54px;object-fit:cover;border-radius:8px;flex:none;background:#000}
+.pv span{font-size:.85rem;color:#d6d2c6}
+.pv b{color:var(--gold2)}
+.gen{display:flex;flex-wrap:wrap;gap:8px}
+.gen label{display:inline-flex;align-items:center;padding:8px 13px;border-radius:999px;border:1px solid var(--line);background:#0e0e11;cursor:pointer;font-size:.84rem;font-weight:500;color:#d6d2c6;transition:border-color .2s,background .2s,color .2s;user-select:none}
+.gen input{position:absolute;opacity:0;pointer-events:none}
+.gen label:has(input:checked){border-color:var(--gold);background:rgba(212,175,55,.12);color:var(--gold2)}
+.gen label:has(input:focus-visible){outline:2px solid var(--gold2);outline-offset:2px}
+#genOther{margin-top:8px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.err{color:#ff9b9b;font-size:.9rem;min-height:1.3em;margin-bottom:10px}
+.ok-msg{display:none;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;background:rgba(127,207,154,.1);border:1px solid rgba(127,207,154,.4);color:#bfe8cc;margin-bottom:16px;font-size:.92rem}
+.ok-msg.on{display:flex}
+.btn-full{width:100%}
+/* lista */
+.pl-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.pl-head h2{font-size:1.4rem}
+.pl-head span{color:var(--muted);font-size:.85rem}
+.pl-f{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:8px}
+.pl-f button{flex:none;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:#0e0e11;color:#d6d2c6;font:600 .78rem Montserrat,sans-serif;cursor:pointer}
+.pl-f button.on{background:var(--grad);color:#1a1405;border-color:transparent}
+.songs{list-style:none;display:grid;gap:8px;max-height:760px;overflow:auto;padding-right:4px}
+.song{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:#0e0e11;border:1px solid var(--line);transition:border-color .2s}
+.song:hover{border-color:rgba(212,175,55,.5)}
+.song.new{animation:sIn .7s ease-out}
+@keyframes sIn{from{opacity:0;transform:translateY(-10px);border-color:var(--gold)}to{opacity:1;transform:none}}
+.song .n{width:34px;height:34px;flex:none;border-radius:10px;display:grid;place-items:center;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.3)}
+.song .n svg{width:16px;height:16px;stroke:var(--gold2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.song .t{min-width:0;flex:1}
+.song .t a{display:block;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.song .t a:hover{color:var(--gold2)}
+.song .t a small{color:var(--muted);font-weight:500}
+.song .by{font-size:.78rem;color:var(--muted);margin-top:2px}
+.song .by b{color:#d6d2c6;font-weight:600}
+.song .g{flex:none;font-size:.7rem;font-weight:700;letter-spacing:.4px;padding:3px 9px;border-radius:999px;border:1px solid rgba(212,175,55,.35);color:var(--gold2);background:rgba(212,175,55,.06);white-space:nowrap}
+.pl-empty{color:var(--muted);text-align:center;padding:28px 16px;border:1px dashed var(--line);border-radius:14px}
+@media (max-width:960px){ .lay{grid-template-columns:1fr} .songs{max-height:none} }
+@media (max-width:600px){ .g2{grid-template-columns:1fr} .card{padding:24px 18px} .song .g{display:none} }
+</style>
+
+<link rel="stylesheet" href="assets/compact.css">
+<link rel="stylesheet" href="assets/menu.css">
+</head>
+<body>
+
+<header class="hdr" id="hdr">
+  <div class="wrap">
+    <a href="index.html" class="brand"><img src="assets/logo-gold.png" alt="The Entertainers"></a>
+    <nav class="nav" id="nav">
+      <a href="index.html">Acasă</a>
+      <a href="despre.html">Despre</a>
+      <a href="cununie.html">Cununie civilă</a>
+      <a href="bytheriver.html">By The River</a>
+      <a href="parteneri.html">Parteneri</a>
+      <a href="harta.html">Harta evenimentelor</a>
+      <a href="calendar.html">Calendar</a>
+      <a href="galerie-foto.html">Galerie foto</a>
+      <a href="galerie-video.html">Galerie video</a>
+      <a href="propune-playlist.html" class="on">Propune playlist</a>
+      <a href="rezerva.html" class="btn btn-gold">Rezervă data</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Meniu" aria-expanded="false">☰</button>
+  </div>
+</header>
+
+<section class="phead">
+  <div class="wrap">
+    <span class="kicker">Propune playlist</span>
+    <h1>Ce melodie vrei să <span class="gold">auzi la petrecere?</span></h1>
+    <p class="lead">Trimite-ne piesa care te ridică de pe scaun. Le ascultăm pe toate, iar cele mai bune intră în playlistul nostru pentru nunți, botezuri, majorate și petreceri.</p>
+  </div>
+</section>
+
+<section style="padding:0 0 90px">
+  <div class="wrap lay">
+    <div class="card rv">
+      <h2>Propune o piesă</h2>
+      <p class="sub">Câmpurile cu <i style="color:var(--gold2);font-style:normal">*</i> sunt obligatorii. Piesa apare imediat în listă și pe prima pagină.</p>
+      <div class="ok-msg" id="ok"><span style="font-size:1.4rem">🎶</span><span>Mulțumim! Piesa ta a intrat în listă. Mai ai una? Propune-o și pe ea.</span></div>
+      <form id="frm" novalidate>
+        <div class="f"><label for="url">Link-ul piesei <i>*</i></label>
+          <div class="lnk-row"><svg viewBox="0 0 24 24"><path d="M10 14a5 5 0 007.1 0l3-3a5 5 0 00-7.1-7.1l-1.7 1.7"/><path d="M14 10a5 5 0 00-7.1 0l-3 3a5 5 0 007.1 7.1l1.7-1.7"/></svg>
+          <input id="url" type="url" inputmode="url" maxlength="500" required placeholder="https://www.youtube.com/watch?v=…"></div>
+          <small>YouTube, Spotify, SoundCloud, Apple Music, Deezer sau TikTok. La YouTube, Spotify, SoundCloud și Deezer completăm automat artistul și titlul.</small></div>
+        <div class="pv" id="pv"><img id="pvImg" alt=""><span id="pvTxt"></span></div>
+        <div class="g2">
+          <div class="f"><label for="artist">Artist / formație <i>*</i></label><input id="artist" maxlength="120" required placeholder="ex. Smiley"></div>
+          <div class="f"><label for="title">Titlul piesei <i>*</i></label><input id="title" maxlength="160" required placeholder="ex. Acasă"></div>
+        </div>
+        <div class="f"><span style="font-size:.82rem;font-weight:600;color:#cfcabe;letter-spacing:.3px">Gen muzical <i style="color:var(--gold2);font-style:normal">*</i></span>
+          <div class="gen" id="gen" role="radiogroup" aria-label="Gen muzical"></div>
+          <input id="genOther" maxlength="60" placeholder="Scrie genul muzical" hidden></div>
+        <div class="g2">
+          <div class="f"><label for="moment">Pentru ce moment?</label><select id="moment"><option value="">Oricând, la petrecere</option></select></div>
+          <div class="f"><label for="city">Localitatea ta</label><input id="city" maxlength="60" placeholder="ex. Slatina"></div>
+        </div>
+        <div class="f"><label for="name">Numele tău <i>*</i></label><input id="name" maxlength="60" required autocomplete="given-name" placeholder="Apare lângă piesă, ex. Andrei"></div>
+        <div class="f"><label for="msg">Mesaj pentru DJ (opțional)</label><textarea id="msg" maxlength="500" placeholder="De ce îți place, la ce eveniment ai vrea s-o auzi…"></textarea></div>
+        <div class="hp" aria-hidden="true"><label>Site <input id="site" tabindex="-1" autocomplete="off"></label></div>
+        <div class="err" id="err" role="alert"></div>
+        <button class="btn btn-gold btn-full" id="send">🎵 Trimite piesa</button>
+      </form>
+    </div>
+
+    <div class="card rv">
+      <div class="pl-head"><h2>Propuse de <span class="gold">voi</span></h2><span id="cnt"></span></div>
+      <div class="pl-f" id="flt"></div>
+      <ul class="songs" id="songs"><li class="pl-empty"><span class="spin"></span>Se încarcă…</li></ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="ft">
+      <div>
+        <a href="index.html" class="brand"><img src="assets/logo-gold.png" alt="The Entertainers" style="height:56px"></a>
+        <p style="margin-top:14px;max-width:340px">We love to entertain you! DJ, MC, sonorizare și lumini profesionale pentru evenimente, din 2005. Din Slatina, Olt, în toată țara.</p>
+        <div class="soc">
+          <a href="https://www.facebook.com/bacanucozmin" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M14 9V7c0-.9.6-1 1-1h2V2h-3c-3.3 0-4 2.4-4 4v3H8v4h2v9h4v-9h3l.5-4z"/></svg></a>
+          <a href="https://www.tiktok.com/@cozminbacanu" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M16.5 2h-3.3v13.2a2.9 2.9 0 11-2.9-2.9c.3 0 .6 0 .9.1V9a6.3 6.3 0 106.3 6.3V8.6a7.7 7.7 0 004.5 1.4V6.7a4.6 4.6 0 01-4.5-4.7z"/></svg></a>
+          <a href="https://wa.me/40727292171" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.6 15l-1.4 5 5.2-1.4A10 10 0 1012 2zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.6-1.2-3s.8-2.2 1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.6 2.1 1.1 1 2.1 1.3 2.4 1.4.3.2.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.7-.1 1.3z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4>Pagini</h4>
+        <ul>
+          <li><a href="index.html">Acasă</a></li>
+          <li><a href="despre.html">Despre noi</a></li>
+          <li><a href="dj-nunta-slatina.html">DJ nuntă Slatina</a></li>
+          <li><a href="dj-botez-slatina.html">DJ botez Slatina</a></li>
+          <li><a href="dj-majorat-slatina.html">DJ majorat Slatina</a></li>
+          <li><a href="cununie.html">Actor cununie civilă</a></li>
+          <li><a href="bytheriver.html">By The River</a></li>
+          <li><a href="harta.html">Harta evenimentelor</a></li>
+          <li><a href="calendar.html">Calendar disponibilitate</a></li>
+          <li><a href="galerie-foto.html">Galerie foto</a></li>
+          <li><a href="galerie-video.html">Galerie video</a></li>
+          <li><a href="propune-playlist.html">Propune playlist</a></li>
+          <li><a href="rezerva.html">Rezervă data</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a class="ct" href="tel:+40727292171"><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15 15 0 006.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 013 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>0727 292 171</a></li>
+          <li><a class="ct" href="mailto:bacanucozmin@gmail.com"><svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 00-2 2v12c0 1.1.9 2 2 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4l-8 5-8-5V6l8 5 8-5z"/></svg>bacanucozmin@gmail.com</a></li>
+          <li class="ct"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 00-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 00-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg>Slatina, Olt · în toată țara</li>
+        </ul>
+      </div>
+    </div>
+    <div class="copy">© <span id="yr">2026</span> The Entertainers · Băcanu Cozmin · We love to entertain you!</div>
+  </div>
+</footer>
+
+<a class="wa" href="https://wa.me/40727292171" target="_blank" rel="noopener" aria-label="Scrie-ne pe WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.6 15l-1.4 5 5.2-1.4A10 10 0 1012 2zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.6-1.2-3s.8-2.2 1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.6 2.1 1.1 1 2.1 1.3 2.4 1.4.3.2.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.7-.1 1.3z"/></svg></a>
+
+<script src="assets/site.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const GENRES = ['Petrecere / dance', 'Pop', 'Românească', 'Populară', 'Manele', 'Lăutărească', 'Retro 80-90-2000', 'Rock', 'Hip-hop / trap', 'House / electronic', 'Latino', 'Lentă / romantică', 'Internațională', 'Altul'];
+const MOMENTS = ['Ring de dans', 'Intrarea mirilor', 'Primul dans', 'Horă', 'Tort', 'Aruncarea buchetului', 'Dansul cu părinții', 'Moțul (botez)', 'Intrarea la majorat', 'Final de petrecere'];
+$('gen').innerHTML = GENRES.map((g, i) => `<label><input type="radio" name="gen" value="${TE.esc(g)}">${TE.esc(g)}</label>`).join('');
+MOMENTS.forEach(m => { const o = document.createElement('option'); o.textContent = m; $('moment').appendChild(o); });
+$('gen').addEventListener('change', () => { const o = document.querySelector('input[name="gen"]:checked')?.value === 'Altul'; $('genOther').hidden = !o; if (o) $('genOther').focus(); });
+
+// completare automată din link
+let lastUrl = '';
+async function fromLink(){
+  const u = $('url').value.trim();
+  if (u === lastUrl || !/^https?:\/\/\S+\.\S+/i.test(u)) return;
+  lastUrl = u;
+  try {
+    const j = await (await fetch('/api/piesa?url=' + encodeURIComponent(u))).json();
+    if (!j || (!j.title && !j.artist)) { $('pv').classList.remove('on'); return; }
+    if (j.artist && !$('artist').value.trim()) $('artist').value = j.artist;
+    if (j.title && !$('title').value.trim()) $('title').value = j.title;
+    if (j.thumb) $('pvImg').src = j.thumb; $('pvImg').hidden = !j.thumb;
+    $('pvTxt').innerHTML = `Am găsit: <b>${TE.esc([j.artist, j.title].filter(Boolean).join(' – '))}</b>. Verifică și corectează dacă e cazul.`;
+    $('pv').classList.add('on');
+  } catch {}
+}
+$('url').addEventListener('change', fromLink);
+$('url').addEventListener('paste', () => setTimeout(fromLink, 50));
+$('url').addEventListener('blur', fromLink);
+
+// lista
+const ICO = '<svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
+const okUrl = u => /^https?:\/\//i.test(u || '') ? TE.esc(u) : '#';
+const ago = d => { const s = (Date.now() - new Date(d)) / 1000; if (s < 60) return 'acum'; if (s < 3600) return `acum ${Math.floor(s / 60)} min`; if (s < 86400) return `acum ${Math.floor(s / 3600)} h`; const z = Math.floor(s / 86400); return z === 1 ? 'ieri' : z < 30 ? `acum ${z} zile` : new Date(d).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' }); };
+let songs = [], cur = 'Toate', fresh = '';
+const songLi = s => `<li class="song${s.id === fresh ? ' new' : ''}"><span class="n">${ICO}</span>
+  <div class="t"><a href="${okUrl(s.url)}" target="_blank" rel="noopener nofollow">${TE.esc(s.artist)} <small>–</small> ${TE.esc(s.title)}</a>
+  <div class="by">propusă de <b>${TE.esc(s.name)}</b>${s.city ? ', ' + TE.esc(s.city) : ''} · ${ago(s.created_at)}${s.moment ? ' · ' + TE.esc(s.moment) : ''}</div></div>
+  <span class="g">${TE.esc(s.genre)}</span></li>`;
+function render(){
+  const gs = [...new Set(songs.map(s => s.genre))];
+  $('flt').innerHTML = gs.length > 1 ? ['Toate', ...gs].map(g => `<button class="${g === cur ? 'on' : ''}" data-g="${TE.esc(g)}">${TE.esc(g)}</button>`).join('') : '';
+  $('flt').querySelectorAll('button').forEach(b => b.onclick = () => { cur = b.dataset.g; render(); });
+  const list = cur === 'Toate' ? songs : songs.filter(s => s.genre === cur);
+  $('cnt').textContent = songs.length ? `${songs.length} ${songs.length === 1 ? 'piesă' : 'piese'}` : '';
+  $('songs').innerHTML = list.length ? list.map(songLi).join('') : '<li class="pl-empty">Încă nu a propus nimeni o piesă. Fii primul! 🎧</li>';
+}
+async function load(){
+  try { songs = await TE.rpc('playlist_public', { p_limit: 200 }); render(); }
+  catch { $('songs').innerHTML = '<li class="pl-empty">Lista nu s-a putut încărca acum.</li>'; }
+}
+load();
+
+// trimitere
+$('frm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const say = (m, f) => { $('err').textContent = m; if (f) $(f).focus(); };
+  if ($('site').value) return;
+  const url = $('url').value.trim();
+  let genre = document.querySelector('input[name="gen"]:checked')?.value || '';
+  if (genre === 'Altul') genre = $('genOther').value.trim();
+  if (!/^https?:\/\/\S+\.\S+/i.test(url)) return say('Lipește link-ul piesei (începe cu https://).', 'url');
+  if (!$('artist').value.trim()) return say('Scrie artistul sau formația.', 'artist');
+  if (!$('title').value.trim()) return say('Scrie titlul piesei.', 'title');
+  if (!genre) return say('Alege genul muzical.', document.querySelector('input[name="gen"]:checked') ? 'genOther' : null);
+  if (!$('name').value.trim()) return say('Scrie-ți numele, ca să apară lângă piesă.', 'name');
+  say('');
+  $('send').disabled = true; $('send').textContent = 'Se trimite…';
+  try {
+    fresh = await TE.rpc('suggest_song', { p_url: url, p_artist: $('artist').value, p_title: $('title').value, p_genre: genre,
+      p_moment: $('moment').value, p_name: $('name').value, p_city: $('city').value, p_message: $('msg').value, p_voter: TE.voter() });
+    try { localStorage.setItem('te_pl_name', $('name').value.trim()); localStorage.setItem('te_pl_city', $('city').value.trim()); } catch {}
+    ['url', 'artist', 'title', 'msg', 'genOther'].forEach(i => $(i).value = '');
+    document.querySelectorAll('input[name="gen"]').forEach(r => r.checked = false); $('genOther').hidden = true;
+    $('moment').value = ''; $('pv').classList.remove('on'); lastUrl = '';
+    $('ok').classList.add('on'); $('ok').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    cur = 'Toate'; await load();
+  } catch (x) { say(x.message || 'Nu s-a putut trimite. Încearcă din nou.'); }
+  $('send').disabled = false; $('send').textContent = '🎵 Trimite piesa';
+});
+try { $('name').value = localStorage.getItem('te_pl_name') || ''; $('city').value = localStorage.getItem('te_pl_city') || ''; } catch {}
+</script>
+<script src="assets/menu.js"></script>
+<script src="assets/track.js" defer></script>
+<script src="assets/sezon.js" defer></script>
+</body>
+</html>

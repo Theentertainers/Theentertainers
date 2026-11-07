@@ -34,6 +34,21 @@
     return null;
   }
 
+  // piese propuse de vizitatori (secțiunea „Piese propuse de voi”)
+  const hpl = document.getElementById('hpl');
+  if (hpl) {
+    const e = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    fetch('https://mmnulrkqnbopkxuooocs.supabase.co/rest/v1/rpc/playlist_public', { method: 'POST',
+      headers: { apikey: 'sb_publishable_o6j_hu_VXCTltuxERfXzEQ_gaJSC6JY', 'Content-Type': 'application/json' }, body: '{"p_limit":8}' })
+      .then(r => (r.ok ? r.json() : Promise.reject()))
+      .then(l => {
+        hpl.innerHTML = l.length ? l.map(s => `<li><div class="t"><a href="${/^https?:\/\//i.test(s.url) ? e(s.url) : '#'}" target="_blank" rel="noopener nofollow">${e(s.artist)} – ${e(s.title)}</a>
+          <div class="by">propusă de <b>${e(s.name)}</b>${s.city ? ', ' + e(s.city) : ''}</div></div><span class="g">${e(s.genre)}</span></li>`).join('')
+          : '<li class="hpl-e">Încă nu a propus nimeni o piesă. Fii primul! 🎧</li>';
+      })
+      .catch(() => { hpl.closest('section').hidden = true; });
+  }
+
   fetch('/api/vreme')
     .then(r => (r.ok ? r.json() : Promise.reject()))
     .then(w => {

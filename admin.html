@@ -268,6 +268,13 @@ main{padding:28px 0 80px}
       <button class="tab" data-t="tabBtr">By The River</button>
       <button class="tab" data-t="tabPar">Parteneri <span class="badge hidden" id="pBadge"></span></button>
       <button class="tab" data-t="tabFoto" data-me="1">⭐ Pozele mele</button>
+      <button class="tab" data-t="tabPl">🎵 Playlist</button>
+    </div>
+
+    <div id="tabPl" class="hidden">
+      <div class="bar"><h1>Piese <span class="gold">propuse</span></h1><a class="lnk" href="propune-playlist.html" target="_blank" style="color:var(--gold2)">Vezi pagina publică ↗</a></div>
+      <p class="hint2" style="margin:-4px 0 14px">Piesele apar imediat pe site. Cu 👁 ascunzi o piesă (rămâne aici, dar dispare de pe site), cu 🗑 o ștergi definitiv.</p>
+      <div class="list" id="plList" style="margin-top:0"></div>
     </div>
 
     <div id="tabStat" class="hidden">
@@ -561,8 +568,9 @@ function show(logged){
 // ---------- tab-uri ----------
 document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
   document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === b));
-  ['tabCal','tabStat','tabReq','tabVid','tabFoto','tabMap','tabBtr','tabPar'].forEach(id => $(id).classList.toggle('hidden', id !== b.dataset.t));
+  ['tabCal','tabStat','tabReq','tabVid','tabFoto','tabMap','tabBtr','tabPar','tabPl'].forEach(id => $(id).classList.toggle('hidden', id !== b.dataset.t));
   if (b.dataset.t === 'tabStat') loadStats();
+  if (b.dataset.t === 'tabPl') loadPl();
   if (b.dataset.t === 'tabBtr') loadBtr();
   if (b.dataset.t === 'tabPar') loadPar();
   if (b.dataset.t === 'tabMap') loadPlaces();
@@ -571,10 +579,43 @@ document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
   if (b.dataset.t === 'tabFoto') { if (b.dataset.me) openMe(); else showAlbList(true); }
 });
 
+// ---------- Playlist (piese propuse de vizitatori) ----------
+async function loadPl(){
+  $('plList').innerHTML = '<div class="empty-l"><span class="spin"></span> Se încarcă…</div>';
+  const { data, error } = await sb.from('playlist_songs').select('*').order('created_at', { ascending: false });
+  if (error) { $('plList').innerHTML = `<div class="empty-l">Nu s-au putut încărca: ${TE.esc(error.message)}</div>`; return; }
+  if (!data.length) { $('plList').innerHTML = '<div class="empty-l">Nicio piesă propusă încă.</div>'; return; }
+  const eye = '<svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const eyeOff = '<svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 5.1A10 10 0 0112 5c6.4 0 10 7 10 7a17 17 0 01-3.2 4M6.6 6.6A17 17 0 002 12s3.6 7 10 7a9.6 9.6 0 005.4-1.6"/><path d="M9.9 9.9a3 3 0 004.2 4.2"/></svg>';
+  $('plList').innerHTML = `<h2 style="font-size:1.2rem;margin-top:4px">${data.length} piese · ${data.filter(s => s.hidden).length} ascunse</h2>` + data.map(s => `
+    <div class="ev" style="grid-template-columns:1fr auto;margin-bottom:10px${s.hidden ? ';opacity:.5' : ''}">
+      <div style="min-width:0;flex:1">
+        <h3><a href="${/^https?:\/\//i.test(s.url) ? TE.esc(s.url) : '#'}" target="_blank" rel="noopener" style="color:var(--text)">${TE.esc(s.artist)} – ${TE.esc(s.title)} ↗</a>${s.hidden ? '<span class="tag p">ascunsă</span>' : ''}</h3>
+        <div class="meta"><span>🎼 ${TE.esc(s.genre)}</span>${s.moment ? `<span>⏱ ${TE.esc(s.moment)}</span>` : ''}<span>👤 ${TE.esc(s.name)}${s.city ? ', ' + TE.esc(s.city) : ''}</span><span>📅 ${new Date(s.created_at).toLocaleString('ro-RO', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span></div>
+        ${s.message ? `<div class="notes">„${TE.esc(s.message)}”</div>` : ''}
+      </div>
+      <div class="acts">
+        <button class="ib" data-hide="${s.id}" data-h="${s.hidden ? 1 : 0}" title="${s.hidden ? 'Arată pe site' : 'Ascunde de pe site'}">${s.hidden ? eye : eyeOff}</button>
+        <button class="ib del" data-pdel="${s.id}" title="Șterge definitiv">${icoDel}</button>
+      </div>
+    </div>`).join('');
+  $('plList').querySelectorAll('[data-hide]').forEach(b => b.onclick = async () => {
+    const { error } = await sb.from('playlist_songs').update({ hidden: b.dataset.h !== '1' }).eq('id', b.dataset.hide);
+    if (error) return toast('Eroare: ' + error.message);
+    toast(b.dataset.h === '1' ? 'Piesa apare din nou pe site ✓' : 'Piesa a fost ascunsă ✓'); loadPl();
+  });
+  $('plList').querySelectorAll('[data-pdel]').forEach(b => b.onclick = async () => {
+    if (!confirm('Ștergi definitiv această piesă? Nu se mai poate recupera.')) return;
+    const { error } = await sb.from('playlist_songs').delete().eq('id', b.dataset.pdel);
+    if (error) return toast('Eroare: ' + error.message);
+    toast('Piesa a fost ștearsă ✓'); loadPl();
+  });
+}
+
 // ---------- Statistici ----------
 const ST_PAGES = { index: 'Prima pagină', despre: 'Despre noi', 'cozmin-bacanu': 'Cozmin Băcanu (pozele tale)', cununie: 'Cununie civilă', bytheriver: 'By The River', parteneri: 'Parteneri',
   harta: 'Harta evenimentelor', calendar: 'Calendar', 'galerie-foto': 'Galerie foto', 'galerie-video': 'Galerie video', rezerva: 'Rezervă data',
-  'dj-nunta-slatina': 'DJ nuntă Slatina', 'dj-botez-slatina': 'DJ botez Slatina', 'dj-majorat-slatina': 'DJ majorat Slatina' };
+  'dj-nunta-slatina': 'DJ nuntă Slatina', 'dj-botez-slatina': 'DJ botez Slatina', 'dj-majorat-slatina': 'DJ majorat Slatina', 'propune-playlist': 'Propune playlist' };
 const ST_SRC = { direct: 'Direct / link salvat', google: 'Google', facebook: 'Facebook', instagram: 'Instagram', tiktok: 'TikTok', bing: 'Bing', chatgpt: 'ChatGPT', whatsapp: 'WhatsApp', duckduckgo: 'DuckDuckGo', yahoo: 'Yahoo' };
 const stNum = n => Number(n || 0).toLocaleString('ro-RO');
 function stBars(rows, label, val){
