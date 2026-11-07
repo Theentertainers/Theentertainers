@@ -1,13 +1,45 @@
 /* Efect decorativ pe anotimpuri – se schimbă singur după lună:
    iarnă (dec–feb): fulgi de zăpadă · primăvară (mar–mai): petale de flori
    vară (iun–aug): luminițe aurii (licurici) · toamnă (sep–nov): frunze care cad
-   Pentru test: adaugă ?sezon=iarna | primavara | vara | toamna la adresa paginii. */
+   Extra: căciulă de Moș Crăciun pe logo (1 dec – 1 ian) și artificii de Revelion (31 dec și 1 ian).
+   Pentru test: adaugă ?sezon=iarna | primavara | vara | toamna | craciun | revelion la adresa paginii. */
 (() => {
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const m = new Date().getMonth();
-  const auto = m === 11 || m < 2 ? 'iarna' : m < 5 ? 'primavara' : m < 8 ? 'vara' : 'toamna';
+  const now = new Date(), m = now.getMonth(), day = now.getDate();
   const q = new URLSearchParams(location.search).get('sezon');
-  const S = ['iarna', 'primavara', 'vara', 'toamna'].includes(q) ? q : auto;
+  const HAT = q === 'craciun' || q === 'revelion' || (!q && (m === 11 || (m === 0 && day === 1)));
+  const FIRE = q === 'revelion' || (!q && ((m === 11 && day === 31) || (m === 0 && day === 1)));
+
+  // ---------- căciula de pe logo (statică – apare și cu „animații reduse”) ----------
+  if (HAT) {
+    const hat = '<svg viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg">' +
+      '<defs><linearGradient id="teHatR" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3342f"/><stop offset="1" stop-color="#9b1515"/></linearGradient></defs>' +
+      '<path d="M14 66 C22 34 42 10 70 8 C84 7 92 16 90 30 C86 22 78 20 72 24 C62 32 66 50 76 64 Z" fill="url(#teHatR)"/>' +
+      '<path d="M40 30 C50 20 60 15 70 14" stroke="rgba(255,255,255,.25)" stroke-width="4" fill="none" stroke-linecap="round"/>' +
+      '<rect x="6" y="60" width="78" height="20" rx="10" fill="#fbfbfb"/>' +
+      '<rect x="6" y="60" width="78" height="7" rx="3.5" fill="#fff" opacity=".9"/>' +
+      '<circle cx="89" cy="33" r="10" fill="#fff"/>' +
+      '<circle cx="86" cy="30" r="4" fill="#fff" opacity=".9"/></svg>';
+    const st = document.createElement('style');
+    st.textContent = '.te-hatw{position:relative;display:inline-block;line-height:0}' +
+      '.te-hat{position:absolute;left:-3%;top:-27%;width:18%;transform:rotate(-24deg);transform-origin:50% 90%;pointer-events:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45));animation:teHat 4s ease-in-out infinite}' +
+      '.te-hat svg{width:100%;height:auto;display:block}' +
+      '@keyframes teHat{0%,100%{transform:rotate(-24deg)}50%{transform:rotate(-17deg)}}' +
+      '@media (prefers-reduced-motion:reduce){.te-hat{animation:none}}';
+    const put = () => {
+      document.head.appendChild(st);
+      document.querySelectorAll('.brand img').forEach(img => {
+        if (img.parentElement.classList.contains('te-hatw')) return;
+        const w = document.createElement('span'); w.className = 'te-hatw';
+        img.parentNode.insertBefore(w, img); w.appendChild(img);
+        const h = document.createElement('span'); h.className = 'te-hat'; h.innerHTML = hat; w.appendChild(h);
+      });
+    };
+    if (document.body) put(); else addEventListener('DOMContentLoaded', put);
+  }
+
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const auto = m === 11 || m < 2 ? 'iarna' : m < 5 ? 'primavara' : m < 8 ? 'vara' : 'toamna';
+  const S = ['iarna', 'primavara', 'vara', 'toamna'].includes(q) ? q : HAT ? 'iarna' : auto;
 
   const cv = document.createElement('canvas');
   cv.setAttribute('aria-hidden', 'true');
@@ -161,7 +193,57 @@
       CFG.draw(p);
       ctx.restore();
     }
+    if (FIRE) fireworks(dt, k);
     requestAnimationFrame(frame);
+  }
+
+  // ---------- artificii de Revelion ----------
+  const rockets = [], sparks = [];
+  const PAL = [['#f3d77a', '#d4af37', '#fff3c4'], ['#ff4d4d', '#f3d77a'], ['#ffffff', '#cfe3ff'], ['#7dff9a', '#f3d77a'],
+    ['#ff7ad9', '#ffd1f0'], ['#6ec8ff', '#ffffff'], ['#ffb347', '#ff6a3d']];
+  let nextRocket = 400;
+  function launch() {
+    const tx = R(W * .12, W * .88), ty = R(H * .1, H * .38), g = .06;
+    rockets.push({ x: tx + R(-40, 40), y: H + 5, tx, vy: -Math.sqrt(2 * g * (H - ty)), g, pal: pick(PAL) });
+  }
+  function burst(r) {
+    const n = small() ? 55 : 80, sp = small() ? 4.4 : 6, ring = Math.random() < .3;
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * 6.283 + R(-.05, .05), v = ring ? sp : sp * Math.sqrt(Math.random());
+      sparks.push({ x: r.x, y: r.y, px: r.x, py: r.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v,
+        life: 1, dec: R(.008, .014), c: pick(r.pal), tw: Math.random() < .4 });
+    }
+  }
+  function fireworks(dt, k) {
+    nextRocket -= dt;
+    if (nextRocket <= 0) {
+      launch(); if (Math.random() < .3) launch();
+      nextRocket = R(small() ? 1300 : 900, small() ? 2800 : 2200);
+    }
+    const d = dpr0();
+    ctx.save();
+    ctx.setTransform(d, 0, 0, d, 0, 0);
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.lineCap = 'round';
+    for (let i = rockets.length - 1; i >= 0; i--) {
+      const r = rockets[i];
+      const py = r.y;
+      r.x += (r.tx - r.x) * .02 * k; r.y += r.vy * k; r.vy += r.g * k;
+      ctx.globalAlpha = .9; ctx.strokeStyle = '#ffe9a8'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(r.x, py + 10); ctx.lineTo(r.x, r.y); ctx.stroke();
+      if (r.vy >= -.6) { burst(r); rockets.splice(i, 1); }
+    }
+    for (let i = sparks.length - 1; i >= 0; i--) {
+      const s = sparks[i];
+      s.px = s.x; s.py = s.y;
+      s.vx *= Math.pow(.965, k); s.vy = s.vy * Math.pow(.965, k) + .03 * k;
+      s.x += s.vx * k; s.y += s.vy * k; s.life -= s.dec * k;
+      if (s.life <= 0) { sparks.splice(i, 1); continue; }
+      ctx.globalAlpha = s.life * (s.tw ? (.4 + .6 * Math.random()) : 1);
+      ctx.strokeStyle = s.c; ctx.lineWidth = 1.2 + s.life * 1.6;
+      ctx.beginPath(); ctx.moveTo(s.px - s.vx * 2, s.py - s.vy * 2); ctx.lineTo(s.x, s.y); ctx.stroke();
+    }
+    ctx.restore();
   }
 
   function start() {
