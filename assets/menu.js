@@ -15,7 +15,9 @@
     'harta.html': '<path d="M12 21s-7-7.8-7-12a7 7 0 0114 0c0 4.2-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>',
     'calendar.html': '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
     'galerie-foto.html': '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/>',
-    'galerie-video.html': '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/>'
+    'galerie-video.html': '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/>',
+    'galerie.html': '<rect x="3" y="5" width="14" height="12" rx="2"/><circle cx="8" cy="9.5" r="1.5"/><path d="M17 13l-3.5-3.5L6 17"/><path d="M7 20h12a2 2 0 002-2V8"/>',
+    'propune-playlist.html': '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>'
   };
   const links = [...nav.querySelectorAll('a')];
   links.forEach((a, i) => {
