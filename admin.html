@@ -391,6 +391,7 @@ main{padding:28px 0 80px}
         <div class="mres" id="mRes"></div>
         <div class="err" id="merr"></div>
       </form>
+      <div id="mAuto"></div>
       <div class="list" id="mList"></div>
     </div>
 
@@ -853,7 +854,7 @@ let places = [];
 async function loadPlaces(){
   const { data, error } = await sb.from('places').select('*').order('county').order('name');
   if (error) { $('mList').innerHTML = `<div class="empty-l">Nu s-au putut încărca: ${TE.esc(error.message)}</div>`; return; }
-  places = data; renderPlaces();
+  places = data; renderPlaces(); loadMapAuto();
 }
 function renderPlaces(){
   const tot = places.reduce((s, p) => s + p.events, 0), jud = new Set(places.map(p => p.county)).size;
@@ -874,6 +875,19 @@ function renderPlaces(){
     places = places.filter(x => x.id !== p.id); renderPlaces(); toast('Scos de pe hartă ✓');
   });
 }
+// localități adăugate automat din contractele semnate (coada map_queue, procesată de server la fiecare minut)
+async function loadMapAuto(){
+  const { data } = await sb.from('map_queue').select('*, requests(name, event_date, type)').order('created_at', { ascending: false }).limit(15);
+  if (!data || !data.length) { $('mAuto').innerHTML = '<p class="hint2" style="margin:14px 0 0">📍 Când un client semnează contractul, localitatea evenimentului se adaugă automat pe hartă (+1). Le vei vedea listate aici.</p>'; return; }
+  const st = q => q.status === 'gata' ? `<span style="color:#7fcf9a">✓ adăugat: <b>${TE.esc(q.place_name || q.query)}</b></span>`
+    : q.status === 'negasit' ? `<span style="color:#ffb38f">⚠ n-am găsit „${TE.esc(q.query)}” – caut-o mai sus și adaug-o manual</span>`
+    : `<span style="color:var(--muted)">⏳ se caută „${TE.esc(q.query)}”…</span>`;
+  $('mAuto').innerHTML = `<h2 style="font-size:1.05rem;margin:18px 0 8px">📍 Adăugate automat din contracte</h2>
+    <div style="display:grid;gap:6px;margin-bottom:6px">${data.map(q => `<div style="padding:9px 14px;border-radius:10px;background:#0e0e11;border:1px solid var(--line);font-size:.88rem;display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between">
+      <span>${TE.esc(q.requests?.name || '')} · ${TE.esc(q.requests?.type || '')} ${q.requests?.event_date ? TE.nice(q.requests.event_date) : ''}</span>${st(q)}</div>`).join('')}</div>
+    <p class="hint2" style="margin:0 0 6px">Dacă a ales altă localitate cu același nume, scade cu − la cea greșită și adaug-o pe cea corectă.</p>`;
+}
+
 // căutare prin OpenStreetMap (Nominatim) – doar în România
 let mBusy = false;
 $('mForm').addEventListener('submit', async e => {
