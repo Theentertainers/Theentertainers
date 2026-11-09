@@ -70,4 +70,6 @@ footer{padding:38px 0 20px}
 .fcm{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:8px 16px;border-radius:999px;border:1px solid rgba(212,175,55,.5);color:var(--gold2)!important;font-weight:600;font-size:.88rem;transition:background .2s,border-color .2s}
 .fcm svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
 .fcm:hover{background:rgba(212,175,55,.12);border-color:var(--gold)}
-.fpg+.fcm{display:flex;width:fit-content}
+.fpg+.fcm{display:flex;width:fit-content}/* subsol: butonul Admin, sub Contul meu */
+.fpg+.fcm+.fadm{display:flex;width:fit-content;margin-top:8px;border-color:rgba(255,255,255,.14);color:var(--muted)!important;font-size:.82rem;padding:6px 14px}
+.fadm:hover{color:var(--gold2)!important;border-color:rgba(212,175,55,.5)}
