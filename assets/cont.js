@@ -118,10 +118,15 @@ window.TECont = (() => {
       done(data.user);
     });
 
-    function showAuth(msg) { A.classList.remove('hidden'); N.classList.add('hidden'); root.hidden = false; if (msg) err(A, msg); }
-    function showNewPw() { A.classList.add('hidden'); N.classList.remove('hidden'); root.hidden = false; }
+    function showAuth(msg, html) { A.classList.remove('hidden'); N.classList.add('hidden'); root.hidden = false; if (msg) err(A, msg, html); opt.onGuest && opt.onGuest(); }
+    function showNewPw() { A.classList.add('hidden'); N.classList.remove('hidden'); root.hidden = false; opt.onGuest && opt.onGuest(); }
     async function done(u) {
-      if ((u.email || '').toLowerCase() === ADMIN) { await sb.auth.signOut(); showAuth('Contul de admin nu se folosește aici. Intră din pagina de admin.'); return; }
+      // ești logat ca admin în acest browser: nu te scoatem din admin, doar arătăm logarea de client
+      if ((u.email || '').toLowerCase() === ADMIN) {
+        setMode('in');
+        showAuth('Ești conectat ca <b>admin</b> în acest browser. Ca să testezi ca client, folosește o fereastră <b>Incognito</b> (sau alt browser) – dacă intri aici cu un cont de client, vei ieși din admin.', 1);
+        return;
+      }
       root.hidden = true;
       if (location.hash) history.replaceState(null, '', location.pathname + location.search);
       opt.onUser && opt.onUser(u);
@@ -133,10 +138,10 @@ window.TECont = (() => {
       if (H0.get('error_description')) {
         history.replaceState(null, '', location.pathname + location.search);
         showAuth(/expired|invalid/i.test(H0.get('error_description')) ? 'Linkul a expirat sau a fost deja folosit. Încearcă din nou.' : 'Linkul nu a mers: ' + H0.get('error_description'));
-        opt.onGuest && opt.onGuest(); return;
+        return;
       }
       if (H0.get('type') === 'recovery' && session) { showNewPw(); return; }
-      if (session) done(session.user); else { showAuth(); opt.onGuest && opt.onGuest(); }
+      if (session) done(session.user); else showAuth();
     })();
     return { showAuth };
   }
