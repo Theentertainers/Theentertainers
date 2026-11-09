@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /admin.html
 Disallow: /cont-partener.html
+Disallow: /cont-client.html
 
 Sitemap: https://www.theentertainers.ro/sitemap.xml
