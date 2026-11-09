@@ -116,6 +116,15 @@ main{padding:28px 0 80px}
 .rq .msg{color:var(--muted);font-size:.88rem;margin-top:8px;white-space:pre-wrap}
 .rq .busy{color:#ffb38f;font-size:.85rem;font-weight:600;margin-top:8px}
 .rq-a{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.ctov{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);display:flex;justify-content:center;align-items:flex-start;padding:24px 12px;overflow:auto}
+.ctm{width:min(900px,100%);background:var(--card,#16161a);border:1px solid var(--line);border-radius:18px;padding:22px}
+.ctf .g2c{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+.ctf label{display:grid;gap:5px;font-size:.8rem;font-weight:600;color:#cfcabe}
+.ctf input{padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#0e0e11;color:var(--text);font:500 .92rem Montserrat,sans-serif}
+.ctf .team{display:grid;gap:6px;margin:6px 0}
+.ctf .tr{display:grid;grid-template-columns:1fr 90px 40px;gap:8px;align-items:center;max-width:420px}
+.ctdoc{max-height:55vh;overflow:auto;border-radius:8px;border:1px solid var(--line);background:#fff;margin-bottom:14px}
+@media (max-width:640px){.ctf .g2c{grid-template-columns:1fr}}
 .rq-a select{padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:#0e0e11;font-size:.88rem}
 .tag.n{background:rgba(229,72,77,.15);color:#ff9b9b}
 .tag.k{background:rgba(120,160,255,.14);color:#a9c1ff}
@@ -524,6 +533,7 @@ main{padding:28px 0 80px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="assets/site.js"></script>
+<script src="assets/contract.js"></script>
 <script>
 const sb = supabase.createClient(TE.SUPABASE_URL, TE.SUPABASE_KEY);
 const $ = id => document.getElementById(id);
@@ -1152,7 +1162,8 @@ async function loadCli(){
     sb.from('requests').select('id,client_id,event_date,type,status,event_id,city,venue,client_changed_at').not('client_id', 'is', null).order('event_date')
   ]);
   if (c.error) { $('cliList').innerHTML = `<div class="empty-l">Nu s-au putut încărca: ${TE.esc(c.error.message)}</div>`; return; }
-  clis = c.data; cliReqs = r.data || []; renderCli();
+  clis = c.data; cliReqs = r.data || [];
+  ctMap = {}; await loadCtMap(cliReqs.map(x => x.id)); renderCli();
 }
 $('cliQ').oninput = () => renderCli();
 function renderCli(){
@@ -1172,10 +1183,12 @@ function renderCli(){
       ${cliOpen === c.id ? `<div id="cliDet" style="margin-top:14px">${rs.length ? rs.map(r => `<div style="padding:12px 14px;border-radius:12px;background:#0e0e11;border:1px solid var(--line);margin-bottom:10px">
           <b>${TE.esc(r.type)} · <span style="color:var(--gold2)">${TE.nice(r.event_date)}</span></b> <span class="tag ${ST[r.status]}">${r.status}</span>${r.event_id ? ' <span style="color:#7fcf9a;font-size:.8rem;font-weight:600">✓ în calendar</span>' : ''}${r.client_changed_at ? ` <span style="color:#ffc53d;font-size:.8rem;font-weight:600">✏️ modificată de client ${new Date(r.client_changed_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short' })}</span>` : ''}
           <div style="color:#cfcabe;font-size:.86rem;margin-top:4px">${TE.esc([r.venue, r.city].filter(Boolean).join(', ') || 'fără locație')}</div>
+          <div style="margin-top:8px">${ctBadge(r.id)}</div>
           <div data-songs="${r.id}" style="margin-top:8px;font-size:.86rem;color:var(--muted)"><span class="spin"></span></div></div>`).join('') : '<div class="empty-l">Nicio rezervare încă.</div>'}</div>` : ''}
     </div>`;
   }).join('');
   $('cliList').querySelectorAll('[data-co]').forEach(x => x.onclick = () => { cliOpen = cliOpen === x.dataset.co ? null : x.dataset.co; renderCli(); });
+  $('cliList').querySelectorAll('[data-ctr]').forEach(b => b.onclick = () => openContract(b.dataset.ctr));
   $('cliList').querySelectorAll('[data-songs]').forEach(el => fillSongs(el, el.dataset.songs));
 }
 // playlistul unui eveniment (piese dorite / interzise de client)
@@ -1193,6 +1206,102 @@ async function fillSongs(el, reqId){
   el.querySelector('[data-copy]').onclick = async () => { try { await navigator.clipboard.writeText(txt); toast('Lista a fost copiată ✓'); } catch { prompt('Copiază lista:', txt); } };
 }
 
+// ---------- contracte ----------
+let ctMap = {};   // request_id → ultimul contract (fără cele anulate)
+async function loadCtMap(ids){
+  if (!ids.length) return;
+  const { data } = await sb.from('contracts').select('id,request_id,status,number,created_at,signed_at').in('request_id', ids).neq('status', 'anulat').order('created_at', { ascending: false });
+  (data || []).forEach(c => { if (!ctMap[c.request_id]) ctMap[c.request_id] = c; });
+}
+function ctBadge(reqId){
+  const c = ctMap[reqId];
+  if (!c) return `<button class="btn btn-ghost btn-sm" data-ctr="${reqId}">📄 Contract</button>`;
+  return c.status === 'semnat'
+    ? `<button class="btn btn-ghost btn-sm" data-ctr="${reqId}" style="color:#7fcf9a">✍️ Contract nr. ${c.number} semnat</button>`
+    : `<button class="btn btn-ghost btn-sm" data-ctr="${reqId}" style="color:#ffc53d">📄 Contract nr. ${c.number} trimis · nesemnat</button>`;
+}
+const SVC_CT = { 'MC / Entertainer': 'Entertainer/MC' };
+async function openContract(reqId){
+  const ov = document.createElement('div'); ov.className = 'ctov';
+  ov.innerHTML = '<div class="ctm"><div class="empty-l"><span class="spin"></span> Se încarcă…</div></div>'; document.body.appendChild(ov);
+  const close = () => { ov.remove(); document.body.style.overflow = ''; }; document.body.style.overflow = 'hidden';
+  ov.addEventListener('click', e => { if (e.target === ov) close(); });
+  const { data: r } = await sb.from('requests').select('*').eq('id', reqId).single();
+  const [ev, cl, cs] = await Promise.all([
+    r.event_id ? sb.from('events').select('*').eq('id', r.event_id).single() : Promise.resolve({ data: null }),
+    r.client_id ? sb.from('clients').select('*').eq('id', r.client_id).single() : Promise.resolve({ data: null }),
+    sb.from('contracts').select('*').eq('request_id', reqId).neq('status', 'anulat').order('created_at', { ascending: false }).limit(1)
+  ]);
+  const e = ev.data, c = cl.data, cur = (cs.data || [])[0];
+  const m = ov.querySelector('.ctm');
+  const head = `<div class="bar" style="margin-bottom:10px"><h1 style="font-size:1.4rem">Contract · <span class="gold">${TE.esc(r.name)}</span></h1><button class="btn btn-ghost btn-sm" data-x>✕ Închide</button></div>`;
+  if (!r.client_id) { m.innerHTML = head + '<div class="empty-l">Clientul acesta nu are cont pe site (cerere veche), așa că nu poate semna online. Poți tipări contractul și semna de mână.</div>'; m.querySelector('[data-x]').onclick = close; return; }
+  if (cur && cur.status === 'semnat') {
+    const b = cur.beneficiary || {}, meta = cur.signed_meta || {};
+    m.innerHTML = head + `<p style="color:#7fcf9a;font-weight:600;margin-bottom:6px">✍️ Semnat pe ${new Date(cur.signed_at).toLocaleString('ro-RO')} ${b.type === 'firma' ? '· firmă' : '· persoană fizică'}${meta.ip ? ' · IP ' + TE.esc(meta.ip) : ''}</p>
+      <div class="rq-a" style="margin:0 0 12px"><button class="btn btn-gold btn-sm" data-pr>⬇ PDF / Tipărește</button><button class="btn btn-ghost btn-sm" data-new>Trimite un contract nou (înlocuiește)</button></div>
+      <div class="ctdoc">${TEContract.html(cur)}</div>`;
+    m.querySelector('[data-x]').onclick = close; m.querySelector('[data-pr]').onclick = () => TEContract.print(cur);
+    m.querySelector('[data-new]').onclick = () => { if (confirm('Contractul semnat rămâne salvat, dar clientul va primi unul nou de semnat. Continui?')) form(); };
+    return;
+  }
+  form();
+  function form(){
+    const d0 = cur?.data || {};
+    const svc = d0.services || (r.services?.length ? r.services.map(s => SVC_CT[s] || s) : ['DJ', 'Entertainer/MC', 'Sonorizare', 'Lumini']);
+    const team = d0.team || [{ role: 'DJ', n: 1 }, { role: 'Entertainer', n: 1 }, { role: 'Asistent', n: 1 }];
+    const date = e?.date || r.event_date;
+    m.innerHTML = head + `
+      ${cur ? `<p style="color:#ffc53d;font-weight:600;margin-bottom:10px">📄 Contractul nr. ${cur.number} a fost trimis pe ${new Date(cur.created_at).toLocaleDateString('ro-RO')} și nu e semnat încă. Dacă trimiți din nou, cel vechi se anulează.</p>` : ''}
+      ${e ? '' : '<p style="color:#ffb38f;font-size:.88rem;margin-bottom:10px">⚠ Cererea nu e trecută în calendar, așa că prețul și avansul nu sunt completate. Le poți scrie aici.</p>'}
+      <form class="ctf" novalidate>
+        <div class="g2c">
+          <label>Eveniment<input name="event" value="${TE.esc(d0.event || e?.type || r.type)}"></label>
+          <label>Data evenimentului<input name="date" type="date" value="${date}"></label>
+          <label>Locație<input name="location" value="${TE.esc(d0.location || [e?.venue || r.venue, e?.city || r.city].filter(Boolean).join(', '))}"></label>
+          <label>Telefon client<input name="phone" value="${TE.esc(d0.phone || c?.phone || r.phone)}"></label>
+          <label>Preț total (lei)<input name="price" type="number" min="0" value="${d0.price ?? e?.price ?? ''}"></label>
+          <label>Avans / taxă rezervare (lei)<input name="deposit" type="number" min="0" value="${d0.deposit ?? e?.deposit ?? ''}"></label>
+          <label>Data finalizării evenimentului<input name="end_date" type="date" value="${d0.end_date || date}"></label>
+          <label>Servicii (despărțite prin virgulă)<input name="services" value="${TE.esc(svc.join(', '))}"></label>
+        </div>
+        <label style="display:block;margin-top:6px">Echipa</label>
+        <div class="team">${team.map(t => `<div class="tr"><input name="role" value="${TE.esc(t.role)}"><input name="n" type="number" min="1" value="${t.n}"><button type="button" class="ib del" data-rm>${icoDel}</button></div>`).join('')}</div>
+        <button type="button" class="btn btn-ghost btn-sm" data-add>+ Rând în echipă</button>
+        <p style="color:var(--muted);font-size:.85rem;margin:14px 0 6px">Previzualizare (datele clientului – nume, adresă, CNP sau firmă – le completează el când semnează):</p>
+        <div class="ctdoc" data-pv></div>
+        <div class="rq-a"><button class="btn btn-gold" data-send>📨 Trimite contractul la ${TE.esc(c?.email || 'client')}</button></div>
+      </form>`;
+    const f = m.querySelector('.ctf'), pv = m.querySelector('[data-pv]');
+    const data = () => {
+      const g = n => f.elements[n].value.trim();
+      const dt = g('date');
+      return { event: g('event'), date: dt, date_txt: dt ? new Date(dt + 'T12:00').toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' }) : '',
+        location: g('location'), phone: g('phone'), price: g('price') ? Number(g('price')) : null, deposit: g('deposit') ? Number(g('deposit')) : 0,
+        end_date: g('end_date') || dt, services: g('services').split(',').map(s => s.trim()).filter(Boolean),
+        team: [...f.querySelectorAll('.tr')].map(x => ({ role: x.querySelector('[name=role]').value.trim(), n: x.querySelector('[name=n]').value || 1 })).filter(t => t.role) };
+    };
+    const upd = () => { pv.innerHTML = TEContract.html({ data: data(), number: cur ? '…' : '' }); };
+    f.addEventListener('input', upd); upd();
+    const bindRm = () => f.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { b.parentElement.remove(); upd(); });
+    bindRm();
+    f.querySelector('[data-add]').onclick = () => { f.querySelector('.team').insertAdjacentHTML('beforeend', `<div class="tr"><input name="role" placeholder="ex. Fotograf"><input name="n" type="number" min="1" value="1"><button type="button" class="ib del" data-rm>${icoDel}</button></div>`); bindRm(); };
+    m.querySelector('[data-x]').onclick = close;
+    f.querySelector('[data-send]').onclick = async ev2 => {
+      ev2.preventDefault(); const d = data();
+      if (!d.price) { alert('Scrie prețul total.'); f.elements.price.focus(); return; }
+      if (d.deposit > d.price) { alert('Avansul nu poate fi mai mare decât prețul.'); return; }
+      if (!d.date || !d.location) { alert('Completează data și locația.'); return; }
+      if (!confirm(`Trimiți contractul la ${c?.email}?\n\n${d.event} · ${d.date_txt}\nPreț ${d.price} lei, avans ${d.deposit} lei.`)) return;
+      const btn = f.querySelector('[data-send]'); btn.disabled = true;
+      const { error } = await sb.from('contracts').insert({ request_id: r.id, client_id: r.client_id, data: d });
+      btn.disabled = false;
+      if (error) { alert('Nu s-a trimis: ' + error.message); return; }
+      toast('Contract trimis ✓ Clientul a primit email.'); close(); ctMap = {}; loadReq(); if (!$('tabCli').classList.contains('hidden')) loadCli();
+    };
+  }
+}
+
 // ---------- cereri de rezervare ----------
 let reqs = [], fromReq = null;
 const ST = { 'nouă':'n', 'contactat':'k', 'confirmat':'c', 'respins':'r' };
@@ -1200,6 +1309,7 @@ async function loadReq(){
   const { data, error } = await sb.from('requests').select('*').order('created_at', { ascending: false }).limit(300);
   if (error) { $('reqList').innerHTML = `<div class="empty-l">Cererile nu s-au putut încărca: ${TE.esc(error.message)}</div>`; return; }
   reqs = data;
+  ctMap = {}; await loadCtMap(reqs.filter(r => r.client_id).map(r => r.id));
   const n = reqs.filter(r => r.status === 'nouă').length;
   $('badge').textContent = n; $('badge').classList.toggle('hidden', !n);
   // ce date din cereri sunt deja ocupate
@@ -1234,6 +1344,7 @@ function renderReq(taken){
         <select data-s="${r.id}">${Object.keys(ST).map(s => `<option${s === r.status ? ' selected' : ''}>${s}</option>`).join('')}</select>
         <a class="btn btn-ghost btn-sm" href="tel:${TE.esc(r.phone)}">Sună</a>
         <a class="btn btn-ghost btn-sm" href="${wa}" target="_blank" rel="noopener">WhatsApp</a>
+        ${r.client_id ? ctBadge(r.id) : ''}
         ${r.event_id ? '<span style="color:#7fcf9a;font-size:.85rem;font-weight:600">✓ e în calendar</span>' : `<button class="btn btn-gold btn-sm" data-c="${r.id}"${isBusy ? ' disabled' : ''}>Trece în calendar</button>`}
         <button class="ib del" data-x="${r.id}" title="Șterge cererea" style="margin-left:auto">${icoDel}</button>
       </div></div>`;
@@ -1243,6 +1354,7 @@ function renderReq(taken){
     if (error) alert('Nu s-a salvat: ' + error.message); else { toast('Statut schimbat ✓'); loadReq(); }
   });
   $('reqList').querySelectorAll('[data-c]').forEach(b => b.onclick = () => toCalendar(reqs.find(r => r.id === b.dataset.c)));
+  $('reqList').querySelectorAll('[data-ctr]').forEach(b => b.onclick = () => openContract(b.dataset.ctr));
   $('reqList').querySelectorAll('[data-rs]').forEach(b => b.onclick = () => { const el = b.parentElement; el.innerHTML = '<span class="spin"></span>'; fillSongs(el, b.dataset.rs); });
   $('reqList').querySelectorAll('[data-x]').forEach(b => b.onclick = async () => {
     const r = reqs.find(x => x.id === b.dataset.x);

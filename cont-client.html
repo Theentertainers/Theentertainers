@@ -68,6 +68,23 @@
 .songs .x{background:none;border:0;color:#ff9b9b;cursor:pointer;font-size:1.1rem;line-height:1;padding:4px}
 .songs .e{color:var(--muted);font-size:.85rem;padding:8px 0}
 .empty{text-align:center;padding:30px 20px;color:var(--muted)}
+.ctb{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:14px;padding:12px 16px;border-radius:12px;border:1px solid rgba(212,175,55,.55);background:rgba(212,175,55,.08)}
+.ctb.ok{border-color:rgba(127,207,154,.5);background:rgba(127,207,154,.07)}
+.ctb span{flex:1;min-width:200px;font-size:.92rem}
+.ctp{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+.ctp .doc{max-height:60vh;overflow:auto;border-radius:8px;border:1px solid var(--line);margin:12px 0 18px;background:#fff}
+.ctp .doc.full{max-height:none}
+.seg2{display:flex;gap:6px;padding:4px;border-radius:999px;background:#0e0e11;border:1px solid var(--line);width:fit-content;margin-bottom:14px}
+.seg2 label{padding:8px 16px;border-radius:999px;cursor:pointer;font-weight:600;font-size:.88rem;color:#cfcabe}
+.seg2 input{display:none}
+.seg2 label:has(input:checked){background:var(--grad);color:#1a1405}
+.pad{position:relative;border-radius:12px;border:2px dashed rgba(212,175,55,.6);background:#fff;touch-action:none;height:180px;max-width:520px}
+.pad canvas{width:100%;height:100%;display:block;border-radius:10px;cursor:crosshair}
+.pad .ph{position:absolute;inset:0;display:grid;place-items:center;color:#999;font-size:.95rem;pointer-events:none}
+.pad .ph[hidden]{display:none}
+.pad .ln{position:absolute;left:20px;right:20px;bottom:40px;border-bottom:1px solid #ccc;pointer-events:none}
+.agree2{display:flex;gap:10px;align-items:flex-start;font-size:.88rem;color:#d6d2c6;margin:14px 0;cursor:pointer}
+.agree2 input{accent-color:var(--gold);width:18px;height:18px;margin-top:2px;flex:none}
 .toast{position:fixed;left:50%;bottom:24px;translate:-50% 0;background:#1d1d22;border:1px solid var(--gold);color:var(--text);padding:12px 20px;border-radius:999px;font-weight:600;font-size:.9rem;z-index:99;opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.on{opacity:1}
 @media (max-width:700px){ .g2,.g3,.songs{grid-template-columns:1fr} .pay{grid-template-columns:1fr 1fr} .box,.pnl{padding:20px} }
@@ -140,6 +157,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="assets/site.js"></script>
 <script src="assets/cont.js"></script>
+<script src="assets/contract.js"></script>
 <script>
 const $ = id => document.getElementById(id);
 const sb = TECont.sb, E = TE.esc;
@@ -147,7 +165,7 @@ const SERV = ['Sonorizare','Lumini','DJ','MC / Entertainer','Prezentare spectaco
 const MOM = ['Intrarea mirilor','Primul dans','Dansul cu părinții','Tortul','Aruncarea buchetului','Cina (muzică de fundal)','Petrecere','Final de seară'];
 const today = TE.iso(new Date());
 const lei = n => n == null ? '–' : Number(n).toLocaleString('ro-RO') + ' lei';
-let user = null, books = [], open = { ed: null, pl: null }, songs = {};
+let user = null, prof = null, books = [], open = { ed: null, pl: null, ct: null }, songs = {}, cts = [];
 const toast = t => { $('toast').textContent = t; $('toast').classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => $('toast').classList.remove('on'), 2400); };
 
 TECont.mount($('auth'), { onUser: start });
@@ -157,7 +175,7 @@ async function start(u){
   user = u;
   $('dash').classList.remove('hidden');
   $('who').textContent = 'Conectat ca ' + u.email;
-  const p = await TECont.profile(u);
+  const p = prof = await TECont.profile(u);
   $('pEmail').value = u.email;
   if (p) { $('pName').value = p.name; $('pPhone').value = p.phone; $('pCity').value = p.city || '';
     $('hi').innerHTML = `Bine ai venit, <span class="gold">${E(p.name.split(' ')[0])}</span>!`; $('lead').textContent = 'Aici găsești rezervările tale, plățile și playlistul pentru petrecere.'; }
@@ -185,9 +203,15 @@ function status(b){
   return ['n', 'Cerere trimisă'];
 }
 async function load(){
-  const { data, error } = await sb.rpc('client_bookings');
-  if (error) { $('list').innerHTML = `<div class="empty">Nu s-au putut încărca rezervările: ${E(error.message)}</div>`; return; }
-  books = data; render();
+  const [r, c] = await Promise.all([sb.rpc('client_bookings'), sb.from('contracts').select('*').order('created_at', { ascending: false })]);
+  if (r.error) { $('list').innerHTML = `<div class="empty">Nu s-au putut încărca rezervările: ${E(r.error.message)}</div>`; return; }
+  books = r.data; cts = c.data || [];
+  // venit din emailul „Contractul tău e gata” → deschidem direct contractul de semnat
+  if (location.hash === '#contract' && open.ct == null) {
+    const first = cts.find(x => x.status === 'trimis') || cts[0];
+    if (first) { open.ct = first.id; history.replaceState(null, '', location.pathname); setTimeout(() => document.getElementById('ct-' + first.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200); }
+  }
+  render();
 }
 function render(){
   if (!books.length) { $('list').innerHTML = '<div class="pnl empty">Nu ai încă nicio rezervare.<br><br><a class="btn btn-gold" href="rezerva.html">Rezervă data evenimentului</a></div>'; return; }
@@ -211,6 +235,7 @@ function card(b){
     <div class="meta">${meta || '<span>Nicio locație trecută încă</span>'}</div>
     ${b.message ? `<div class="msg">${E(b.message)}</div>` : ''}
     ${pay}
+    ${ctBanner(b)}
     <div class="bk-a">
       ${!closed ? `<button class="btn btn-ghost btn-sm" data-ed="${b.id}">✏️ Modifică detaliile</button>` : ''}
       ${b.status !== 'respins' ? `<button class="btn btn-ghost btn-sm" data-pl="${b.id}">🎵 Playlist (${b.songs})</button>` : ''}
@@ -218,7 +243,86 @@ function card(b){
     </div>
     ${open.ed === b.id ? editForm(b) : ''}
     ${open.pl === b.id ? plPanel(b, closed) : ''}
+    ${(() => { const c = cts.find(x => x.request_id === b.id); return c && open.ct === c.id ? ctPanel(c) : ''; })()}
   </div>`;
+}
+
+// ---------- contract ----------
+function ctBanner(b){
+  const c = cts.find(x => x.request_id === b.id); if (!c) return '';
+  if (c.status === 'semnat') return `<div class="ctb ok" id="ct-${c.id}"><span>✍️ <b>Contract nr. ${c.number}</b> semnat pe ${TEContract.dmy(c.signed_at)}</span>
+    <button class="btn btn-ghost btn-sm" data-ct="${c.id}">${open.ct === c.id ? 'Ascunde' : 'Vezi contractul'}</button><button class="btn btn-ghost btn-sm" data-ctp="${c.id}">⬇ PDF / Tipărește</button></div>`;
+  return `<div class="ctb" id="ct-${c.id}"><span>📄 <b>Ai un contract de semnat</b> (nr. ${c.number})</span>
+    <button class="btn btn-gold btn-sm" data-ct="${c.id}">${open.ct === c.id ? 'Ascunde' : 'Vezi și semnează'}</button></div>`;
+}
+function ctPanel(c){
+  if (c.status === 'semnat') return `<div class="ctp"><div class="doc full">${TEContract.html(c)}</div></div>`;
+  const pf = !prof?.name ? '' : E(prof.name);
+  return `<form class="ctp" data-sign="${c.id}" novalidate autocomplete="on">
+    <h3 style="font-size:1.1rem;margin-bottom:4px">1. Datele <span class="gold">tale</span> pentru contract</h3>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:12px">Le folosim doar în acest contract. Restul (data, locația, prețul) le-am completat noi.</p>
+    <div class="seg2"><label><input type="radio" name="type" value="pf" checked> Persoană fizică</label><label><input type="radio" name="type" value="firma"> Firmă</label></div>
+    <div data-t="pf" class="g3">
+      <div class="f"><label>Nume și prenume *</label><input name="name" maxlength="120" value="${pf}" autocomplete="name"></div>
+      <div class="f" style="grid-column:span 2"><label>Adresa de domiciliu (din buletin) *</label><input name="address" maxlength="200" placeholder="ex. Str. Libertății nr. 10, bl. A, ap. 5, Slatina, jud. Olt" autocomplete="street-address"></div>
+      <div class="f"><label>CNP *</label><input name="cnp" maxlength="13" inputmode="numeric" placeholder="13 cifre"></div>
+    </div>
+    <div data-t="firma" class="g3 hidden">
+      <div class="f"><label>Denumirea firmei *</label><input name="company" maxlength="160" placeholder="ex. SC Exemplu SRL"></div>
+      <div class="f" style="grid-column:span 2"><label>Sediul *</label><input name="seat" maxlength="200" placeholder="ex. Str. Primăverii nr. 3, Slatina, jud. Olt"></div>
+      <div class="f"><label>Nr. Registrul Comerțului</label><input name="regcom" maxlength="40" placeholder="ex. J28/123/2020"></div>
+      <div class="f"><label>CUI *</label><input name="cui" maxlength="20" placeholder="ex. RO12345678"></div>
+      <div class="f"><label>Reprezentant (nume) *</label><input name="rep" maxlength="120" value="${pf}"></div>
+    </div>
+    <h3 style="font-size:1.1rem;margin:10px 0 4px">2. Citește <span class="gold">contractul</span></h3>
+    <div class="doc" data-doc></div>
+    <h3 style="font-size:1.1rem;margin-bottom:4px">3. Semnează <span class="gold">aici</span></h3>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:10px">Cu degetul pe telefon sau cu mouse-ul pe calculator.</p>
+    <div class="pad"><canvas></canvas><div class="ln"></div><div class="ph">✍️ Semnează aici</div></div>
+    <button type="button" class="btn btn-ghost btn-sm" data-clear style="margin-top:8px">Șterge semnătura</button>
+    <label class="agree2"><input type="checkbox" name="agree"> <span>Am citit contractul, datele sunt corecte și sunt de acord cu toate clauzele. Semnătura de mai sus are aceeași valoare ca semnătura mea olografă.</span></label>
+    <div class="err"></div>
+    <button class="btn btn-gold">✍️ Semnează contractul</button>
+  </form>`;
+}
+function benOf(f){
+  const t = f.elements.type.value, g = n => f.elements[n].value.trim();
+  return t === 'pf' ? { type: 'pf', name: g('name'), address: g('address'), cnp: g('cnp').replace(/\D/g, '') }
+    : { type: 'firma', company: g('company'), seat: g('seat'), regcom: g('regcom'), cui: g('cui').toUpperCase(), rep: g('rep') };
+}
+function bindSign(f){
+  const c = cts.find(x => x.id === f.dataset.sign), doc = f.querySelector('[data-doc]');
+  const today = TEContract.dmy(new Date().toISOString());
+  const upd = () => { doc.innerHTML = TEContract.html({ ...c, beneficiary: benOf(f) }, { date: today }); };
+  f.querySelectorAll('input[name=type]').forEach(r => r.onchange = () => { f.querySelectorAll('[data-t]').forEach(x => x.classList.toggle('hidden', x.dataset.t !== f.elements.type.value)); upd(); });
+  f.addEventListener('input', upd); upd();
+  // chenarul de semnătură
+  const cv = f.querySelector('canvas'), pad = f.querySelector('.pad'), ph = f.querySelector('.ph');
+  const g = cv.getContext('2d'); let drawing = false, strokes = 0, last = null;
+  const size = () => { const r = cv.getBoundingClientRect(), k = Math.min(2, devicePixelRatio || 1); cv.width = r.width * k; cv.height = r.height * k; g.setTransform(k, 0, 0, k, 0, 0); g.lineWidth = 2.4; g.lineCap = g.lineJoin = 'round'; g.strokeStyle = '#10204a'; strokes = 0; ph.hidden = false; };
+  size();
+  const pt = e => { const r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+  cv.addEventListener('pointerdown', e => { e.preventDefault(); cv.setPointerCapture(e.pointerId); drawing = true; last = pt(e); g.beginPath(); g.arc(last.x, last.y, 1.1, 0, 7); g.fillStyle = '#10204a'; g.fill(); ph.hidden = true; });
+  cv.addEventListener('pointermove', e => { if (!drawing) return; const p = pt(e); g.beginPath(); g.moveTo(last.x, last.y); g.lineTo(p.x, p.y); g.stroke(); last = p; strokes++; });
+  const stop = () => { drawing = false; };
+  cv.addEventListener('pointerup', stop); cv.addEventListener('pointercancel', stop);
+  f.querySelector('[data-clear]').onclick = () => { g.clearRect(0, 0, cv.width, cv.height); size(); };
+  f.addEventListener('submit', async e => {
+    e.preventDefault(); const er = f.querySelector('.err'); er.textContent = '';
+    const ben = benOf(f);
+    if (ben.type === 'pf' && !/^[1-9]\d{12}$/.test(ben.cnp)) { er.textContent = 'CNP-ul trebuie să aibă 13 cifre.'; f.elements.cnp.focus(); return; }
+    if (strokes < 8) { er.textContent = 'Semnează în chenarul alb înainte de a trimite.'; pad.scrollIntoView({ block: 'center' }); return; }
+    if (!f.elements.agree.checked) { er.textContent = 'Bifează că ai citit și ești de acord cu contractul.'; return; }
+    const btn = f.querySelector('.btn-gold'); btn.disabled = true; btn.textContent = 'Se semnează…';
+    // semnătura micșorată (max. 600 px lățime), PNG transparent
+    const k = Math.min(1, 600 / cv.width), o = document.createElement('canvas'); o.width = cv.width * k; o.height = cv.height * k;
+    o.getContext('2d').drawImage(cv, 0, 0, o.width, o.height);
+    const { error } = await sb.rpc('client_sign_contract', { p_id: c.id, p_ben: ben, p_sig: o.toDataURL('image/png') });
+    btn.disabled = false; btn.textContent = '✍️ Semnează contractul';
+    if (error) { er.textContent = error.message; return; }
+    toast('Contractul a fost semnat ✓ Mulțumim!'); open.ct = c.id; await load();
+    document.getElementById('ct-' + c.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 }
 function editForm(b){
   return `<form class="ed" data-form="${b.id}" novalidate>
@@ -259,6 +363,9 @@ function plPanel(b, closed){
   </div>`;
 }
 function bind(){
+  $('list').querySelectorAll('[data-ct]').forEach(x => x.onclick = () => { open.ct = open.ct === x.dataset.ct ? null : x.dataset.ct; open.ed = open.pl = null; render(); });
+  $('list').querySelectorAll('[data-ctp]').forEach(x => x.onclick = () => TEContract.print(cts.find(c => c.id === x.dataset.ctp)));
+  $('list').querySelectorAll('[data-sign]').forEach(bindSign);
   $('list').querySelectorAll('[data-ed]').forEach(x => x.onclick = () => { open.ed = open.ed === x.dataset.ed ? null : x.dataset.ed; open.pl = null; render(); });
   $('list').querySelectorAll('[data-pl]').forEach(x => x.onclick = () => { const id = x.dataset.pl; open.pl = open.pl === id ? null : id; open.ed = null; render(); if (open.pl) loadSongs(id); });
   $('list').querySelectorAll('[data-close]').forEach(x => x.onclick = () => { open.ed = null; render(); });
