@@ -226,7 +226,7 @@ function card(b){
     b.guests && `👥 ~${b.guests} invitați`,
     b.services?.length && `🎛 ${E(b.services.join(', '))}`
   ].filter(Boolean).map(x => `<span>${x}</span>`).join('');
-  const pay = b.price != null ? `<div class="pay"><div><small>Preț</small><b>${lei(b.price)}</b></div><div><small>Avans plătit</small><b>${lei(b.deposit || 0)}</b></div>
+  const pay = b.price != null ? `<div class="pay"><div><small>Preț</small><b>${lei(b.price)}</b></div><div><small>Avans (taxă rezervare)</small><b>${lei(b.deposit || 0)}</b></div>
     <div class="rest"><small>Rest de plată</small><b>${lei(Math.max(0, b.price - (b.deposit || 0)))}</b></div></div>` : '';
   const days = Math.round((new Date(b.event_date + 'T12:00') - new Date(today + 'T12:00')) / 864e5);
   return `<div class="bk${past ? ' past' : ''}" id="b-${b.id}">
