@@ -130,6 +130,7 @@ window.TEContract = (() => {
     ${c.signature ? `<br><img src="${E(c.signature)}" alt="Semnătura beneficiarului">` : ''}
     ${c.signed_at ? `<br><small>Semnat electronic pe ${E(new Date(c.signed_at).toLocaleString('ro-RO', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }))}</small>` : ''}</div>
 </div>
+<p class="ct-conf">DOCUMENT CONFIDENTIAL. Continutul prezentului contract este confidential intre parti (art. 6.1.2 si 6.2.4) si nu poate fi instrainat sau transmis tertilor fara acordul scris al celeilalte parti. Datele personale ale Beneficiarului sunt folosite exclusiv pentru incheierea si executarea prezentului contract.</p>
 </article>`;
   }
 
@@ -147,6 +148,7 @@ window.TEContract = (() => {
 .ct-sign>div{flex:1}
 .ct-sign img{max-width:240px;max-height:110px;margin-top:6px}
 .ct-sign small{color:#555;font-size:11px}
+.ct-doc .ct-conf{margin-top:28px;padding-top:10px;border-top:1px solid #ccc;font-size:11px;line-height:1.5;color:#555;text-align:center}
 @media (max-width:600px){.ct-doc{padding:24px 18px;font-size:13px}}`;
   const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
 

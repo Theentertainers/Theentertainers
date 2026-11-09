@@ -74,6 +74,11 @@
 .ctp{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
 .ctp .doc{max-height:60vh;overflow:auto;border-radius:8px;border:1px solid var(--line);margin:12px 0 18px;background:#fff}
 .ctp .doc.full{max-height:none}
+.conf{padding:14px 18px;border-radius:12px;border:1px solid rgba(127,207,154,.4);background:rgba(127,207,154,.06);margin-bottom:18px;font-size:.88rem;color:#d6d2c6}
+.conf b{color:var(--text)}
+.conf>b{display:block;color:#a8e6b9;font-size:.95rem;margin-bottom:6px}
+.conf p{margin:0 0 6px}.conf p:last-child{margin:0}
+.conf a{color:var(--gold2)}
 .seg2{display:flex;gap:6px;padding:4px;border-radius:999px;background:#0e0e11;border:1px solid var(--line);width:fit-content;margin-bottom:14px}
 .seg2 label{padding:8px 16px;border-radius:999px;cursor:pointer;font-weight:600;font-size:.88rem;color:#cfcabe}
 .seg2 input{display:none}
@@ -254,6 +259,9 @@ function card(b){
 }
 
 // ---------- contract ----------
+const CONF = `<div class="conf"><b>🔒 Contract și date confidențiale</b>
+  <p>Datele tale le folosim <b>exclusiv</b> pentru acest contract și pentru organizarea evenimentului. Nu le folosim în niciun alt scop, nu le dăm nimănui și nu apar nicăieri public.</p>
+  <p>Contractul este <b>confidențial</b> între tine și The Entertainers (art. 6.1.2 și 6.2.4) și nu trebuie înstrăinat sau transmis altor persoane fără acordul celeilalte părți. Detalii în <a href="confidentialitate.html" target="_blank">Politica de confidențialitate</a>.</p></div>`;
 function ctBanner(b){
   const c = cts.find(x => x.request_id === b.id); if (!c) return '';
   if (c.status === 'semnat') return `<div class="ctb ok" id="ct-${c.id}"><span>✍️ <b>Contract nr. ${c.number}</b> semnat pe ${TEContract.dmy(c.signed_at)}</span>
@@ -262,9 +270,10 @@ function ctBanner(b){
     <button class="btn btn-gold btn-sm" data-ct="${c.id}">${open.ct === c.id ? 'Ascunde' : 'Vezi și semnează'}</button></div>`;
 }
 function ctPanel(c){
-  if (c.status === 'semnat') return `<div class="ctp"><div class="doc full">${TEContract.html(c)}</div></div>`;
+  if (c.status === 'semnat') return `<div class="ctp">${CONF}<div class="doc full">${TEContract.html(c)}</div></div>`;
   const pf = !prof?.name ? '' : E(prof.name);
   return `<form class="ctp" data-sign="${c.id}" novalidate autocomplete="on">
+    ${CONF}
     <h3 style="font-size:1.1rem;margin-bottom:4px">1. Datele <span class="gold">tale</span> pentru contract</h3>
     <p style="color:var(--muted);font-size:.85rem;margin-bottom:12px">Le folosim doar în acest contract. Restul (data, locația, prețul) le-am completat noi.</p>
     <div class="seg2"><label><input type="radio" name="type" value="pf" checked> Persoană fizică</label><label><input type="radio" name="type" value="firma"> Firmă</label></div>
