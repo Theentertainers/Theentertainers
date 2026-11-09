@@ -150,7 +150,7 @@
       <div class="done" id="done" style="display:none">
         <div class="ok-ico"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
         <h2>Mulțumim, <span class="gold" id="doneName"></span>!</h2>
-        <p id="doneTxt">Am primit cererea ta. Te sunăm în cel mai scurt timp pentru detalii.</p>
+        <p id="doneTxt">Am primit cererea ta. Echipa noastră redactează acum contractul, pe care îl vei primi în scurt timp pe email. Așteptăm confirmarea ta!</p>
         <div class="cta">
           <a class="btn btn-gold" href="cont-client.html">Vezi rezervarea în contul tău</a>
           <a class="btn btn-wa" id="doneWa" target="_blank" rel="noopener">Scrie-ne și pe WhatsApp</a>
@@ -348,7 +348,7 @@ $('form').addEventListener('submit', async e => {
     $('form').style.display = 'none';
     $('doneName').textContent = d.name.split(' ')[0];
     window.teTrack && teTrack('rezerva');
-    $('doneTxt').textContent = `Am primit cererea pentru ${d.type.toLowerCase()}, ${TE.nice(d.date)}. Te sunăm în cel mai scurt timp pentru detalii.`;
+    $('doneTxt').innerHTML = `Am primit cererea pentru <b>${TE.esc(d.type.toLowerCase())}, ${TE.nice(d.date)}</b>.<br><br>Echipa noastră redactează acum contractul, pe care îl vei primi în scurt timp pe email. Îl poți citi și semna direct din contul tău.<br><br>Așteptăm confirmarea ta! 🎉`;
     $('doneWa').href = waText(d);
     $('done').style.display = 'block'; $('who').classList.add('hidden');
     $('formCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
