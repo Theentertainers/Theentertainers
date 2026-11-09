@@ -109,10 +109,6 @@
     </div>
     <div class="jpanel" id="jpanel"></div>
 
-    <div class="allc rv" id="allc" hidden>
-      <h2>Toate localitățile <span class="gold">pe județe</span></h2>
-      <div class="cgrid" id="cgrid"></div>
-    </div>
     <p class="src-note">Contururile județelor: Code for America (click_that_hood), după date OpenStreetMap.</p>
 
     <div class="cta" style="margin-top:30px">
@@ -228,9 +224,6 @@ function stats(){
   const tot = places.reduce((s, p) => s + p.events, 0);
   const counters = [['sP', places.length], ['sJ', Object.keys(byCounty).length], ['sE', tot]];
   counters.forEach(([id, n]) => { const el = $(id), t0 = performance.now(); const tick = t => { const k = Math.min(1, (t - t0) / 1200); el.textContent = Math.round(n * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(tick); }; requestAnimationFrame(tick); });
-  const counties = Object.keys(byCounty).sort((a, b) => a.localeCompare(b, 'ro'));
-  $('cgrid').innerHTML = counties.map(c => { const l = byCounty[c]; return `<div class="cg"><h3>${TE.esc(c)}<small>${evTxt(l.reduce((s, p) => s + p.events, 0))}</small></h3><p>${l.map(p => TE.esc(p.name)).join(' · ')}</p></div>`; }).join('');
-  $('allc').hidden = !counties.length;
 }
 
 (async () => {
