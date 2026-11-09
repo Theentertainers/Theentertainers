@@ -42,7 +42,7 @@ window.TECont = (() => {
         <div class="f"><label>Email *</label><input name="email" type="email" autocomplete="username" maxlength="160"></div>
         <div class="f"><label>Parolă *</label><input name="pw" type="password" autocomplete="current-password" minlength="8"><small class="cx-up">Minim 8 caractere, cu litere, cifre și un semn.</small></div>
         <div class="f cx-up"><label>Scrie parola încă o dată *</label><input name="pw2" type="password" autocomplete="new-password" minlength="8"></div>
-        <label class="cx-agree cx-up"><input type="checkbox" name="agree"> <span>Sunt de acord ca The Entertainers să păstreze aceste date ca să-mi gestioneze rezervările și să mă contacteze despre evenimentele mele.</span></label>
+        <label class="cx-agree cx-up"><input type="checkbox" name="agree"> <span>Am citit <a href="termeni.html" target="_blank" style="color:var(--gold2)">Termenii și condițiile</a> și <a href="confidentialitate.html" target="_blank" style="color:var(--gold2)">Politica de confidențialitate</a> și sunt de acord ca The Entertainers să-mi păstreze datele ca să-mi gestioneze rezervările și să mă contacteze despre evenimentele mele.</span></label>
         <div class="cx-err" role="alert"></div>
         <button class="btn btn-gold" style="width:100%" name="go">Creează contul</button>
         <div class="cx-in" style="text-align:center;margin-top:14px"><button type="button" class="cx-lnk" name="forgot">Am uitat parola</button></div>

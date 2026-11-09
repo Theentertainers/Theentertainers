@@ -73,3 +73,12 @@ footer{padding:38px 0 20px}
 .fpg+.fcm{display:flex;width:fit-content}/* subsol: butonul Admin, sub Contul meu */
 .fpg+.fcm+.fadm{display:flex;width:fit-content;margin-top:8px;border-color:rgba(255,255,255,.14);color:var(--muted)!important;font-size:.82rem;padding:6px 14px}
 .fadm:hover{color:var(--gold2)!important;border-color:rgba(212,175,55,.5)}
+/* subsol: linkuri legale + ANPC */
+.flegal{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 22px;padding:14px 0 6px;font-size:.82rem}
+.flegal a{color:var(--muted)}
+.flegal a:hover{color:var(--gold2)}
+.flegal .anpc{display:inline-flex;align-items:center;gap:8px;padding:5px 12px 5px 6px;border-radius:8px;background:#fff;color:#1d3c7a!important;line-height:1.05}
+.flegal .anpc b{background:#1d3c7a;color:#fff;font-size:.72rem;padding:5px 7px;border-radius:5px;letter-spacing:.5px}
+.flegal .anpc span{font-weight:800;font-size:.95rem;display:flex;align-items:center;gap:7px}
+.flegal .anpc small{font-weight:600;font-size:.6rem;color:#334;text-transform:uppercase;letter-spacing:.2px}
+.flegal .anpc:hover{box-shadow:0 0 0 2px var(--gold)}
