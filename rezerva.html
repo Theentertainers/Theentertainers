@@ -60,6 +60,9 @@
 .steps b{display:block;color:var(--text)}
 .side .ct{padding:10px 0;border-bottom:1px solid var(--line);font-size:.95rem}
 .side .ct:last-child{border-bottom:0}
+.who{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;border-radius:12px;background:#0e0e11;border:1px solid var(--line);font-size:.85rem;color:var(--muted);margin-bottom:20px}
+.who a,.who button{color:var(--gold2);font:600 .85rem Montserrat,sans-serif;background:none;border:0;cursor:pointer;padding:0}
+.hidden{display:none!important}
 @media (max-width:960px){ .lay{grid-template-columns:1fr} }
 @media (max-width:600px){ .g2{grid-template-columns:1fr} .card{padding:24px 18px} }
 </style>
@@ -99,7 +102,13 @@
   <div class="wrap lay">
 
     <div class="card rv" id="formCard">
-      <form id="form" novalidate>
+      <div id="accBox" hidden>
+        <h2>Fă-ți <span class="gold">cont</span> ca să rezervi</h2>
+        <p class="sub">Durează un minut. În contul tău vezi rezervarea, plățile și îți faci playlistul pentru petrecere.</p>
+        <div id="auth" hidden></div>
+      </div>
+      <div class="who hidden" id="who"></div>
+      <form id="form" novalidate style="display:none">
         <h2>Detaliile evenimentului</h2>
         <p class="sub">Câmpurile cu <span style="color:var(--gold2)">*</span> sunt obligatorii.</p>
 
@@ -127,11 +136,9 @@
           <div class="f"><label for="name">Nume și prenume <i>*</i></label><input id="name" autocomplete="name" maxlength="120" required></div>
           <div class="f"><label for="phone">Telefon <i>*</i></label><input id="phone" type="tel" autocomplete="tel" maxlength="20" required placeholder="07xx xxx xxx"></div>
         </div>
-        <div class="f"><label for="email">Email</label><input id="email" type="email" autocomplete="email" maxlength="160"></div>
+        <div class="f"><label for="email">Email (contul tău)</label><input id="email" type="email" readonly style="color:var(--muted)"></div>
         <div class="f"><label for="msg">Mesaj (opțional)</label><textarea id="msg" maxlength="2000" placeholder="Orice detaliu ne ajută: ora de început, momente speciale, preferințe muzicale…"></textarea></div>
         <div class="hp" aria-hidden="true"><label>Site <input id="site" tabindex="-1" autocomplete="off"></label></div>
-
-        <label class="agree"><input type="checkbox" id="agree"> <span>Sunt de acord ca The Entertainers să folosească aceste date doar pentru a mă contacta în legătură cu evenimentul meu.</span></label>
 
         <div class="err" id="err" role="alert"></div>
         <div class="btns">
@@ -140,12 +147,12 @@
         </div>
       </form>
 
-      <div class="done hidden" id="done" style="display:none">
+      <div class="done" id="done" style="display:none">
         <div class="ok-ico"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
         <h2>Mulțumim, <span class="gold" id="doneName"></span>!</h2>
         <p id="doneTxt">Am primit cererea ta. Te sunăm în cel mai scurt timp pentru detalii.</p>
         <div class="cta">
-          <a class="btn btn-ghost" href="index.html">Înapoi acasă</a>
+          <a class="btn btn-gold" href="cont-client.html">Vezi rezervarea în contul tău</a>
           <a class="btn btn-wa" id="doneWa" target="_blank" rel="noopener">Scrie-ne și pe WhatsApp</a>
         </div>
       </div>
@@ -155,9 +162,10 @@
       <div class="card rv" style="margin-bottom:20px">
         <h2 style="font-size:1.3rem;margin-bottom:18px">Cum funcționează</h2>
         <ol class="steps">
-          <li><span><b>Trimiți cererea</b>Prin formular sau pe WhatsApp, cum îți e mai simplu.</span></li>
+          <li><span><b>Îți faci cont</b>Cu emailul tău și o parolă. Acolo îți urmărești rezervarea.</span></li>
+          <li><span><b>Trimiți cererea</b>Alegi data, tipul evenimentului și serviciile dorite.</span></li>
           <li><span><b>Te sunăm noi</b>Discutăm despre eveniment și îți facem o ofertă.</span></li>
-          <li><span><b>Blocăm data</b>După confirmare, data ta apare ocupată în calendar.</span></li>
+          <li><span><b>Blocăm data</b>După confirmare, data ta apare ocupată în calendar, iar în cont vezi prețul, avansul și îți faci playlistul.</span></li>
         </ol>
       </div>
       <div class="card rv">
@@ -198,6 +206,7 @@
           <li><a href="calendar.html">Calendar disponibilitate</a></li>
           <li><a href="galerie.html">Galerie</a></li>
         <li><a href="propune-playlist.html">Propune playlist</a></li>
+        <li><a href="cont-client.html">👤 Contul meu</a></li>
         </ul>
       </div>
       <div>
@@ -213,10 +222,29 @@
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="assets/site.js"></script>
+<script src="assets/cont.js"></script>
 <script>
 const $ = id => document.getElementById(id);
 const t0 = Date.now();
+
+// rezervarea se face doar din cont: fără cont arătăm întâi înscrierea / logarea
+let me = null, prof = null;
+TECont.mount($('auth'), {
+  mode: 'up',
+  onGuest: () => { $('accBox').hidden = false; },
+  onUser: async u => {
+    me = u; $('accBox').hidden = true;
+    $('form').style.display = '';
+    $('email').value = u.email;
+    $('who').innerHTML = `<span>Conectat ca <b style="color:var(--text)">${TE.esc(u.email)}</b></span><span><a href="cont-client.html">Contul meu</a> · <button type="button" id="out">Ieși</button></span>`;
+    $('who').classList.remove('hidden');
+    $('out').onclick = async () => { await TECont.logout(); location.reload(); };
+    prof = await TECont.profile(u);
+    if (prof) { if (!$('name').value) $('name').value = prof.name; if (!$('phone').value) $('phone').value = prof.phone; if (!$('city').value && prof.city) $('city').value = prof.city; }
+  }
+});
 const today = TE.iso(new Date());
 const dp = TE.datePicker($('date'), { min: today, onChange: () => checkDate() });
 
@@ -278,8 +306,6 @@ function validate(d, full){
   if (!full) return true;
   if (d.name.length < 2) return say('Scrie-ne numele tău.', 'name');
   if (d.phone.replace(/[^0-9]/g, '').length < 9) return say('Scrie un număr de telefon valid, ca să te putem suna.', 'phone');
-  if (d.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) return say('Adresa de email nu pare corectă.', 'email');
-  if (!$('agree').checked) return say('Bifează acordul pentru folosirea datelor.', 'agree');
   return true;
 }
 function waText(d){
@@ -307,23 +333,26 @@ $('form').addEventListener('submit', async e => {
   const d = data();
   if (!validate(d, true)) return;
   if ($('site').value || Date.now() - t0 < 3000) { $('err').textContent = 'Te rugăm să mai încerci o dată.'; return; }
+  if (!me) { $('err').textContent = 'Intră în cont ca să trimiți cererea.'; return; }
   $('send').disabled = true; $('send').innerHTML = '<span class="spin"></span>Se trimite…';
   try {
-    const r = await fetch(TE.SUPABASE_URL + '/rest/v1/rpc/submit_request', {
-      method: 'POST', headers: { apikey: TE.SUPABASE_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ p_name: d.name, p_phone: d.phone, p_email: d.email || null, p_date: d.date, p_type: d.type,
-        p_city: d.city || null, p_venue: d.venue || null, p_guests: d.guests, p_services: d.services, p_message: d.msg || null })
-    });
-    if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.message || 'Eroare ' + r.status); }
+    // numele și telefonul se păstrează în contul clientului
+    if (!prof || prof.name !== d.name || prof.phone !== d.phone.replace(/[^0-9+]/g, '')) {
+      const s = await TECont.sb.rpc('client_save', { p_name: d.name, p_phone: d.phone, p_city: prof?.city || d.city || null });
+      if (s.error) throw new Error(s.error.message); prof = s.data;
+    }
+    const { error } = await TECont.sb.rpc('client_submit_request', { p_date: d.date, p_type: d.type,
+      p_city: d.city || null, p_venue: d.venue || null, p_guests: d.guests, p_services: d.services, p_message: d.msg || null });
+    if (error) throw new Error(error.message);
     $('form').style.display = 'none';
     $('doneName').textContent = d.name.split(' ')[0];
     window.teTrack && teTrack('rezerva');
     $('doneTxt').textContent = `Am primit cererea pentru ${d.type.toLowerCase()}, ${TE.nice(d.date)}. Te sunăm în cel mai scurt timp pentru detalii.`;
     $('doneWa').href = waText(d);
-    $('done').style.display = 'block';
+    $('done').style.display = 'block'; $('who').classList.add('hidden');
     $('formCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch (ex) {
-    $('err').textContent = /Numele|Telefonul|Emailul|Data|Tipul|Am primit|Prea multe/.test(ex.message) ? ex.message : 'Cererea nu s-a putut trimite acum. Te rugăm să folosești butonul WhatsApp sau să ne suni la 0727 292 171.';
+    $('err').textContent = /Numele|Telefonul|Emailul|Data|Tipul|Am primit|Prea multe|Ai trimis|conectat|Completează/.test(ex.message) ? ex.message : 'Cererea nu s-a putut trimite acum. Te rugăm să folosești butonul WhatsApp sau să ne suni la 0727 292 171.';
     $('send').disabled = false; $('send').textContent = 'Trimite cererea';
   }
 });

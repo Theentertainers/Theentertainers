@@ -266,6 +266,7 @@ main{padding:28px 0 80px}
       <button class="tab on" data-t="tabCal">Calendar</button>
       <button class="tab" data-t="tabStat">📊 Statistici</button>
       <button class="tab" data-t="tabReq">Cereri de rezervare <span class="badge hidden" id="badge"></span></button>
+      <button class="tab" data-t="tabCli">👤 Clienți</button>
       <button class="tab" data-t="tabVid">Galerie video</button>
       <button class="tab" data-t="tabFoto">Galerie foto</button>
       <button class="tab" data-t="tabMap">Harta</button>
@@ -279,6 +280,12 @@ main{padding:28px 0 80px}
       <div class="bar"><h1>Piese <span class="gold">propuse</span></h1><a class="lnk" href="propune-playlist.html" target="_blank" style="color:var(--gold2)">Vezi pagina publică ↗</a></div>
       <p class="hint2" style="margin:-4px 0 14px">Piesele apar imediat pe site. Cu 👁 ascunzi o piesă (rămâne aici, dar dispare de pe site), cu 🗑 o ștergi definitiv.</p>
       <div class="list" id="plList" style="margin-top:0"></div>
+    </div>
+
+    <div id="tabCli" class="hidden">
+      <div class="bar"><h1>Clienți <span class="gold">cu cont</span></h1><input id="cliQ" class="flt" placeholder="Caută nume, telefon, email…" style="min-width:240px"></div>
+      <p class="hint2" style="margin:-4px 0 14px">Clienții își fac cont când rezervă o dată. Apasă pe un client ca să-i vezi rezervările și playlistul pentru fiecare eveniment.</p>
+      <div id="cliList"></div>
     </div>
 
     <div id="tabStat" class="hidden">
@@ -572,8 +579,9 @@ function show(logged){
 // ---------- tab-uri ----------
 document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
   document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === b));
-  ['tabCal','tabStat','tabReq','tabVid','tabFoto','tabMap','tabBtr','tabPar','tabPl'].forEach(id => $(id).classList.toggle('hidden', id !== b.dataset.t));
+  ['tabCal','tabStat','tabReq','tabCli','tabVid','tabFoto','tabMap','tabBtr','tabPar','tabPl'].forEach(id => $(id).classList.toggle('hidden', id !== b.dataset.t));
   if (b.dataset.t === 'tabStat') loadStats();
+  if (b.dataset.t === 'tabCli') loadCli();
   if (b.dataset.t === 'tabPl') loadPl();
   if (b.dataset.t === 'tabBtr') loadBtr();
   if (b.dataset.t === 'tabPar') loadPar();
@@ -1135,6 +1143,56 @@ $('vForm').addEventListener('submit', async e => {
   toast('Clip adăugat ✓'); loadVid();
 });
 
+// ---------- clienți cu cont ----------
+let clis = [], cliReqs = [], cliOpen = null;
+async function loadCli(){
+  $('cliList').innerHTML = '<div class="empty-l"><span class="spin"></span> Se încarcă…</div>';
+  const [c, r] = await Promise.all([
+    sb.from('clients').select('*').order('created_at', { ascending: false }),
+    sb.from('requests').select('id,client_id,event_date,type,status,event_id,city,venue,client_changed_at').not('client_id', 'is', null).order('event_date')
+  ]);
+  if (c.error) { $('cliList').innerHTML = `<div class="empty-l">Nu s-au putut încărca: ${TE.esc(c.error.message)}</div>`; return; }
+  clis = c.data; cliReqs = r.data || []; renderCli();
+}
+$('cliQ').oninput = () => renderCli();
+function renderCli(){
+  const q = $('cliQ').value.trim().toLowerCase();
+  const list = clis.filter(c => !q || [c.name, c.phone, c.email, c.city].some(v => (v || '').toLowerCase().includes(q)));
+  if (!clis.length) { $('cliList').innerHTML = '<div class="empty-l">Niciun client cu cont încă. Apar aici după ce își fac cont pe pagina Rezervă data.</div>'; return; }
+  if (!list.length) { $('cliList').innerHTML = '<div class="empty-l">Niciun client găsit.</div>'; return; }
+  $('cliList').innerHTML = `<h2 style="font-size:1.2rem;margin:4px 0 12px">${clis.length} ${clis.length === 1 ? 'client' : 'clienți'}</h2>` + list.map(c => {
+    const rs = cliReqs.filter(r => r.client_id === c.id);
+    const next = rs.find(r => r.event_date >= TE.iso(new Date()) && r.status !== 'respins');
+    const wa = 'https://wa.me/' + c.phone.replace(/^\+/, '').replace(/^0/, '40');
+    return `<div class="rq" style="margin-bottom:12px">
+      <div class="rq-h"><h3 style="cursor:pointer" data-co="${c.id}">${cliOpen === c.id ? '▾' : '▸'} ${TE.esc(c.name)} <span style="font-size:.85rem">· ${rs.length} ${rs.length === 1 ? 'rezervare' : 'rezervări'}</span></h3>
+        <span class="when">cont din ${new Date(c.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' })}</span></div>
+      <div class="meta"><span>📞 <a href="tel:${TE.esc(c.phone)}">${TE.esc(c.phone)}</a></span>${c.email ? `<span>✉️ <a href="mailto:${TE.esc(c.email)}">${TE.esc(c.email)}</a></span>` : ''}${c.city ? `<span>📍 ${TE.esc(c.city)}</span>` : ''}${next ? `<span>📅 următorul: ${TE.esc(next.type)}, ${TE.nice(next.event_date)}</span>` : ''}</div>
+      <div class="rq-a"><a class="btn btn-ghost btn-sm" href="tel:${TE.esc(c.phone)}">Sună</a><a class="btn btn-ghost btn-sm" href="${wa}" target="_blank" rel="noopener">WhatsApp</a><button class="btn btn-ghost btn-sm" data-co="${c.id}">${cliOpen === c.id ? 'Ascunde' : 'Rezervări și playlist'}</button></div>
+      ${cliOpen === c.id ? `<div id="cliDet" style="margin-top:14px">${rs.length ? rs.map(r => `<div style="padding:12px 14px;border-radius:12px;background:#0e0e11;border:1px solid var(--line);margin-bottom:10px">
+          <b>${TE.esc(r.type)} · <span style="color:var(--gold2)">${TE.nice(r.event_date)}</span></b> <span class="tag ${ST[r.status]}">${r.status}</span>${r.event_id ? ' <span style="color:#7fcf9a;font-size:.8rem;font-weight:600">✓ în calendar</span>' : ''}${r.client_changed_at ? ` <span style="color:#ffc53d;font-size:.8rem;font-weight:600">✏️ modificată de client ${new Date(r.client_changed_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short' })}</span>` : ''}
+          <div style="color:#cfcabe;font-size:.86rem;margin-top:4px">${TE.esc([r.venue, r.city].filter(Boolean).join(', ') || 'fără locație')}</div>
+          <div data-songs="${r.id}" style="margin-top:8px;font-size:.86rem;color:var(--muted)"><span class="spin"></span></div></div>`).join('') : '<div class="empty-l">Nicio rezervare încă.</div>'}</div>` : ''}
+    </div>`;
+  }).join('');
+  $('cliList').querySelectorAll('[data-co]').forEach(x => x.onclick = () => { cliOpen = cliOpen === x.dataset.co ? null : x.dataset.co; renderCli(); });
+  $('cliList').querySelectorAll('[data-songs]').forEach(el => fillSongs(el, el.dataset.songs));
+}
+// playlistul unui eveniment (piese dorite / interzise de client)
+async function fillSongs(el, reqId){
+  const { data, error } = await sb.from('event_songs').select('*').eq('request_id', reqId).order('created_at');
+  if (error) { el.textContent = 'Playlistul nu s-a putut încărca.'; return; }
+  if (!data.length) { el.textContent = '🎵 Clientul nu a pus încă piese în playlist.'; return; }
+  const li = s => `<li style="margin:3px 0">${s.url ? `<a href="${TE.esc(s.url)}" target="_blank" rel="noopener" style="color:var(--text)">${TE.esc(s.song)} ↗</a>` : `<span style="color:var(--text)">${TE.esc(s.song)}</span>`}${s.moment ? ` <span style="color:var(--gold2)">· ${TE.esc(s.moment)}</span>` : ''}${s.note ? ` <i>· ${TE.esc(s.note)}</i>` : ''}</li>`;
+  const yes = data.filter(s => s.kind === 'vreau'), no = data.filter(s => s.kind === 'nu');
+  const txt = ['PLAYLIST', ...yes.map(s => '✅ ' + s.song + (s.moment ? ' (' + s.moment + ')' : '')), ...(no.length ? ['', 'NU VREAU', ...no.map(s => '🚫 ' + s.song)] : [])].join('\n');
+  el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+    <div><b style="color:#7fcf9a">✅ Vreau (${yes.length})</b><ol style="padding-left:20px">${yes.map(li).join('') || '<li>–</li>'}</ol></div>
+    <div><b style="color:#ff9b9b">🚫 Nu vreau (${no.length})</b><ol style="padding-left:20px">${no.map(li).join('') || '<li>–</li>'}</ol></div></div>
+    <button class="btn btn-ghost btn-sm" style="margin-top:8px" data-copy>📋 Copiază lista (pentru DJ)</button>`;
+  el.querySelector('[data-copy]').onclick = async () => { try { await navigator.clipboard.writeText(txt); toast('Lista a fost copiată ✓'); } catch { prompt('Copiază lista:', txt); } };
+}
+
 // ---------- cereri de rezervare ----------
 let reqs = [], fromReq = null;
 const ST = { 'nouă':'n', 'contactat':'k', 'confirmat':'c', 'respins':'r' };
@@ -1168,9 +1226,10 @@ function renderReq(taken){
     const isBusy = taken.has(r.event_date) && !r.event_id;
     return `<div class="rq${r.status === 'nouă' ? ' new' : ''}">
       <div class="rq-h"><h3>${TE.esc(r.type)} · <span>${TE.nice(r.event_date)}</span> · ${TE.esc(r.name)}<span class="tag ${ST[r.status]}">${r.status}</span></h3><span class="when">primită ${when}</span></div>
-      <div class="meta">${meta}</div>
+      <div class="meta">${meta}${r.client_id ? '<span style="color:var(--gold2)">👤 are cont</span>' : ''}${r.client_changed_at ? `<span style="color:#ffc53d">✏️ modificată de client ${new Date(r.client_changed_at).toLocaleString('ro-RO', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>` : ''}</div>
       ${r.message ? `<div class="msg">${TE.esc(r.message)}</div>` : ''}
       ${isBusy ? '<div class="busy">⚠ Data e deja ocupată în calendar.</div>' : ''}
+      ${r.client_id ? `<div data-rsongs="${r.id}" style="margin-top:8px;font-size:.86rem;color:var(--muted)"><button class="lnk2" data-rs="${r.id}" style="background:none;border:0;color:var(--gold2);font:600 .85rem Montserrat,sans-serif;cursor:pointer;padding:0">🎵 Vezi playlistul clientului</button></div>` : ''}
       <div class="rq-a">
         <select data-s="${r.id}">${Object.keys(ST).map(s => `<option${s === r.status ? ' selected' : ''}>${s}</option>`).join('')}</select>
         <a class="btn btn-ghost btn-sm" href="tel:${TE.esc(r.phone)}">Sună</a>
@@ -1184,6 +1243,7 @@ function renderReq(taken){
     if (error) alert('Nu s-a salvat: ' + error.message); else { toast('Statut schimbat ✓'); loadReq(); }
   });
   $('reqList').querySelectorAll('[data-c]').forEach(b => b.onclick = () => toCalendar(reqs.find(r => r.id === b.dataset.c)));
+  $('reqList').querySelectorAll('[data-rs]').forEach(b => b.onclick = () => { const el = b.parentElement; el.innerHTML = '<span class="spin"></span>'; fillSongs(el, b.dataset.rs); });
   $('reqList').querySelectorAll('[data-x]').forEach(b => b.onclick = async () => {
     const r = reqs.find(x => x.id === b.dataset.x);
     if (!confirm(`Ștergi cererea lui ${r.name} (${TE.nice(r.event_date)})?`)) return;

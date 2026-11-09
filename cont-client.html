@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contul meu – The Entertainers</title>
+<meta name="description" content="Contul tău The Entertainers: rezervările tale, detaliile evenimentului, plăți și playlistul pentru petrecere.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b0b0c">
+<link rel="icon" href="assets/mic-gold.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+.hidden{display:none!important}
+.box{max-width:560px;margin:0 auto;padding:28px;border-radius:var(--r);background:linear-gradient(160deg,#1b1b20,#121215);border:1px solid var(--line)}
+.dash{max-width:900px;margin:0 auto}
+.top2{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.top2 span{color:var(--muted);font-size:.86rem}
+.pnl{padding:24px;border-radius:var(--r);background:var(--card);border:1px solid var(--line);margin-bottom:22px}
+.pnl h2{font-size:1.35rem;margin-bottom:4px}
+.pnl .sub{color:var(--muted);font-size:.88rem;margin-bottom:16px}
+.f{display:grid;gap:6px;margin-bottom:14px}
+.f label{font-size:.82rem;font-weight:600;color:#cfcabe}
+.f input,.f select,.f textarea{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--line);background:#0e0e11;color:var(--text);font:500 .93rem Montserrat,sans-serif;outline:none}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--gold)}
+.f input[readonly]{color:var(--muted)}
+.f textarea{min-height:80px;resize:vertical}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 14px}
+.err{color:#ff9b9b;font-size:.88rem;min-height:1.2em;margin:2px 0 8px}
+.hd{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:6px 0 14px}
+.hd h2{font-size:1.5rem}
+.bk{padding:20px 22px;border-radius:var(--r);background:var(--card);border:1px solid var(--line);margin-bottom:16px}
+.bk.past{opacity:.65}
+.bk-h{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.bk-h h3{font-family:Montserrat,sans-serif;font-size:1.08rem}
+.bk-h h3 span{color:var(--gold2)}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:.78rem;font-weight:700;border:1px solid var(--line);white-space:nowrap}
+.pill::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.pill.n{color:#ffc53d}.pill.k{color:#7cc4fa}.pill.c{color:#7fcf9a}.pill.p{color:#f3d77a}.pill.r{color:#ff9b9b}
+.bk .meta{color:#cfcabe;font-size:.9rem;display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:8px}
+.bk .msg{color:var(--muted);font-size:.88rem;margin-top:8px;white-space:pre-wrap}
+.pay{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.pay div{padding:12px 14px;border-radius:12px;background:#0e0e11;border:1px solid var(--line)}
+.pay small{display:block;color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.6px}
+.pay b{font-size:1.1rem}
+.pay .rest b{color:var(--gold2)}
+.bk-a{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.ed{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+.svc{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px}
+.svc label{display:inline-flex;align-items:center;gap:8px;padding:8px 13px;border-radius:999px;border:1px solid var(--line);background:#0e0e11;cursor:pointer;font-size:.86rem;color:#d6d2c6}
+.svc input{accent-color:var(--gold)}
+.svc label:has(input:checked){border-color:var(--gold);color:var(--gold2);background:rgba(212,175,55,.1)}
+.kind{display:flex;gap:6px;padding:4px;border-radius:999px;background:#0e0e11;border:1px solid var(--line);margin-bottom:14px;width:fit-content}
+.kind label{padding:8px 16px;border-radius:999px;cursor:pointer;font-weight:600;font-size:.88rem;color:#cfcabe}
+.kind input{display:none}
+.kind label:has(input:checked){background:var(--grad);color:#1a1405}
+.kind label.no:has(input:checked){background:#e5484d;color:#fff}
+.songs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
+.songs h4{font-size:.95rem;margin-bottom:8px}
+.songs ol{list-style:none;display:grid;gap:6px}
+.songs li{display:flex;gap:10px;align-items:center;padding:9px 12px;border-radius:10px;background:#0e0e11;border:1px solid var(--line);font-size:.88rem}
+.songs li .t{flex:1;min-width:0}
+.songs li .t a{color:var(--text)}
+.songs li small{display:block;color:var(--muted);font-size:.76rem}
+.songs .x{background:none;border:0;color:#ff9b9b;cursor:pointer;font-size:1.1rem;line-height:1;padding:4px}
+.songs .e{color:var(--muted);font-size:.85rem;padding:8px 0}
+.empty{text-align:center;padding:30px 20px;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:24px;translate:-50% 0;background:#1d1d22;border:1px solid var(--gold);color:var(--text);padding:12px 20px;border-radius:999px;font-weight:600;font-size:.9rem;z-index:99;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.on{opacity:1}
+@media (max-width:700px){ .g2,.g3,.songs{grid-template-columns:1fr} .pay{grid-template-columns:1fr 1fr} .box,.pnl{padding:20px} }
+</style>
+<link rel="stylesheet" href="assets/compact.css">
+<link rel="stylesheet" href="assets/menu.css">
+</head>
+<body>
+
+<header class="hdr" id="hdr">
+  <div class="wrap">
+    <a href="index.html" class="brand"><img src="assets/logo-gold.png" alt="The Entertainers"></a>
+    <nav class="nav" id="nav">
+      <a href="index.html">Acasă</a>
+      <a href="despre.html">Despre</a>
+      <a href="cununie.html">Cununie civilă</a>
+      <a href="bytheriver.html">By The River</a>
+      <a href="parteneri.html">Parteneri</a>
+      <a href="harta.html">Harta evenimentelor</a>
+      <a href="calendar.html">Calendar</a>
+      <a href="galerie.html">Galerie</a>
+      <a href="propune-playlist.html">Propune playlist</a>
+      <a href="rezerva.html" class="btn btn-gold">Rezervă data</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Meniu" aria-expanded="false">☰</button>
+  </div>
+</header>
+
+<section class="phead">
+  <div class="wrap">
+    <span class="kicker">Contul meu</span>
+    <h1 id="hi">Contul tău de <span class="gold">client</span></h1>
+    <p class="lead" id="lead">Intră în cont ca să-ți vezi rezervările, plățile și să-ți faci playlistul pentru petrecere.</p>
+  </div>
+</section>
+
+<section style="padding:0 0 80px">
+  <div class="wrap">
+    <div class="box" id="auth" hidden></div>
+
+    <div class="dash hidden" id="dash">
+      <div class="top2"><span id="who"></span><button type="button" class="btn btn-ghost btn-sm" id="logout">Ieși din cont</button></div>
+
+      <div class="hd"><h2>Rezervările <span class="gold">mele</span></h2><a class="btn btn-gold btn-sm" href="rezerva.html">+ Rezervă o dată</a></div>
+      <div id="list"><div class="empty"><span class="spin"></span> Se încarcă…</div></div>
+
+      <form class="pnl" id="prof" novalidate>
+        <h2>Datele <span class="gold">mele</span></h2>
+        <p class="sub">Le folosim ca să te contactăm despre evenimentele tale.</p>
+        <div class="g2">
+          <div class="f"><label for="pName">Nume și prenume *</label><input id="pName" maxlength="120" autocomplete="name"></div>
+          <div class="f"><label for="pPhone">Telefon *</label><input id="pPhone" type="tel" maxlength="20" autocomplete="tel"></div>
+          <div class="f"><label for="pEmail">Email (contul)</label><input id="pEmail" readonly></div>
+          <div class="f"><label for="pCity">Localitate</label><input id="pCity" maxlength="80" placeholder="ex. Slatina"></div>
+        </div>
+        <div class="err" id="pErr"></div>
+        <button class="btn btn-gold btn-sm" id="pSave">Salvează datele</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="copy">© <span id="yr">2026</span> The Entertainers · Băcanu Cozmin · <a href="tel:+40727292171" style="color:var(--gold2)">0727 292 171</a> · <a href="https://wa.me/40727292171" style="color:var(--gold2)" target="_blank" rel="noopener">WhatsApp</a></div>
+  </div>
+</footer>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="assets/site.js"></script>
+<script src="assets/cont.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const sb = TECont.sb, E = TE.esc;
+const SERV = ['Sonorizare','Lumini','DJ','MC / Entertainer','Prezentare spectacole','Actor cununie civilă'];
+const MOM = ['Intrarea mirilor','Primul dans','Dansul cu părinții','Tortul','Aruncarea buchetului','Cina (muzică de fundal)','Petrecere','Final de seară'];
+const today = TE.iso(new Date());
+const lei = n => n == null ? '–' : Number(n).toLocaleString('ro-RO') + ' lei';
+let user = null, books = [], open = { ed: null, pl: null }, songs = {};
+const toast = t => { $('toast').textContent = t; $('toast').classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => $('toast').classList.remove('on'), 2400); };
+
+TECont.mount($('auth'), { onUser: start });
+$('logout').onclick = async () => { await TECont.logout(); location.reload(); };
+
+async function start(u){
+  user = u;
+  $('dash').classList.remove('hidden');
+  $('who').textContent = 'Conectat ca ' + u.email;
+  const p = await TECont.profile(u);
+  $('pEmail').value = u.email;
+  if (p) { $('pName').value = p.name; $('pPhone').value = p.phone; $('pCity').value = p.city || '';
+    $('hi').innerHTML = `Bine ai venit, <span class="gold">${E(p.name.split(' ')[0])}</span>!`; $('lead').textContent = 'Aici găsești rezervările tale, plățile și playlistul pentru petrecere.'; }
+  else { $('prof').scrollIntoView({ block: 'center' }); $('pErr').textContent = 'Completează-ți numele și telefonul ca să poți rezerva.'; }
+  load();
+}
+
+// ---------- profil ----------
+$('prof').addEventListener('submit', async e => {
+  e.preventDefault(); $('pErr').textContent = '';
+  $('pSave').disabled = true;
+  const { error } = await sb.rpc('client_save', { p_name: $('pName').value, p_phone: $('pPhone').value, p_city: $('pCity').value || null });
+  $('pSave').disabled = false;
+  if (error) { $('pErr').textContent = error.message; return; }
+  toast('Datele au fost salvate ✓');
+});
+
+// ---------- rezervări ----------
+function status(b){
+  if (b.status === 'respins') return ['r', 'Închisă'];
+  if (b.in_calendar && b.event_status === 'confirmat') return ['c', 'Confirmată ✓'];
+  if (b.in_calendar) return ['p', 'Rezervare provizorie'];
+  if (b.status === 'confirmat') return ['c', 'Confirmată ✓'];
+  if (b.status === 'contactat') return ['k', 'Te-am contactat'];
+  return ['n', 'Cerere trimisă'];
+}
+async function load(){
+  const { data, error } = await sb.rpc('client_bookings');
+  if (error) { $('list').innerHTML = `<div class="empty">Nu s-au putut încărca rezervările: ${E(error.message)}</div>`; return; }
+  books = data; render();
+}
+function render(){
+  if (!books.length) { $('list').innerHTML = '<div class="pnl empty">Nu ai încă nicio rezervare.<br><br><a class="btn btn-gold" href="rezerva.html">Rezervă data evenimentului</a></div>'; return; }
+  const up = books.filter(b => b.event_date >= today), past = books.filter(b => b.event_date < today).reverse();
+  $('list').innerHTML = up.map(card).join('') + (past.length ? '<h3 style="margin:22px 0 10px;color:var(--muted);font-size:1rem">Evenimente trecute</h3>' + past.map(card).join('') : '');
+  bind();
+}
+function card(b){
+  const [cls, txt] = status(b), past = b.event_date < today, closed = past || b.status === 'respins';
+  const meta = [
+    (b.venue || b.city) && `📍 ${E([b.venue, b.city].filter(Boolean).join(', '))}`,
+    b.guests && `👥 ~${b.guests} invitați`,
+    b.services?.length && `🎛 ${E(b.services.join(', '))}`
+  ].filter(Boolean).map(x => `<span>${x}</span>`).join('');
+  const pay = b.price != null ? `<div class="pay"><div><small>Preț</small><b>${lei(b.price)}</b></div><div><small>Avans plătit</small><b>${lei(b.deposit || 0)}</b></div>
+    <div class="rest"><small>Rest de plată</small><b>${lei(Math.max(0, b.price - (b.deposit || 0)))}</b></div></div>` : '';
+  const days = Math.round((new Date(b.event_date + 'T12:00') - new Date(today + 'T12:00')) / 864e5);
+  return `<div class="bk${past ? ' past' : ''}" id="b-${b.id}">
+    <div class="bk-h"><h3>${E(b.type)} · <span>${TE.nice(b.event_date)}</span></h3><span class="pill ${cls}">${txt}</span></div>
+    ${!past ? `<div class="meta"><span>⏳ ${days === 0 ? 'Azi!' : days === 1 ? 'Mâine' : 'peste ' + days + ' zile'}</span></div>` : ''}
+    <div class="meta">${meta || '<span>Nicio locație trecută încă</span>'}</div>
+    ${b.message ? `<div class="msg">${E(b.message)}</div>` : ''}
+    ${pay}
+    <div class="bk-a">
+      ${!closed ? `<button class="btn btn-ghost btn-sm" data-ed="${b.id}">✏️ Modifică detaliile</button>` : ''}
+      ${b.status !== 'respins' ? `<button class="btn btn-ghost btn-sm" data-pl="${b.id}">🎵 Playlist (${b.songs})</button>` : ''}
+      <a class="btn btn-ghost btn-sm" href="https://wa.me/40727292171?text=${encodeURIComponent('Bună! Am o întrebare despre evenimentul meu din ' + TE.nice(b.event_date) + ' (' + b.type + ').')}" target="_blank" rel="noopener">💬 Scrie-ne</a>
+    </div>
+    ${open.ed === b.id ? editForm(b) : ''}
+    ${open.pl === b.id ? plPanel(b, closed) : ''}
+  </div>`;
+}
+function editForm(b){
+  return `<form class="ed" data-form="${b.id}" novalidate>
+    <div class="g3">
+      <div class="f"><label>Localitate</label><input name="city" maxlength="80" value="${E(b.city || '')}"></div>
+      <div class="f"><label>Locație (restaurant, sală)</label><input name="venue" maxlength="120" value="${E(b.venue || '')}"></div>
+      <div class="f"><label>Invitați (aprox.)</label><input name="guests" type="number" min="1" max="5000" value="${b.guests || ''}"></div>
+    </div>
+    <label style="font-size:.82rem;font-weight:600;color:#cfcabe">Servicii dorite</label>
+    <div class="svc">${SERV.map(s => `<label><input type="checkbox" value="${E(s)}"${b.services?.includes(s) ? ' checked' : ''}> ${E(s)}</label>`).join('')}</div>
+    <div class="f"><label>Mesaj / detalii</label><textarea name="message" maxlength="2000">${E(b.message || '')}</textarea></div>
+    <p style="color:var(--muted);font-size:.8rem;margin:-4px 0 10px">Pentru schimbarea datei sau a tipului de eveniment, sună-ne la 0727 292 171.</p>
+    <div class="err"></div>
+    <button class="btn btn-gold btn-sm">Trimite modificările</button> <button type="button" class="btn btn-ghost btn-sm" data-close>Renunță</button>
+  </form>`;
+}
+function plPanel(b, closed){
+  const L = songs[b.id];
+  const item = s => `<li><span class="t">${s.url ? `<a href="${E(s.url)}" target="_blank" rel="noopener nofollow">${E(s.song)} ↗</a>` : E(s.song)}${s.moment || s.note ? `<small>${E([s.moment, s.note].filter(Boolean).join(' · '))}</small>` : ''}</span>${!closed ? `<button class="x" data-del="${s.id}" title="Șterge">×</button>` : ''}</li>`;
+  const list = !L ? '<div class="e"><span class="spin"></span> Se încarcă…</div>' : `<div class="songs">
+      <div><h4>✅ Vreau să se cânte (${L.filter(s => s.kind === 'vreau').length})</h4><ol>${L.filter(s => s.kind === 'vreau').map(item).join('') || '<li class="e" style="border:0;background:none">Nicio piesă încă.</li>'}</ol></div>
+      <div><h4>🚫 Nu vreau (${L.filter(s => s.kind === 'nu').length})</h4><ol>${L.filter(s => s.kind === 'nu').map(item).join('') || '<li class="e" style="border:0;background:none">Nimic aici.</li>'}</ol></div></div>`;
+  return `<div class="ed">
+    <h3 style="font-size:1.1rem;margin-bottom:4px">Playlistul <span class="gold">evenimentului</span></h3>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:14px">Spune-ne ce piese vrei la momentele importante și ce nu vrei să auzi. DJ-ul primește lista înainte de eveniment.</p>
+    ${!closed ? `<form data-song="${b.id}" novalidate>
+      <div class="kind"><label><input type="radio" name="kind" value="vreau" checked> Vreau</label><label class="no"><input type="radio" name="kind" value="nu"> Nu vreau</label></div>
+      <div class="g3">
+        <div class="f" style="grid-column:span 2"><label>Piesa (artist – titlu) *</label><input name="song" maxlength="200" placeholder="ex. Ed Sheeran – Perfect"></div>
+        <div class="f"><label>Moment</label><input name="moment" maxlength="60" list="moms" placeholder="opțional"></div>
+        <div class="f" style="grid-column:span 2"><label>Link (YouTube, Spotify…)</label><input name="url" maxlength="300" placeholder="opțional"></div>
+        <div class="f"><label>Notă</label><input name="note" maxlength="300" placeholder="opțional"></div>
+      </div>
+      <div class="err"></div>
+      <button class="btn btn-gold btn-sm">+ Adaugă piesa</button>
+    </form>` : ''}
+    ${list}
+  </div>`;
+}
+function bind(){
+  $('list').querySelectorAll('[data-ed]').forEach(x => x.onclick = () => { open.ed = open.ed === x.dataset.ed ? null : x.dataset.ed; open.pl = null; render(); });
+  $('list').querySelectorAll('[data-pl]').forEach(x => x.onclick = () => { const id = x.dataset.pl; open.pl = open.pl === id ? null : id; open.ed = null; render(); if (open.pl) loadSongs(id); });
+  $('list').querySelectorAll('[data-close]').forEach(x => x.onclick = () => { open.ed = null; render(); });
+  $('list').querySelectorAll('[data-form]').forEach(f => f.addEventListener('submit', async e => {
+    e.preventDefault(); const er = f.querySelector('.err'); er.textContent = '';
+    const g = f.guests.value ? parseInt(f.guests.value, 10) : null;
+    const btn = f.querySelector('.btn-gold'); btn.disabled = true;
+    const { error } = await sb.rpc('client_update_request', { p_id: f.dataset.form, p_city: f.city.value || null, p_venue: f.venue.value || null, p_guests: g,
+      p_services: [...f.querySelectorAll('.svc input:checked')].map(i => i.value), p_message: f.message.value || null });
+    btn.disabled = false;
+    if (error) { er.textContent = error.message; return; }
+    open.ed = null; toast('Modificările au fost trimise ✓'); load();
+  }));
+  $('list').querySelectorAll('[data-song]').forEach(f => f.addEventListener('submit', async e => {
+    e.preventDefault(); const er = f.querySelector('.err'); er.textContent = '';
+    const song = f.song.value.trim(); let url = f.url.value.trim();
+    if (song.length < 2) { er.textContent = 'Scrie numele piesei.'; f.song.focus(); return; }
+    if (url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
+    const btn = f.querySelector('button'); btn.disabled = true;
+    const { error } = await sb.from('event_songs').insert({ request_id: f.dataset.song, client_id: user.id, kind: f.kind.value, song,
+      url: url || null, moment: f.moment.value.trim() || null, note: f.note.value.trim() || null });
+    btn.disabled = false;
+    if (error) { er.textContent = /url/i.test(error.message) ? 'Linkul nu pare corect.' : 'Nu s-a salvat: ' + error.message; return; }
+    toast('Piesa a fost adăugată ✓'); await loadSongs(f.dataset.song, true);
+    setTimeout(() => { const nf = document.querySelector(`[data-song="${f.dataset.song}"]`); nf && nf.song.focus(); }, 30);
+  }));
+  $('list').querySelectorAll('[data-del]').forEach(x => x.onclick = async () => {
+    const { error } = await sb.from('event_songs').delete().eq('id', x.dataset.del);
+    if (error) return toast('Eroare: ' + error.message);
+    loadSongs(open.pl, true);
+  });
+}
+async function loadSongs(id, keep){
+  const { data, error } = await sb.from('event_songs').select('*').eq('request_id', id).order('created_at');
+  songs[id] = error ? [] : data;
+  const b = books.find(x => x.id === id); if (b) b.songs = songs[id].length;
+  render();
+}
+document.body.insertAdjacentHTML('beforeend', `<datalist id="moms">${MOM.map(m => `<option value="${m}">`).join('')}</datalist>`);
+</script>
+<script src="assets/menu.js"></script>
+</body>
+</html>
