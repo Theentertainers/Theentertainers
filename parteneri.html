@@ -212,8 +212,8 @@ function render(){
     `<button class="pf${c === cur ? ' on' : ''}" data-c="${TE.esc(c)}">${c === 'Toate' ? '' : ico(c)}${TE.esc(c)} <small>${n}</small></button>`).join('');
   $('filters').querySelectorAll('.pf').forEach(b => b.onclick = () => { cur = b.dataset.c; render(); });
   const show = cur === 'Toate' ? cats : [cur];
-  $('list').innerHTML = show.map(c => `<div class="pcat"><span class="ci">${ico(c)}</span><h2>${TE.esc(c)}</h2></div>
-    <div class="pgrid">${all.filter(p => p.category === c).map(card).join('')}</div>`).join('');
+  const list = show.flatMap(c => all.filter(p => p.category === c));
+  $('list').innerHTML = `<div class="pgrid">${list.map(card).join('')}</div>`;
 }
 (async () => {
   try {
