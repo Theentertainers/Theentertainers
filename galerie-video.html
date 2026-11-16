@@ -43,6 +43,8 @@
 .vbox iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .vmeta{padding:14px 16px 16px}
 .vmeta h3{font-family:Montserrat,sans-serif;font-size:1rem;font-weight:700;margin-bottom:4px}
+.vext{display:block;margin-top:8px;font-size:.78rem;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.vext:hover{color:var(--gold2)}
 .vmeta span{font-size:.78rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--gold2)}
 .vmsg{text-align:center;color:var(--muted);padding:40px 0}
 </style>
@@ -161,6 +163,7 @@ function card(v){
       <span class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
     </div>
     <div class="vmeta">${v.title ? `<h3>${TE.esc(v.title)}</h3>` : ''}<span>${TE.esc(v.category)}</span>
+      ${/^https:\/\//i.test(v.url || '') ? `<a class="vext" href="${TE.esc(v.url)}" target="_blank" rel="noopener">Nu pornește? Vezi pe ${yt ? 'YouTube' : 'TikTok'} ↗</a>` : ''}
       <div style="margin-top:12px">${TE.reactBar('video', v.id, rx[v.id])}</div></div>
   </article>`;
 }
