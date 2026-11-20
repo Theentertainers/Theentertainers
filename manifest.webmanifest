@@ -1,0 +1,27 @@
+{
+  "id": "/",
+  "name": "The Entertainers – DJ & MC",
+  "short_name": "Entertainers",
+  "description": "DJ, MC, sonorizare și lumini pentru nunți, botezuri, majorate și evenimente. Verifică data liberă și rezervă online.",
+  "lang": "ro",
+  "dir": "ltr",
+  "start_url": "/?app=1",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0b0c",
+  "theme_color": "#0b0b0c",
+  "categories": ["entertainment", "music", "lifestyle"],
+  "icons": [
+    { "src": "/assets/app-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/app-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/app-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/assets/app-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Rezervă data", "short_name": "Rezervă", "url": "/rezerva.html", "icons": [{ "src": "/assets/app-192.png", "sizes": "192x192" }] },
+    { "name": "Calendar date libere", "short_name": "Calendar", "url": "/calendar.html", "icons": [{ "src": "/assets/app-192.png", "sizes": "192x192" }] },
+    { "name": "Contul meu", "short_name": "Contul meu", "url": "/cont-client.html", "icons": [{ "src": "/assets/app-192.png", "sizes": "192x192" }] },
+    { "name": "Propune o melodie", "short_name": "Playlist", "url": "/propune-playlist.html", "icons": [{ "src": "/assets/app-192.png", "sizes": "192x192" }] }
+  ]
+}
